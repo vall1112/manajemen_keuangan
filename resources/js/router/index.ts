@@ -33,6 +33,15 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Dashboard"],
                 },
             },
+             {
+                path: "/bill",
+                name: "bill",
+                component: () => import("@/pages/dashboard/bill/Index.vue"),
+                meta: {
+                    pageTitle: "Bill",
+                    breadcrumbs: ["Bill"],
+                },
+            },
             {
                 path: "/dashboard/profile",
                 name: "dashboard.profile",

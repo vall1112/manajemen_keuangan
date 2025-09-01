@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
@@ -92,6 +93,14 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('school-years', [SchoolYearController::class, 'index']);
             Route::post('school-years/store', [SchoolYearController::class, 'store']);
             Route::apiResource('school-years', SchoolYearController::class)
+                ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:bill')->group(function () {
+            Route::get('bills', [BillController::class, 'get']);
+            Route::post('bills', [BillController::class, 'index']);
+            Route::post('bills/store', [BillController::class, 'store']);
+            Route::apiResource('bills', BillController::class)
                 ->except(['index', 'store']);
         });
     });

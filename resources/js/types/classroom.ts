@@ -1,9 +1,15 @@
-export interface Classroom {
+export interface Bill {
     id: number;
-    nama_kelas: string;
-    jurusan: string;
-    wali_kelas_id: number; // relasi ke teacher
-    jumlah_anak: number;
+    siswa_id: number;              // relasi ke students
+    jenis_pembayaran_id: number;   // relasi ke payment_types
+    school_year_id: number;        // relasi ke school_years
+    total: number;
+    tanggal_tagih: string;         // format date (YYYY-MM-DD)
+    jatuh_tempo: string;           // format date (YYYY-MM-DD)
+    status: "Belum Dibayar" | "Dibayar Sebagian" | "Lunas";
+    dibayar: number;
+    sisa: number;
+    keterangan?: string;
     created_at?: string;
     updated_at?: string;
 }

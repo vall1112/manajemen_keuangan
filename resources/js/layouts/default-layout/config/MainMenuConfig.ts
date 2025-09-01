@@ -15,8 +15,8 @@ const MainMenuConfig: Array<MenuItem> = [
         pages: [
             {
                 heading: "Tagihan",
-                name: "dashboard",
-                route: "/dashboard",
+                name: "bill",
+                route: "/bill",
                 keenthemesIcon: "element-11",
             },
         ],
