@@ -104,6 +104,16 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: "/dashboard/master/school_years",
+                name: "/dashboard.master.school_years",
+                component: () =>
+                    import("@/pages/dashboard/master/school_year/Index.vue"),
+                meta: {
+                    pageTitle: "School Year",
+                    breadcrumbs: ["School Year"],
+                },
+            },
+            {
                 path: "/dashboard/master/payment_types",
                 name: "/dashboard.master.payment_types",
                 component: () =>

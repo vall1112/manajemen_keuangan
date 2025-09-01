@@ -5,4 +5,5 @@ export type { Teacher } from "./teacher";
 export type { Student } from "./student";
 export type { Classroom } from "./classroom";
 export type { PaymentType } from "./paymentType";
+export type { SchoolYear } from "./schoolYear";
 

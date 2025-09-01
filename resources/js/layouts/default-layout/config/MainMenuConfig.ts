@@ -50,6 +50,11 @@ const MainMenuConfig: Array<MenuItem> = [
                         route: "/dashboard/master/classrooms",
                         name: "master-classroom",
                     },
+                     {
+                        heading: "Tahun Ajaran",
+                        route: "/dashboard/master/school_years",
+                        name: "master-school-year",
+                    },
                     {
                         heading: "Jenis Pembayaran",
                         route: "/dashboard/master/payment_types",
