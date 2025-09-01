@@ -26,21 +26,34 @@ const MainMenuConfig: Array<MenuItem> = [
                 name: "master",
                 sub: [
                     {
-                        sectionTitle: "User",
-                        route: "/users",
+                        heading: "User",
+                        route: "/dashboard/master/users",
                         name: "master-user",
-                        sub: [
-                            {
-                                heading: "Role",
-                                name: "master-role",
-                                route: "/dashboard/master/users/roles",
-                            },
-                            {
-                                heading: "User",
-                                name: "master-user",
-                                route: "/dashboard/master/users",
-                            },
-                        ],
+                    },
+                    {
+                        heading: "Role",
+                        route: "/dashboard/master/users/roles",
+                        name: "master-role",
+                    },
+                    {
+                        heading: "Guru",
+                        route: "/dashboard/master/teachers",
+                        name: "master-teacher",
+                    },
+                    {
+                        heading: "Siswa",
+                        route: "/dashboard/master/students",
+                        name: "master-student",
+                    },
+                    {
+                        heading: "Kelas",
+                        route: "/dashboard/master/classrooms",
+                        name: "master-classroom",
+                    },
+                    {
+                        heading: "Jenis Pembayaran",
+                        route: "/dashboard/master/payment_types",
+                        name: "master-payment",
                     },
                 ],
             },

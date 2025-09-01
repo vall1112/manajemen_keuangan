@@ -5,9 +5,9 @@ export interface Setting {
     telepon: string;
     description: string;
     alamat: string;
-    dinas: string;
+    school: string;
     pemerintah: string;
     email: string;
     logo: Array<File | string> | string;
-    banner: Array<File | string> | string;
+    bg_auth: Array<File | string> | string;
 }

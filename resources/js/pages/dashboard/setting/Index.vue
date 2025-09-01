@@ -21,9 +21,22 @@
 
                     <!--begin::Input group-->
                     <div class="fv-row mb-8">
+                        <label class="form-label fw-bold fs-6 required">Nama Sekolah</label>
+                        <Field class="form-control form-control-lg form-control-solid" type="text" name="school"
+                            autocomplete="off" v-model="formData.school" />
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="school" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-8">
                         <label class="form-label fw-bold fs-6 required">Deskripsi</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="textarea" name="description"
-                            autocomplete="off" v-model="formData.description" />
+                        <Field class="form-control form-control-lg form-control-solid" type="textarea"
+                            name="description" autocomplete="off" v-model="formData.description" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="description" />
@@ -151,6 +164,7 @@ export default defineComponent({
         const formSchema = Yup.object().shape({
             alamat: Yup.string().required('Alamat wajib diisi'),
             app: Yup.string().required('Nama aplikasi wajib diisi'),
+            school: Yup.string().required('Nama sekolah wajib diisi'),
             description: Yup.string().required('Deskripsi wajib diisi'),
             email: Yup.string().required('Email wajib diisi'),
             pemerintah: Yup.string().required('Nama pemerintah wajib diisi'),

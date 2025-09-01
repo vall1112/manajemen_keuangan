@@ -4,6 +4,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\PaymentTypeController;
+use App\Http\Controllers\SchoolYearController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +52,46 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('roles', [RoleController::class, 'index']);
             Route::post('roles/store', [RoleController::class, 'store']);
             Route::apiResource('roles', RoleController::class)
+                ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:master-teacher')->group(function () {
+            Route::get('teachers', [TeacherController::class, 'get']);
+            Route::post('teachers', [TeacherController::class, 'index']);
+            Route::post('teachers/store', [TeacherController::class, 'store']);
+            Route::apiResource('teachers', TeacherController::class)
+                ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:master-classroom')->group(function () {
+            Route::get('classrooms', [ClassroomController::class, 'get']);
+            Route::post('classrooms', [ClassroomController::class, 'index']);
+            Route::post('classrooms/store', [ClassroomController::class, 'store']);
+            Route::apiResource('classrooms', ClassroomController::class)
+                ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:master-student')->group(function () {
+            Route::get('students', [StudentController::class, 'get']);
+            Route::post('students', [StudentController::class, 'index']);
+            Route::post('students/store', [StudentController::class, 'store']);
+            Route::apiResource('students', StudentController::class)
+                ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:master-payment')->group(function () {
+            Route::get('payment-types', [PaymentTypeController::class, 'get']);
+            Route::post('payment-types', [PaymentTypeController::class, 'index']);
+            Route::post('payment-types/store', [PaymentTypeController::class, 'store']);
+            Route::apiResource('payment-types', PaymentTypeController::class)
+                ->except(['index', 'store']);
+        });
+
+         Route::middleware('can:master-school-yer')->group(function () {
+            Route::get('payment-types', [PaymentTypeController::class, 'get']);
+            Route::post('payment-types', [PaymentTypeController::class, 'index']);
+            Route::post('payment-types/store', [PaymentTypeController::class, 'store']);
+            Route::apiResource('payment-types', PaymentTypeController::class)
                 ->except(['index', 'store']);
         });
     });

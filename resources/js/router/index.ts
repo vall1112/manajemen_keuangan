@@ -73,6 +73,46 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users"],
                 },
             },
+            {
+                path: "/dashboard/master/teachers",
+                name: "/dashboard.master.teachers",
+                component: () =>
+                    import("@/pages/dashboard/master/teacher/Index.vue"),
+                meta: {
+                    pageTitle: "Teacher",
+                    breadcrumbs: ["Teacher"],
+                },
+            },
+            {
+                path: "/dashboard/master/students",
+                name: "/dashboard.master.students",
+                component: () =>
+                    import("@/pages/dashboard/master/student/Index.vue"),
+                meta: {
+                    pageTitle: "Student",
+                    breadcrumbs: ["Student"],
+                },
+            },
+            {
+                path: "/dashboard/master/classrooms",
+                name: "/dashboard.master.classrooms",
+                component: () =>
+                    import("@/pages/dashboard/master/classroom/Index.vue"),
+                meta: {
+                    pageTitle: "Classrooms",
+                    breadcrumbs: ["Classrooms"],
+                },
+            },
+            {
+                path: "/dashboard/master/payment_types",
+                name: "/dashboard.master.payment_types",
+                component: () =>
+                    import("@/pages/dashboard/master/paymentType/Index.vue"),
+                meta: {
+                    pageTitle: "Payment Type",
+                    breadcrumbs: ["Payment Type"],
+                },
+            },
         ],
     },
     {
@@ -120,7 +160,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes,
     scrollBehavior(to) {
         // If the route has a hash, scroll to the section with the specified ID; otherwise, scroll to the top of the page.
