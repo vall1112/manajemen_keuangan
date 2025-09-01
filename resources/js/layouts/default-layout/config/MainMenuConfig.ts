@@ -11,6 +11,16 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
+    {
+        pages: [
+            {
+                heading: "Tagihan",
+                name: "dashboard",
+                route: "/dashboard",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
 
     // WEBSITE
     {
