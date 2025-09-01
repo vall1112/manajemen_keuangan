@@ -11,6 +11,19 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
+<<<<<<< HEAD
+=======
+    {
+        pages: [
+            {
+                heading: "Tagihan",
+                name: "bill",
+                route: "/bill",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
+>>>>>>> 933e1e9 (ubah 3)
 
     // WEBSITE
     {
