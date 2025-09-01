@@ -107,7 +107,7 @@ const routes: Array<RouteRecordRaw> = [
                 path: "/dashboard/master/payment_types",
                 name: "/dashboard.master.payment_types",
                 component: () =>
-                    import("@/pages/dashboard/master/paymentType/Index.vue"),
+                    import("@/pages/dashboard/master/payment_type/Index.vue"),
                 meta: {
                     pageTitle: "Payment Type",
                     breadcrumbs: ["Payment Type"],

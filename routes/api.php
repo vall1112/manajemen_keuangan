@@ -87,11 +87,11 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
 
-         Route::middleware('can:master-school-yer')->group(function () {
-            Route::get('payment-types', [PaymentTypeController::class, 'get']);
-            Route::post('payment-types', [PaymentTypeController::class, 'index']);
-            Route::post('payment-types/store', [PaymentTypeController::class, 'store']);
-            Route::apiResource('payment-types', PaymentTypeController::class)
+        Route::middleware('can:master-school-yer')->group(function () {
+            Route::get('school-years', [SchoolYearController::class, 'get']);
+            Route::post('school-years', [SchoolYearController::class, 'index']);
+            Route::post('school-years/store', [SchoolYearController::class, 'store']);
+            Route::apiResource('school-years', SchoolYearController::class)
                 ->except(['index', 'store']);
         });
     });
