@@ -87,7 +87,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
 
-        Route::middleware('can:master-school-yer')->group(function () {
+        Route::middleware('can:master-school-year')->group(function () {
             Route::get('school-years', [SchoolYearController::class, 'get']);
             Route::post('school-years', [SchoolYearController::class, 'index']);
             Route::post('school-years/store', [SchoolYearController::class, 'store']);
