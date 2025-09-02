@@ -31,6 +31,12 @@ const MainMenuConfig: Array<MenuItem> = [
                 route: "/transaction",
                 keenthemesIcon: "wallet",
             },
+            {
+               heading: "Tabungan",
+                name: "transaction",
+                route: "/transaction",
+                keenthemesIcon: "bank",
+            },
         ],
     },
     {
