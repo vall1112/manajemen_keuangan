@@ -20,6 +20,9 @@
 
         <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
             <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#with-phone">{{ $t('Username') }}</a>
+            </li>
+            <li class="nav-item">
                 <a
                     class="nav-link active"
                     data-bs-toggle="tab"
@@ -27,9 +30,6 @@
                     >Email</a
                 >
             </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#with-phone">{{ $t('login.telepon') }}</a>
-            </li> -->
         </ul>
 
         <div class="tab-content" id="myTabContent">

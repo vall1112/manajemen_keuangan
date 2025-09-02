@@ -14,47 +14,59 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        // Kosongkan relasi role_has_permissions dulu
         DB::table('role_has_permissions')->delete();
 
-        // Reset cached roles and permissions
+        // Reset cache spatie
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $menuMaster = ['master', 'master-user', 'master-role'];
-        $menuWebsite = ['website', 'setting'];
+        // Daftar permissions sesuai tabel yang kamu tunjukkan
+        $allPermissions = [
+            'dashboard',
+            'master',
+            'master-user',
+            'master-role',
+            'website',
+            'setting',
+            'master-teacher',
+            'master-classroom',
+            'master-student',
+            'master-payment',
+            'master-school-year',
+            'bill',
+            'transaction',
+        ];
 
+        // Insert permission kalau belum ada
+        foreach ($allPermissions as $name) {
+            Permission::firstOrCreate([
+                'name' => $name,
+                'guard_name' => 'api',
+            ]);
+        }
+
+        // Daftar permission untuk setiap role
         $permissionsByRole = [
-            'admin' => ['dashboard', ...$menuMaster, ...$menuWebsite],
+            'admin' => $allPermissions, // admin dapat semua
         ];
 
-        $insertPermissions = fn ($role) => collect($permissionsByRole[$role])
-            ->map(function ($name) {
-                $check = Permission::whereName($name)->first();
+        // Assign permissions ke role
+        foreach ($permissionsByRole as $roleName => $permissions) {
+            $role = Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'api',
+            ]);
 
-                if (!$check) {
-                    return Permission::create([
-                        'name' => $name,
-                        'guard_name' => 'api',
-                    ])->id;
-                }
+            $permissionIds = collect($permissions)->map(function ($name) {
+                return Permission::whereName($name)->first()->id;
+            });
 
-                return $check->id;
-            })
-            ->toArray();
-
-        $permissionIdsByRole = [
-            'admin' => $insertPermissions('admin')
-        ];
-
-        foreach ($permissionIdsByRole as $role => $permissionIds) {
-            $role = Role::whereName($role)->first();
-
-            DB::table('role_has_permissions')
-                ->insert(
-                    collect($permissionIds)->map(fn ($id) => [
-                        'role_id' => $role->id,
-                        'permission_id' => $id
-                    ])->toArray()
-                );
+            DB::table('role_has_permissions')->insert(
+                $permissionIds->map(fn($id) => [
+                    'role_id' => $role->id,
+                    'permission_id' => $id,
+                ])->toArray()
+            );
         }
     }
 }
