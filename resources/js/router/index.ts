@@ -18,7 +18,7 @@ declare module "vue-router" {
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
-        redirect: "/sign-in",
+        redirect: "/dashboard",
         component: () => import("@/layouts/default-layout/DefaultLayout.vue"),
         meta: {
             middleware: "auth",
@@ -31,15 +31,6 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     pageTitle: "Dashboard",
                     breadcrumbs: ["Dashboard"],
-                },
-            },
-       {
-                path: "/landing-page",
-                name: "Landing-Page",
-                component: () => import("@/pages/auth/landing-page/Index.vue"),
-                meta: {
-                    pageTitle: "Landing Page",
-                    breadcrumbs: ["Landing Page"],
                 },
             },
             {
@@ -163,6 +154,15 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/auth/sign-in/Index.vue"),
                 meta: {
                     pageTitle: "Sign In",
+                    middleware: "guest",
+                },
+            },
+                 {
+                path: "/landing-page",
+                name: "Landing-Page",
+                component: () => import("@/pages/auth/landing-page/Index.vue"),
+                meta: {
+                    pageTitle: "Landing Page",
                     middleware: "guest",
                 },
             },
