@@ -18,10 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tahun_ajaran_id');
             $table->decimal('total', 10, 2);
             $table->date('tanggal_tagih');
-<<<<<<< HEAD
             $table->date('jatuh_tempo')->nullable();
-=======
->>>>>>> 8c1ba2f
             $table->enum('status', ['Belum Dibayar', 'Dibayar Sebagian', 'Lunas'])->default('Belum Dibayar');
             $table->decimal('dibayar', 10, 2)->default(0);
             $table->decimal('sisa', 10, 2)->default(0);
