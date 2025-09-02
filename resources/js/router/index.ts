@@ -42,33 +42,6 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Bill"],
                 },
             },
-            {
-                path: "/setor",
-                name: "setor",
-                component: () => import("@/pages/dashboard/saving/setor/Form.vue"),
-                meta: {
-                    pageTitle: "Setor",
-                    breadcrumbs: ["Setor"],
-                },
-            },
-            {
-                path: "/tarik",
-                name: "tarik",
-                component: () => import("@/pages/dashboard/saving/setor/Form.vue"),
-                meta: {
-                    pageTitle: "Tarik",
-                    breadcrumbs: ["Tarik"],
-                },
-            },
-            {
-                path: "/histori",
-                name: "histori",
-                component: () => import("@/pages/dashboard/saving/setor/Index.vue"),
-                meta: {
-                    pageTitle: "Histori",
-                    breadcrumbs: ["Histori"],
-                },
-            },
              {
                 path: "/transaction",
                 name: "transaction",
@@ -186,7 +159,8 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
-       {
+    // LANDING PAGE
+    {
         path: "/",
         children: [
             {

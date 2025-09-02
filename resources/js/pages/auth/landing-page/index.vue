@@ -78,112 +78,110 @@
           </div>
         </div>
 
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator position-absolute bottom-0 start-50 translate-middle-x mb-8">
-          <a href="#features" class="text-white opacity-75 hover-opacity-100 smooth-scroll">
-            <i class="ki-duotone ki-down fs-2x bounce">
-              <span class="path1"></span>
-            </i>
-          </a>
-        </div>
-      </section>
-
-      <!-- Features Section -->
-      <section id="features" class="features-section py-20" :style="featuresBackgroundStyle">
-        <div class="container-fluid">
-          <div class="text-center mb-15 fade-in-up">
-            <span class="badge badge-primary badge-lg mb-4">Fitur Unggulan</span>
-            <h2 class="display-5 fw-bold text-gray-900 mb-4">
-              Solusi Lengkap untuk Manajemen Keuangan Sekolah
-            </h2>
-            <p class="fs-4 text-muted mx-auto" style="max-width: 600px;">
-              Kelola semua aspek keuangan sekolah dalam satu platform yang terintegrasi dan mudah digunakan
-            </p>
-          </div>
-
-          <div class="row g-8">
-            <div class="col-xl-4 col-md-6" v-for="(feature, index) in features" :key="index">
-              <div class="feature-card card border-0 shadow-lg h-100 hover-scale fade-in-up"
-                :style="{ 'animation-delay': `${0.2 + index * 0.1}s` }">
-                <div class="card-body text-center p-8">
-                  <div class="feature-icon mb-6">
-                    <div class="symbol symbol-80px mx-auto">
-                      <div class="symbol-label" :class="`bg-light-${feature.color}`">
-                        <i :class="['ki-duotone', feature.icon, `text-${feature.color}`, 'fs-2x']">
-                          <span class="path1"></span>
-                          <span class="path2"></span>
-                          <span class="path3" v-if="feature.icon === 'ki-chart-line-up'"></span>
-                          <span class="path4" v-if="feature.icon === 'ki-shield-tick'"></span>
-                        </i>
-                      </div>
-                    </div>
-                  </div>
-                  <h3 class="fs-2 fw-bold text-gray-900 mb-4">{{ feature.title }}</h3>
-                  <p class="fs-5 text-muted mb-6">{{ feature.description }}</p>
-                  <div class="feature-benefits">
-                    <div class="d-flex align-items-center mb-3" v-for="benefit in feature.benefits" :key="benefit">
-                      <i class="ki-duotone ki-check text-success me-3 fs-6">
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section position-relative overflow-hidden">
+          <div class="hero-background"></div>
+          <div class="hero-overlay"></div>
+          <div class="container-fluid py-20 position-relative">
+            <div class="row align-items-center min-vh-100">
+              <div class="col-lg-6">
+                <div class="hero-content text-white fade-in-up">
+                  <h1 class="display-3 fw-bold mb-4">
+                    Revolusi Digital untuk
+                    <span class="text-primary">Keuangan Sekolah</span>
+                  </h1>
+                  <p class="fs-4 opacity-85 mb-6 lh-lg">
+                    {{ taglineText }}
+                  </p>
+                  <div class="d-flex flex-wrap gap-4">
+                    <router-link to="/sign-in" class="btn btn-primary btn-lg px-6 hover-scale">
+                      <i class="ki-duotone ki-rocket me-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
                       </i>
-                      <span class="text-gray-700">{{ benefit }}</span>
+                      Mulai Sekarang
+                    </router-link>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-6 hover-scale smooth-scroll">
+                      <i class="ki-duotone ki-down me-2">
+                        <span class="path1"></span>
+                      </i>
+                      Pelajari Lebih Lanjut
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="hero-stats fade-in-up" style="animation-delay: 0.3s">
+                  <div class="row g-4">
+                    <div class="col-6" v-for="(stat, index) in stats" :key="index">
+                      <div class="stat-card bg-white bg-opacity-10 rounded-4 p-6 text-center hover-scale"
+                        :style="{ 'animation-delay': `${0.4 + index * 0.1}s` }">
+                        <i :class="['ki-duotone', stat.icon, 'text-success', 'fs-2x', 'mb-3']">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3" v-if="stat.icon === 'ki-chart-line-up'"></span>
+                        </i>
+                        <div class="fs-2 fw-bold text-white counter" :data-target="stat.value">0</div>
+                        <div class="fs-7 text-white opacity-75">{{ stat.label }}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <!-- Updated transparent box -->
+            <div class="transparent-box"></div>
           </div>
-        </div>
-      </section>
 
-      <!-- Why Choose Us Section -->
-      <section class="why-section py-20 bg-light">
-        <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-lg-6">
-              <div class="fade-in-up">
-                <span class="badge badge-success badge-lg mb-4">Mengapa Memilih Kami</span>
-                <h2 class="display-5 fw-bold text-gray-900 mb-6">
-                  Dipercaya oleh Ribuan Sekolah di Indonesia
-                </h2>
-                <p class="fs-4 text-muted mb-8">
-                  Platform kami telah membantu sekolah-sekolah mencapai transparansi dan efisiensi dalam pengelolaan
-                  keuangan.
-                </p>
+          <!-- Scroll Indicator -->
+          <div class="scroll-indicator position-absolute bottom-0 start-50 translate-middle-x mb-8">
+            <a href="#features" class="text-white opacity-75 hover-opacity-100 smooth-scroll">
+              <i class="ki-duotone ki-down fs-2x bounce">
+                <span class="path1"></span>
+              </i>
+            </a>
+          </div>
+        </section>
 
-                <div class="row g-6">
-                  <div class="col-6" v-for="(advantage, index) in advantages" :key="index">
-                    <div class="d-flex align-items-start">
-                      <div class="symbol symbol-50px me-4">
-                        <div class="symbol-label bg-light-primary">
-                          <i :class="['ki-duotone', advantage.icon, 'text-primary', 'fs-2']">
+        <!-- Features Section -->
+        <section id="features" class="features-section py-20" :style="featuresBackgroundStyle">
+          <div class="container-fluid">
+            <div class="text-center mb-15 fade-in-up">
+              <span class="badge badge-primary badge-lg mb-4">Fitur Unggulan</span>
+              <h2 class="display-5 fw-bold text-gray-900 mb-4">
+                Solusi Lengkap untuk Manajemen Keuangan Sekolah
+              </h2>
+              <p class="fs-4 text-muted mx-auto" style="max-width: 600px;">
+                Kelola semua aspek keuangan sekolah dalam satu platform yang terintegrasi dan mudah digunakan
+              </p>
+            </div>
+
+            <div class="row g-8">
+              <div class="col-xl-4 col-md-6" v-for="(feature, index) in features" :key="index">
+                <div class="feature-card card border-0 shadow-lg h-100 hover-scale fade-in-up"
+                  :style="{ 'animation-delay': `${0.2 + index * 0.1}s` }">
+                  <div class="card-body text-center p-8">
+                    <div class="feature-icon mb-6">
+                      <div class="symbol symbol-80px mx-auto">
+                        <div class="symbol-label" :class="`bg-light-${feature.color}`">
+                          <i :class="['ki-duotone', feature.icon, `text-${feature.color}`, 'fs-2x']">
                             <span class="path1"></span>
                             <span class="path2"></span>
+                            <span class="path3" v-if="feature.icon === 'ki-chart-line-up'"></span>
+                            <span class="path4" v-if="feature.icon === 'ki-shield-tick'"></span>
                           </i>
                         </div>
                       </div>
-                      <div>
-                        <h4 class="fs-4 fw-bold text-gray-900 mb-2">{{ advantage.title }}</h4>
-                        <p class="text-muted">{{ advantage.description }}</p>
-                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="text-center fade-in-up" style="animation-delay: 0.3s">
-                <div class="bg-primary rounded-3 p-10 position-relative overflow-hidden">
-                  <div class="achievement-bg"></div>
-                  <div class="row g-6 position-relative">
-                    <div class="col-6" v-for="(achievement, index) in achievements" :key="index">
-                      <div class="text-white text-center">
-                        <i :class="['ki-duotone', achievement.icon, 'text-success', 'fs-3x', 'mb-4']">
+                    <h3 class="fs-2 fw-bold text-gray-900 mb-4">{{ feature.title }}</h3>
+                    <p class="fs-5 text-muted mb-6">{{ feature.description }}</p>
+                    <div class="feature-benefits">
+                      <div class="d-flex align-items-center mb-3" v-for="benefit in feature.benefits" :key="benefit">
+                        <i class="ki-duotone ki-check text-success me-3 fs-6">
                           <span class="path1"></span>
                           <span class="path2"></span>
                         </i>
-                        <div class="fs-1 fw-bold counter" :data-target="achievement.value">0</div>
-                        <div class="fs-6 opacity-75">{{ achievement.label }}</div>
+                        <span class="text-gray-700">{{ benefit }}</span>
                       </div>
                     </div>
                   </div>
@@ -191,178 +189,236 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Articles Section -->
-      <section id="articles" class="articles-section py-20">
-        <div class="container-fluid">
-          <div class="text-center mb-15 fade-in-up">
-            <span class="badge badge-info badge-lg mb-4">Artikel & Berita</span>
-            <h2 class="display-5 fw-bold text-gray-900 mb-4">
-              Pelajari Lebih Lanjut tentang Pengelolaan Keuangan Sekolah
-            </h2>
-            <p class="fs-4 text-muted mx-auto" style="max-width: 600px;">
-              Dapatkan tips, panduan, dan insight terbaru untuk meningkatkan efisiensi keuangan sekolah Anda
-            </p>
-          </div>
+        <!-- Why Choose Us Section -->
+        <section class="why-section py-20 bg-light">
+          <div class="container-fluid">
+            <div class="row align-items-center">
+              <div class="col-lg-6">
+                <div class="fade-in-up">
+                  <span class="badge badge-success badge-lg mb-4">Mengapa Memilih Kami</span>
+                  <h2 class="display-5 fw-bold text-gray-900 mb-6">
+                    Dipercaya oleh Ribuan Sekolah di Indonesia
+                  </h2>
+                  <p class="fs-4 text-muted mb-8">
+                    Platform kami telah membantu sekolah-sekolah mencapai transparansi dan efisiensi dalam pengelolaan
+                    keuangan.
+                  </p>
 
-          <div class="row g-6">
-            <div class="col-lg-4 col-md-6" v-for="(article, index) in articles" :key="index">
-              <article class="article-card card border-0 shadow-lg h-100 hover-scale fade-in-up"
-                :style="{ 'animation-delay': `${0.2 + index * 0.1}s` }">
-                <div class="article-image">
-                  <img :src="article.image" class="card-img-top" :alt="article.title"
-                    style="height: 200px; object-fit: cover;">
-                  <div class="article-badge">
-                    <span class="badge badge-primary">{{ article.category }}</span>
+                  <div class="row g-6">
+                    <div class="col-6" v-for="(advantage, index) in advantages" :key="index">
+                      <div class="d-flex align-items-start">
+                        <div class="symbol symbol-50px me-4">
+                          <div class="symbol-label bg-light-primary">
+                            <i :class="['ki-duotone', advantage.icon, 'text-primary', 'fs-2']">
+                              <span class="path1"></span>
+                              <span class="path2"></span>
+                            </i>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 class="fs-4 fw-bold text-gray-900 mb-2">{{ advantage.title }}</h4>
+                          <p class="text-muted">{{ advantage.description }}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="card-body p-6 d-flex flex-column">
-                  <div class="article-meta mb-3">
-                    <span class="text-muted fs-7">
-                      <i class="ki-duotone ki-calendar me-2">
+              </div>
+              <div class="col-lg-6">
+                <div class="text-center fade-in-up" style="animation-delay: 0.3s">
+                  <div class="bg-primary rounded-3 p-10 position-relative overflow-hidden">
+                    <div class="achievement-bg"></div>
+                    <div class="row g-6 position-relative">
+                      <div class="col-6" v-for="(achievement, index) in achievements" :key="index">
+                        <div class="text-white text-center">
+                          <i :class="['ki-duotone', achievement.icon, 'text-success', 'fs-3x', 'mb-4']">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                          </i>
+                          <div class="fs-1 fw-bold counter" :data-target="achievement.value">0</div>
+                          <div class="fs-6 opacity-75">{{ achievement.label }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Articles Section -->
+        <section id="articles" class="articles-section py-20">
+          <div class="container-fluid">
+            <div class="text-center mb-15 fade-in-up">
+              <span class="badge badge-info badge-lg mb-4">Artikel & Berita</span>
+              <h2 class="display-5 fw-bold text-gray-900 mb-4">
+                Pelajari Lebih Lanjut tentang Pengelolaan Keuangan Sekolah
+              </h2>
+              <p class="fs-4 text-muted mx-auto" style="max-width: 600px;">
+                Dapatkan tips, panduan, dan insight terbaru untuk meningkatkan efisiensi keuangan sekolah Anda
+              </p>
+            </div>
+
+            <div class="row g-6">
+              <div class="col-lg-4 col-md-6" v-for="(article, index) in articles" :key="index">
+                <article class="article-card card border-0 shadow-lg h-100 hover-scale fade-in-up"
+                  :style="{ 'animation-delay': `${0.2 + index * 0.1}s` }">
+                  <div class="article-image">
+                    <img :src="article.image" class="card-img-top" :alt="article.title"
+                      style="height: 200px; object-fit: cover;">
+                    <div class="article-badge">
+                      <span class="badge badge-primary">{{ article.category }}</span>
+                    </div>
+                  </div>
+                  <div class="card-body p-6 d-flex flex-column">
+                    <div class="article-meta mb-3">
+                      <span class="text-muted fs-7">
+                        <i class="ki-duotone ki-calendar me-2">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                        </i>
+                        {{ article.date }}
+                      </span>
+                    </div>
+                    <h3 class="fs-4 fw-bold text-gray-900 mb-3">{{ article.title }}</h3>
+                    <p class="text-muted mb-4 flex-grow-1">{{ article.excerpt }}</p>
+                    <router-link :to="`/article/${article.id}`" class="btn btn-light-primary btn-sm align-self-start">
+                      Baca Selengkapnya
+                      <i class="ki-duotone ki-arrow-right ms-2">
                         <span class="path1"></span>
                         <span class="path2"></span>
                       </i>
-                      {{ article.date }}
-                    </span>
+                    </router-link>
                   </div>
-                  <h3 class="fs-4 fw-bold text-gray-900 mb-3">{{ article.title }}</h3>
-                  <p class="text-muted mb-4 flex-grow-1">{{ article.excerpt }}</p>
-                  <router-link :to="`/article/${article.id}`" class="btn btn-light-primary btn-sm align-self-start">
-                    Baca Selengkapnya
-                    <i class="ki-duotone ki-arrow-right ms-2">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                    </i>
-                  </router-link>
-                </div>
-              </article>
+                </article>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- CTA Section -->
-      <section class="cta-section py-20 bg-primary position-relative overflow-hidden">
-        <div class="cta-background"></div>
-        <div class="container-fluid position-relative">
-          <div class="text-center text-white fade-in-up">
-            <h2 class="display-5 fw-bold mb-4">Siap Memulai Transformasi Digital?</h2>
-            <p class="fs-4 opacity-85 mb-8 mx-auto" style="max-width: 600px;">
-              Bergabunglah dengan ribuan sekolah yang telah merasakan kemudahan pengelolaan keuangan dengan platform
-              kami
-            </p>
-            <div class="d-flex flex-wrap justify-content-center gap-4">
-              <router-link to="/register" class="btn btn-light btn-lg px-8 hover-scale">
-                <i class="ki-duotone ki-user-tick me-2">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                  <span class="path3"></span>
-                </i>
-                Daftar Gratis
-              </router-link>
-              <router-link to="/demo" class="btn btn-outline-light btn-lg px-8 hover-scale">
-                <i class="ki-duotone ki-eye me-2">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                  <span class="path3"></span>
-                </i>
-                Lihat Demo
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Footer Section -->
-      <footer class="footer bg-dark text-white py-15">
-        <div class="container-fluid">
-          <div class="row g-8">
-            <div class="col-lg-4">
-              <div class="footer-brand">
-                <a class="navbar-brand fw-bold fs-3 text-white mb-4 d-block" href="#">
-                  <i class="ki-duotone ki-wallet text-primary fs-2x me-2">
+        <!-- CTA Section -->
+        <section class="cta-section py-20 bg-primary position-relative overflow-hidden">
+          <div class="cta-background"></div>
+          <div class="container-fluid position-relative">
+            <div class="text-center text-white fade-in-up">
+              <h2 class="display-5 fw-bold mb-4">Siap Memulai Transformasi Digital?</h2>
+              <p class="fs-4 opacity-85 mb-8 mx-auto" style="max-width: 600px;">
+                Bergabunglah dengan ribuan sekolah yang telah merasakan kemudahan pengelolaan keuangan dengan platform
+                kami
+              </p>
+              <div class="d-flex flex-wrap justify-content-center gap-4">
+                <router-link to="/register" class="btn btn-light btn-lg px-8 hover-scale">
+                  <i class="ki-duotone ki-user-tick me-2">
                     <span class="path1"></span>
                     <span class="path2"></span>
                     <span class="path3"></span>
                   </i>
-                  {{ setting?.app || 'EduFinance' }}
-                </a>
-                <p class="text-muted fs-6 mb-6">
-                  Platform terdepan untuk manajemen keuangan sekolah yang modern, transparan, dan efisien.
-                </p>
-                <div class="d-flex gap-3">
-                  <a href="https://www.instagram.com/rvalndsyh_?utm_source=ig_web_button_share_sheet&igsh=MXJ5NHd1Zm54MTZxOQ=="
-                    target="_blank" class="btn btn-icon btn-sm btn-light-primary">
-                    <i class="ki-duotone ki-instagram fs-6"></i>
+                  Daftar Gratis
+                </router-link>
+                <router-link to="/demo" class="btn btn-outline-light btn-lg px-8 hover-scale">
+                  <i class="ki-duotone ki-eye me-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                  </i>
+                  Lihat Demo
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="footer bg-dark text-white py-15">
+          <div class="container-fluid">
+            <div class="row g-8">
+              <div class="col-lg-4">
+                <div class="footer-brand">
+                  <a class="navbar-brand fw-bold fs-3 text-white mb-4 d-block" href="#">
+                    <i class="ki-duotone ki-wallet text-primary fs-2x me-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                    </i>
+                    {{ setting?.app || 'EduFinance' }}
                   </a>
-                  <a href="https://www.instagram.com/mihrosqolby?igsh=dGJ0eGFqbXByeWxx" target="_blank"
-                    class="btn btn-icon btn-sm btn-light-primary">
-                    <i class="ki-duotone ki-instagram fs-6"></i>
-                  </a>
-                  <a href="https://www.instagram.com/adizulfa.23/?utm_source=ig_web_button_share_sheet" target="_blank"
-                    class="btn btn-icon btn-sm btn-light-primary">
-                    <i class="ki-duotone ki-instagram fs-6"></i>
-                  </a>
+                  <p class="text-muted fs-6 mb-6">
+                    Platform terdepan untuk manajemen keuangan sekolah yang modern, transparan, dan efisien.
+                  </p>
+                  <div class="d-flex gap-3">
+                    <a href="https://www.instagram.com/rvalndsyh_?utm_source=ig_web_button_share_sheet&igsh=MXJ5NHd1Zm54MTZxOQ=="
+                      target="_blank" class="btn btn-icon btn-sm btn-light-primary">
+                      <i class="ki-duotone ki-instagram fs-6"></i>
+                    </a>
+                    <a href="https://www.instagram.com/mihrosqolby?igsh=dGJ0eGFqbXByeWxx" target="_blank"
+                      class="btn btn-icon btn-sm btn-light-primary">
+                      <i class="ki-duotone ki-instagram fs-6"></i>
+                    </a>
+                    <a href="https://www.instagram.com/adizulfa.23/?utm_source=ig_web_button_share_sheet"
+                      target="_blank" class="btn btn-icon btn-sm btn-light-primary">
+                      <i class="ki-duotone ki-instagram fs-6"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-6">
+                <h5 class="text-white fw-bold mb-6">Produk</h5>
+                <div class="d-flex flex-column gap-3">
+                  <a href="#" class="text-muted hover-text-primary">Pembayaran SPP</a>
+                  <a href="#" class="text-muted hover-text-primary">Laporan Keuangan</a>
+                  <a href="#" class="text-muted hover-text-primary">Manajemen Siswa</a>
+                  <a href="#" class="text-muted hover-text-primary">Analitik</a>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-6">
+                <h5 class="text-white fw-bold mb-6">Perusahaan</h5>
+                <div class="d-flex flex-column gap-3">
+                  <a href="#" class="text-muted hover-text-primary">Tentang Kami</a>
+                  <a href="#" class="text-muted hover-text-primary">Karir</a>
+                  <a href="#" class="text-muted hover-text-primary">Blog</a>
+                  <a href="#" class="text-muted hover-text-primary">Kontak</a>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-6">
+                <h5 class="text-white fw-bold mb-6">Dukungan</h5>
+                <div class="d-flex flex-column gap-3">
+                  <a href="#" class="text-muted hover-text-primary">Bantuan</a>
+                  <a href="#" class="text-muted hover-text-primary">Dokumentasi</a>
+                  <a href="#" class="text-muted hover-text-primary">FAQ</a>
+                  <a href="#" class="text-muted hover-text-primary">Live Chat</a>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-6">
+                <h5 class="text-white fw-bold mb-6">Legal</h5>
+                <div class="d-flex flex-column gap-3">
+                  <a href="#" class="text-muted hover-text-primary">Kebijakan Privasi</a>
+                  <a href="#" class="text-muted hover-text-primary">Syarat & Ketentuan</a>
+                  <a href="#" class="text-muted hover-text-primary">Keamanan</a>
                 </div>
               </div>
             </div>
-            <div class="col-lg-2 col-md-6">
-              <h5 class="text-white fw-bold mb-6">Produk</h5>
-              <div class="d-flex flex-column gap-3">
-                <a href="#" class="text-muted hover-text-primary">Pembayaran SPP</a>
-                <a href="#" class="text-muted hover-text-primary">Laporan Keuangan</a>
-                <a href="#" class="text-muted hover-text-primary">Manajemen Siswa</a>
-                <a href="#" class="text-muted hover-text-primary">Analitik</a>
-              </div>
-            </div>
-            <div class="col-lg-2 col-md-6">
-              <h5 class="text-white fw-bold mb-6">Perusahaan</h5>
-              <div class="d-flex flex-column gap-3">
-                <a href="#" class="text-muted hover-text-primary">Tentang Kami</a>
-                <a href="#" class="text-muted hover-text-primary">Karir</a>
-                <a href="#" class="text-muted hover-text-primary">Blog</a>
-                <a href="#" class="text-muted hover-text-primary">Kontak</a>
-              </div>
-            </div>
-            <div class="col-lg-2 col-md-6">
-              <h5 class="text-white fw-bold mb-6">Dukungan</h5>
-              <div class="d-flex flex-column gap-3">
-                <a href="#" class="text-muted hover-text-primary">Bantuan</a>
-                <a href="#" class="text-muted hover-text-primary">Dokumentasi</a>
-                <a href="#" class="text-muted hover-text-primary">FAQ</a>
-                <a href="#" class="text-muted hover-text-primary">Live Chat</a>
-              </div>
-            </div>
-            <div class="col-lg-2 col-md-6">
-              <h5 class="text-white fw-bold mb-6">Legal</h5>
-              <div class="d-flex flex-column gap-3">
-                <a href="#" class="text-muted hover-text-primary">Kebijakan Privasi</a>
-                <a href="#" class="text-muted hover-text-primary">Syarat & Ketentuan</a>
-                <a href="#" class="text-muted hover-text-primary">Keamanan</a>
-              </div>
+            <hr class="border-secondary my-8">
+            <div class="text-center">
+              <p class="text-muted mb-0">&copy; 2025 {{ setting?.app || 'EduFinance' }}. Semua hak cipta dilindungi.</p>
             </div>
           </div>
-          <hr class="border-secondary my-8">
-          <div class="text-center">
-            <p class="text-muted mb-0">&copy; 2025 {{ setting?.app || 'EduFinance' }}. Semua hak cipta dilindungi.</p>
-          </div>
-        </div>
-      </footer>
+        </footer>
     </div>
   </main>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSetting } from '@/services';
 
 // State
 const router = useRouter();
 const { data: setting } = useSetting();
+const { data: newSetting } = useSetting(); // Asumsikan ini sumber baru untuk bg_landingpage
 
 // Computed
 const taglineText = computed(() => 'Solusi manajemen keuangan sekolah yang terintegrasi, transparan, dan mudah digunakan untuk semua stakeholder pendidikan.');
@@ -370,6 +426,20 @@ const taglineText = computed(() => 'Solusi manajemen keuangan sekolah yang terin
 const featuresBackgroundStyle = computed(() => ({
   background: 'linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%)',
 }));
+
+const heroBackgroundStyle = computed(() => {
+  const bgImage = newSetting?.value?.bg_landingpage || '';
+  return {
+    backgroundImage: bgImage ? `url(${bgImage})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  };
+});
 
 // Stats Data
 const stats = ref([
@@ -623,6 +693,13 @@ onMounted(() => {
   initSmoothScroll();
   initScrollAnimations();
 });
+
+// Watch untuk memperbarui background saat newSetting berubah
+watch(() => newSetting.value, (newVal) => {
+  if (newVal?.bg_landingpage) {
+    document.querySelector('.hero-background').style.backgroundImage = `url(${newVal.bg_landingpage})`;
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>
@@ -697,6 +774,17 @@ onMounted(() => {
   transform: translateY(0);
 }
 
+.transparent-box {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.8); /* Sedikit transparan (80% opacity) */
+  z-index: 1;
+}
+
 .bounce {
   animation: bounce 2s infinite;
 }
@@ -719,7 +807,6 @@ onMounted(() => {
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
 }
@@ -730,8 +817,9 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-  animation: float 8s ease-in-out infinite;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-overlay {
