@@ -159,6 +159,20 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+       {
+        path: "/",
+        children: [
+            {
+                path: "/sikaz",
+                name: "SIKAZ",
+                component: () => import("@/pages/auth/landing-page/Index.vue"),
+                meta: {
+                    pageTitle: "SIKAZ",
+                    middleware: "guest",
+                },
+            },
+        ],
+    },
     {
         path: "/",
         component: () => import("@/layouts/SystemLayout.vue"),
