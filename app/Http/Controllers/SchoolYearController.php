@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SchoolYearController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ========================== AMBIL SEMUA DATA SCHOOL YEAR (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -21,9 +19,7 @@ class SchoolYearController extends Controller
         ]);
     }
 
-    /**
-     * Display a paginated list of the resource.
-     */
+    // ========================== AMBIL DATA SCHOOL YEAR DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
@@ -39,9 +35,7 @@ class SchoolYearController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ========================== SIMPAN DATA SCHOOL YEAR BARU ==========================
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -58,9 +52,7 @@ class SchoolYearController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // ========================== TAMPILKAN DETAIL SCHOOL YEAR ==========================
     public function show(SchoolYear $schoolYear)
     {
         return response()->json([
@@ -68,9 +60,7 @@ class SchoolYearController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // ========================== UPDATE DATA SCHOOL YEAR ==========================
     public function update(Request $request, SchoolYear $schoolYear)
     {
         $validatedData = $request->validate([
@@ -87,9 +77,7 @@ class SchoolYearController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ========================== HAPUS DATA SCHOOL YEAR ==========================
     public function destroy(SchoolYear $schoolYear)
     {
         $schoolYear->delete();
@@ -99,9 +87,7 @@ class SchoolYearController extends Controller
         ]);
     }
 
-    /**
-     * Ubah status
-     */
+    // ========================== UBAH STATUS SECARA MANUAL ==========================
     public function updateStatus(Request $request, $id)
     {
         $validated = $request->validate([

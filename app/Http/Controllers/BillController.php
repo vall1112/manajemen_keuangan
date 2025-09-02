@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class BillController extends Controller
 {
-    /**
-     * Ambil semua data bill (tanpa pagination).
-     */
+    // ========================== AMBIL SEMUA DATA BILL (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -20,20 +18,19 @@ class BillController extends Controller
         ]);
     }
 
-    /**
-     * Ambil data bill dengan pagination.
-     */
+    // ========================== AMBIL DATA BILL DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
+
         $data = Bill::with(['student', 'paymentType', 'schoolYear'])
             ->when($request->search, function (Builder $query, string $search) {
                 $query->whereHas('student', function ($q) use ($search) {
-                        $q->where('nama', 'like', "%$search%");
-                    })
+                    $q->where('nama', 'like', "%$search%");
+                })
                     ->orWhereHas('paymentType', function ($q) use ($search) {
                         $q->where('nama_jenis', 'like', "%$search%");
                     })
@@ -49,20 +46,15 @@ class BillController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Simpan data bill baru.
-     */
+    // ========================== SIMPAN DATA BILL BARU ==========================
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'siswa_id'            => 'required|exists:students,id',
             'jenis_pembayaran_id' => 'required|exists:payment_types,id',
-            'school_year_id'      => 'required|exists:school_years,id',
+            'tahun_ajaran_id'     => 'required|exists:school_years,id',
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
-            'status'              => 'required|in:Belum Dibayar,Dibayar Sebagian,Lunas',
-            // 'dibayar'             => 'nullable|numeric|min:0',
-            // 'sisa'                => 'nullable|numeric|min:0',
             'keterangan'          => 'nullable|string|max:255',
         ]);
 
@@ -74,9 +66,7 @@ class BillController extends Controller
         ]);
     }
 
-    /**
-     * Tampilkan detail bill.
-     */
+    // ========================== TAMPILKAN DETAIL BILL ==========================
     public function show(Bill $bill)
     {
         return response()->json([
@@ -84,20 +74,15 @@ class BillController extends Controller
         ]);
     }
 
-    /**
-     * Update data bill.
-     */
+    // ========================== UPDATE DATA BILL ==========================
     public function update(Request $request, Bill $bill)
     {
         $validatedData = $request->validate([
             'siswa_id'            => 'required|exists:students,id',
             'jenis_pembayaran_id' => 'required|exists:payment_types,id',
-            'school_year_id'      => 'required|exists:school_years,id',
+            'tahun_ajaran_id'     => 'required|exists:school_years,id',
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
-            'status'              => 'required|in:Belum Dibayar,Dibayar Sebagian,Lunas',
-            'dibayar'             => 'nullable|numeric|min:0',
-            'sisa'                => 'nullable|numeric|min:0',
             'keterangan'          => 'nullable|string|max:255',
         ]);
 
@@ -109,9 +94,7 @@ class BillController extends Controller
         ]);
     }
 
-    /**
-     * Hapus data bill.
-     */
+    // ========================== HAPUS DATA BILL ==========================
     public function destroy(Bill $bill)
     {
         $bill->delete();

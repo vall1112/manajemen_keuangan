@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ========================== AMBIL SEMUA DATA ROLE (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -21,9 +19,7 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Display a paginated list of the resource.
-     */
+    // ========================== AMBIL DATA ROLE DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
@@ -38,9 +34,7 @@ class RoleController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ========================== SIMPAN DATA ROLE BARU ==========================
     public function store(RoleRequest $request)
     {
         $validatedData = $request->validated();
@@ -56,9 +50,7 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // ========================== TAMPILKAN DETAIL ROLE ==========================
     public function show(Role $role)
     {
         return response()->json([
@@ -70,9 +62,7 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // ========================== UPDATE DATA ROLE ==========================
     public function update(RoleRequest $request, Role $role)
     {
         $validatedData = $request->validated();
@@ -91,9 +81,7 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ========================== HAPUS DATA ROLE ==========================
     public function destroy(Role $role)
     {
         $role->revokePermissionTo($role->permissions);

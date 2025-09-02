@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class TeacherController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ========================== AMBIL SEMUA DATA TEACHER (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -21,9 +19,7 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Display a paginated list of the resource.
-     */
+    // ========================== AMBIL DATA TEACHER DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
@@ -39,9 +35,7 @@ class TeacherController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ========================== SIMPAN DATA TEACHER BARU ==========================
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -71,9 +65,7 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // ========================== TAMPILKAN DETAIL TEACHER ==========================
     public function show(Teacher $teacher)
     {
         return response()->json([
@@ -81,9 +73,7 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // ========================== UPDATE DATA TEACHER ==========================
     public function update(Request $request, Teacher $teacher)
     {
         $validatedData = $request->validate([
@@ -116,9 +106,7 @@ class TeacherController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ========================== HAPUS DATA TEACHER ==========================
     public function destroy(Teacher $teacher)
     {
         if ($teacher->foto) {

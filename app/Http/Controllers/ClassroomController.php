@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class ClassroomController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ========================== AMBIL SEMUA DATA CLASSROOM (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -20,9 +18,7 @@ class ClassroomController extends Controller
         ]);
     }
 
-    /**
-     * Display a paginated list of the resource.
-     */
+    // ========================== AMBIL DATA CLASSROOM DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
@@ -41,9 +37,7 @@ class ClassroomController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ========================== SIMPAN DATA CLASSROOM BARU ==========================
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -61,9 +55,7 @@ class ClassroomController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // ========================== TAMPILKAN DETAIL CLASSROOM ==========================
     public function show(Classroom $classroom)
     {
         return response()->json([
@@ -71,9 +63,7 @@ class ClassroomController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // ========================== UPDATE DATA CLASSROOM ==========================
     public function update(Request $request, Classroom $classroom)
     {
         $validatedData = $request->validate([
@@ -91,9 +81,7 @@ class ClassroomController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // ========================== HAPUS DATA CLASSROOM ==========================
     public function destroy(Classroom $classroom)
     {
         $classroom->delete();

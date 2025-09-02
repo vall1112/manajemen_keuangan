@@ -4,9 +4,10 @@ import { onMounted, ref, watch, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
-import type { Classroom } from "@/types";
+import type { Classroom, User } from "@/types";
 import ApiService from "@/core/services/ApiService";
 import { useClassroom } from "@/services/useClassroom";
+import { useUser } from "@/services/useUser";
 
 const props = defineProps({
   selected: {
@@ -30,9 +31,18 @@ const classrooms = computed(() =>
   }))
 );
 
+const user = useUser();
+const users = computed(() =>
+  user.data.value?.map((item: User) => ({
+    id: item.id,
+    text: item.username,
+  }))
+);
+
 const formSchema = Yup.object().shape({
   nis: Yup.string().required("NIS harus diisi"),
   nama: Yup.string().required("Nama harus diisi"),
+  user_id: Yup.string().required("Pilih akun"),
   email: Yup.string().email("Email harus valid").nullable(),
   telepon: Yup.string().nullable(),
   jenis_kelamin: Yup.string().required("Pilih jenis kelamin"),
@@ -66,6 +76,7 @@ function submit() {
   const formData = new FormData();
   formData.append("nis", student.value.nis);
   formData.append("nama", student.value.nama);
+  formData.append("user_id", student.value.user_id);
   formData.append("email", student.value.email ?? "");
   formData.append("telepon", student.value.telepon ?? "");
   formData.append("tempat_lahir", student.value.tempat_lahir);
@@ -157,6 +168,25 @@ watch(
             <Field class="form-control form-control-lg form-control-solid" type="text" name="nis" v-model="student.nis"
               placeholder="Masukkan NIS" />
             <ErrorMessage name="nis" class="text-danger small" />
+          </div>
+        </div>
+
+        <!-- Akun -->
+        <div class="col-md-4">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6 required">
+              Akun
+            </label>
+            <Field name="user_id" type="hidden" v-model="student.user_id">
+              <select2 placeholder="Pilih akun" class="form-select-solid" :options="users" name="user_id"
+                v-model="student.user_id">
+              </select2>
+            </Field>
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="user_id" />
+              </div>
+            </div>
           </div>
         </div>
 

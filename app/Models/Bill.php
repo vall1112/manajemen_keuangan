@@ -12,10 +12,10 @@ class Bill extends Model
     protected $fillable = [
         'siswa_id',
         'jenis_pembayaran_id',
-        'school_year_id',
+        'tahun_ajaran_id',
         'total',
         'tanggal_tagih',
-        'status',
+        // 'status',
         // 'dibayar',
         // 'sisa',
         'keterangan',
@@ -42,6 +42,6 @@ class Bill extends Model
      */
     public function schoolYear()
     {
-        return $this->belongsTo(SchoolYear::class, 'school_year_id');
+        return $this->belongsTo(SchoolYear::class, 'tahun_ajaran_id');
     }
 }

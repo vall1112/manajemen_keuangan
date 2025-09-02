@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class TransactionController extends Controller
 {
-    /**
-     * Ambil semua data transaksi.
-     */
+    // ========================== AMBIL SEMUA DATA TRANSACTION (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -21,9 +19,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Ambil data transaksi dengan pagination + pencarian.
-     */
+    // ========================== AMBIL DATA TRANSACTION DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
@@ -34,8 +30,8 @@ class TransactionController extends Controller
         $data = Transaction::with('bill')
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where('metode', 'like', "%$search%")
-                      ->orWhere('status', 'like', "%$search%")
-                      ->orWhere('keterangan', 'like', "%$search%");
+                    ->orWhere('status', 'like', "%$search%")
+                    ->orWhere('keterangan', 'like', "%$search%");
             })
             ->latest()
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
@@ -43,9 +39,7 @@ class TransactionController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Simpan transaksi baru.
-     */
+    // ========================== SIMPAN DATA TRANSACTION BARU ==========================
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -69,9 +63,8 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Tampilkan detail transaksi.
-     */
+    // ========================== TAMPILKAN DETAIL TRANSACTION ==========================
+
     public function show(Transaction $transaction)
     {
         return response()->json([
@@ -79,9 +72,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Update transaksi.
-     */
+    // ========================== UPDATE DATA TRANSACTION ==========================
     public function update(Request $request, Transaction $transaction)
     {
         $validatedData = $request->validate([
@@ -108,9 +99,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    /**
-     * Hapus transaksi.
-     */
+    // ========================== HAPUS DATA TRANSACTION ==========================
     public function destroy(Transaction $transaction)
     {
         if ($transaction->bukti) {

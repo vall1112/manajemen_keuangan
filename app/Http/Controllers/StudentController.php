@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
-    /**
-     * Ambil semua data student (tanpa pagination).
-     */
+    // ========================== AMBIL SEMUA DATA STUDENT (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -21,31 +19,31 @@ class StudentController extends Controller
         ]);
     }
 
-    /**
-     * Ambil data student dengan pagination + searching.
-     */
+    // ========================== AMBIL DATA STUDENT DENGAN PAGINASI ==========================
     public function index(Request $request)
-{
-    $per = $request->per ?? 10;
-    $page = $request->page ? $request->page - 1 : 0;
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
 
-    DB::statement('set @no=0+' . $page * $per);
+        DB::statement('set @no=0+' . $page * $per);
 
-    $data = Student::with('classroom') // ambil relasi kelas
-        ->when($request->search, function (Builder $query, string $search) {
-            $query->where('nama', 'like', "%$search%")
-                ->orWhere('nis', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
-        })
-        ->latest()
-        ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+        $data = Student::with(['classroom', 'user']) // ambil relasi kelas dan user
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->where('nama', 'like', "%$search%")
+                    ->orWhere('nis', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%")
+                    ->orWhereHas('user', function (Builder $q) use ($search) { // cari berdasarkan username
+                        $q->where('username', 'like', "%$search%");
+                    });
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
-    return response()->json($data);
-}
+        return response()->json($data);
+    }
 
-    /**
-     * Simpan data student baru.
-     */
+
+    // ========================== SIMPAN DATA STUDENT BARU ==========================
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -64,6 +62,7 @@ class StudentController extends Controller
             'nama_ibu'      => 'nullable|string|max:255',
             'telepon_ibu'   => 'nullable|string|max:20',
             'foto'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'user_id'       => 'nullable|exists:users,id|unique:students,user_id',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -78,9 +77,7 @@ class StudentController extends Controller
         ]);
     }
 
-    /**
-     * Tampilkan detail student.
-     */
+    // ========================== TAMPILKAN DETAIL STUDENT ==========================
     public function show(Student $student)
     {
         return response()->json([
@@ -88,9 +85,7 @@ class StudentController extends Controller
         ]);
     }
 
-    /**
-     * Update data student.
-     */
+    // ========================== UPDATE DATA STUDENT ==========================
     public function update(Request $request, Student $student)
     {
         $validatedData = $request->validate([
@@ -108,6 +103,7 @@ class StudentController extends Controller
             'telepon_ayah'  => 'nullable|string|max:20',
             'nama_ibu'      => 'nullable|string|max:255',
             'telepon_ibu'   => 'nullable|string|max:20',
+            'user_id'       => 'nullable|unique:students,user_id,' . $student->id,
             'foto'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -126,9 +122,7 @@ class StudentController extends Controller
         ]);
     }
 
-    /**
-     * Hapus data student.
-     */
+    // ========================== HAPUS DATA STUDENT ==========================
     public function destroy(Student $student)
     {
         if ($student->foto) {

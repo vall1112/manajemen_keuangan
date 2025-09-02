@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
+    // ========================== AMBIL DATA USER YANG SEDANG LOGIN ==========================
     public function me()
     {
         return response()->json([
@@ -19,7 +20,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // Login dengan email
+    // ========================== LOGIN DENGAN EMAIL ==========================
     public function loginEmail(Request $request)
     {
         $validator = Validator::make($request->post(), [
@@ -48,7 +49,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // Login dengan username
+    // ========================== LOGIN DENGAN USERNAME ==========================
     public function loginUsername(Request $request)
     {
         $validator = Validator::make($request->post(), [
@@ -79,31 +80,31 @@ class AuthController extends Controller
         ]);
     }
 
-    // Register
+    // ========================== REGISTRASI USER ==========================
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'username' => [
-                'required',                       // harus diisi
-                'string',                         // harus berupa string
-                'min:3',                           // minimal 3 karakter
-                'max:50',                          // maksimal 50 karakter
-                'regex:/^[a-zA-Z][a-zA-Z0-9_]*$/', // harus dimulai huruf, boleh huruf, angka, underscore
-                'unique:users,username',           // harus unik di tabel users
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                'regex:/^[a-zA-Z][a-zA-Z0-9_]*$/',
+                'unique:users,username',
             ],
             'nama' => 'required|string|max:255',
             'email' => [
                 'required',
                 'string',
-                'email',                           // format email valid
+                'email',
                 'max:255',
-                'unique:users,email',              // harus unik di tabel users
+                'unique:users,email',
             ],
             'phone' => [
                 'required',
                 'unique:users,phone'
             ],
-            'password' => 'required|string|min:8|confirmed', // password_confirmation harus ada
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -132,10 +133,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // ========================== EMAIL OTP ==========================
-    /**
-     * Kirim OTP ke email.
-     */
+    // ========================== KIRIM KODE OTP KE EMAIL ==========================
     public function sendEmailOtp(Request $request)
     {
         $request->validate([
@@ -144,7 +142,6 @@ class AuthController extends Controller
 
         $email = $request->email;
 
-        // Cek apakah email sudah terdaftar
         if (User::where('email', $email)->exists()) {
             return response()->json([
                 'status' => 'error',
@@ -152,14 +149,10 @@ class AuthController extends Controller
             ], 400);
         }
 
-        // Generate OTP 6 digit
         $otp = rand(100000, 999999);
-
-        // Simpan OTP di cache selama 5 menit
         $otpKey = "otp_{$email}";
         Cache::put($otpKey, $otp, now()->addMinutes(5));
 
-        // Kirim email
         Mail::to($email)->send(new OtpMail($otp));
 
         return response()->json([
@@ -168,9 +161,7 @@ class AuthController extends Controller
         ]);
     }
 
-     /**
-     * Cek OTP dari email.
-     */
+    // ========================== CEK KODE OTP EMAIL ==========================
     public function checkEmailOtp(Request $request)
     {
         $request->validate([
@@ -188,7 +179,6 @@ class AuthController extends Controller
             ], 400);
         }
 
-        // OTP valid, hapus dari cache
         Cache::forget($otpKey);
 
         return response()->json([
@@ -197,6 +187,7 @@ class AuthController extends Controller
         ]);
     }
 
+    // ========================== LOGOUT ==========================
     public function logout()
     {
         auth()->logout();

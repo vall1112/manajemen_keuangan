@@ -2,7 +2,7 @@ export interface Bill {
     id: number;
     siswa_id: number;              // relasi ke students
     jenis_pembayaran_id: number;   // relasi ke payment_types
-    school_year_id: number;        // relasi ke school_years
+    tahun_ajaran_id: number;        // relasi ke school_years
     total: number;
     tanggal_tagih: string;         // format date (YYYY-MM-DD)
     status: "Belum Dibayar" | "Dibayar Sebagian" | "Lunas";

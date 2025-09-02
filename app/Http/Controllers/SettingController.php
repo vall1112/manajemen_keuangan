@@ -8,11 +8,13 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
+    // ========================== AMBIL DATA SETTING ==========================
     public function index()
     {
         return response()->json(Setting::first());
     }
 
+    // ========================== UPDATE DATA SETTING ==========================
     public function update(Request $request)
     {
         if (request()->wantsJson()) {
@@ -40,7 +42,7 @@ class SettingController extends Controller
                 Storage::disk('public')->delete($old_photo);
             }
 
-            
+
             if ($setting->bg_landingpage != null && $setting->bg_landingpage != '') {
                 $old_photo = str_replace('/storage/', '', $setting->bg_landingpage);
                 Storage::disk('public')->delete($old_photo);
@@ -52,7 +54,7 @@ class SettingController extends Controller
                 $data['logo'] = '/storage/' . $request->file('logo')->store('setting', 'public');
             }
 
-            
+
             if ($request->hasFile('bg_landingpage')) {
                 $data['bg_landingpage'] = '/storage/' . $request->file('bg_landingpage')->store('setting', 'public');
             }
