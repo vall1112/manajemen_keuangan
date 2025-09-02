@@ -11,8 +11,6 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
-<<<<<<< HEAD
-=======
     {
         pages: [
             {
@@ -23,7 +21,6 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
->>>>>>> 933e1e9 (ubah 3)
 
     // WEBSITE
     {
@@ -31,39 +28,6 @@ const MainMenuConfig: Array<MenuItem> = [
         route: "/dashboard/website",
         name: "website",
         pages: [
-            // TAGIHAN
-               {
-                heading: "Tagihan",
-                route: "/dashboard/setting",
-                name: "setting",
-                keenthemesIcon: "bill",
-            },
-            // PEMBAYARAN
-               {
-                heading: "Pembayaran",
-                route: "/dashboard/setting",
-                name: "setting",
-                keenthemesIcon: "wallet",
-            },
-            // TABUNGAN
-             {
-                sectionTitle: "Tabungan",
-                route: "/master",
-                keenthemesIcon: "bank",
-                name: "master",
-                sub: [
-                    {
-                        heading: "Tarik Tunai",
-                        route: "/dashboard/master/users",
-                        name: "master-user",
-                    },
-                    {
-                        heading: "Setor Tunai",
-                        route: "/dashboard/master/users/roles",
-                        name: "master-role",
-                    },
-                ],
-            },
             // MASTER
             {
                 sectionTitle: "Master",
@@ -95,6 +59,11 @@ const MainMenuConfig: Array<MenuItem> = [
                         heading: "Kelas",
                         route: "/dashboard/master/classrooms",
                         name: "master-classroom",
+                    },
+                     {
+                        heading: "Tahun Ajaran",
+                        route: "/dashboard/master/school_years",
+                        name: "master-school-year",
                     },
                     {
                         heading: "Jenis Pembayaran",
