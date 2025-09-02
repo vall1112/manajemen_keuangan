@@ -29,7 +29,7 @@ const formSchema = Yup.object().shape({
   tanggal_tagih: Yup.string().required("Tanggal tagih harus diisi"),
   status: Yup.string().required("Status harus dipilih"),
   dibayar: Yup.number().nullable(),
-  sisa: Yup.number().nullable(),
+  // sisa: Yup.number().nullable(),
   keterangan: Yup.string().nullable(),
 });
 
@@ -55,8 +55,8 @@ function submit() {
   formData.append("total", bill.value.total);
   formData.append("tanggal_tagih", bill.value.tanggal_tagih);
   formData.append("status", bill.value.status);
-  formData.append("dibayar", bill.value.dibayar);
-  formData.append("sisa", bill.value.sisa);
+  // formData.append("dibayar", bill.value.dibayar);
+  // formData.append("sisa", bill.value.sisa);
   formData.append("keterangan", bill.value.keterangan ?? "");
 
   if (props.selected) {
@@ -234,7 +234,7 @@ watch(
           </div>
         </div>
 
-        <!-- status -->
+        <!-- status
         <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Status</label>
@@ -246,10 +246,10 @@ watch(
             </Field>
             <ErrorMessage name="status" class="text-danger" />
           </div>
-        </div>
+        </div> -->
 
         <!-- dibayar -->
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6">Dibayar</label>
             <Field
@@ -261,10 +261,10 @@ watch(
             />
             <ErrorMessage name="dibayar" class="text-danger" />
           </div>
-        </div>
+        </div> -->
 
         <!-- sisa -->
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6">Sisa</label>
             <Field
@@ -276,7 +276,7 @@ watch(
             />
             <ErrorMessage name="sisa" class="text-danger" />
           </div>
-        </div>
+        </div> -->
 
         <!-- keterangan -->
         <div class="col-md-12">

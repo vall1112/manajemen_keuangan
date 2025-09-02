@@ -5,7 +5,7 @@
         "resources/js/*",
         "resources/js/**/{*.js,*.ts,*.vue}"
     ],
-    "compilerOptions": {
+    "compiler_Options": {
         "lib": ["ES2020", "DOM"],
         "noImplicitAny": false,
         "baseUrl": ".",

@@ -15,7 +15,7 @@ const { delete: deleteTeacher } = useDelete({
 });
 
 const columns = [
-    column.accessor("no", {
+    column.accessor("id", {
         header: "#",
     }),
     column.accessor("nama", {
@@ -77,7 +77,7 @@ watch(openForm, (val) => {
 </script>
 
 <template>
-    <Form :selected="selected" @close="openForm = false" v-if="openForm" @refresh="refresh" />
+    <Form selected="selected" @close="openForm = false" v-if="openForm" @refresh="refresh" />
 
     <div class="card">
         <div class="card-header align-items-center">
