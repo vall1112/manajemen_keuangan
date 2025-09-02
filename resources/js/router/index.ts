@@ -103,6 +103,16 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: "/dashboard/master/pembayaran",
+                name: "/dashboard.master.pembayaran",
+                component: () =>
+                    import("@/pages/dashboard/master/pembayaran/Index.vue"),
+                meta: {
+                    pageTitle: "Pembayaran",
+                    breadcrumbs: ["pembayaran"],
+                },
+            },
+            {
                 path: "/dashboard/master/classrooms",
                 name: "/dashboard.master.classrooms",
                 component: () =>
