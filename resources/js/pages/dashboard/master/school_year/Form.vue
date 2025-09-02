@@ -136,7 +136,7 @@ watch(
                             name="semester"
                             v-model="schoolYear.semester"
                         >
-                            <option value="">-- Pilih Semester --</option>
+                            <option value="">Pilih Semester</option>
                             <option value="Ganjil">Ganjil</option>
                             <option value="Genap">Genap</option>
                         </Field>
@@ -155,7 +155,7 @@ watch(
                             name="status"
                             v-model="schoolYear.status"
                         >
-                            <option value="">-- Pilih Status --</option>
+                            <option value="">Pilih Status</option>
                             <option value="Aktif">Aktif</option>
                             <option value="Tidak Aktif">Tidak Aktif</option>
                         </Field>

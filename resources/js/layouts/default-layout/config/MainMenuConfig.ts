@@ -21,6 +21,16 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
+    {
+        pages: [
+            {
+                heading: "Transaksi",
+                name: "transaction",
+                route: "/transaction",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
 
     // WEBSITE
     {
@@ -60,7 +70,7 @@ const MainMenuConfig: Array<MenuItem> = [
                         route: "/dashboard/master/classrooms",
                         name: "master-classroom",
                     },
-                     {
+                    {
                         heading: "Tahun Ajaran",
                         route: "/dashboard/master/school_years",
                         name: "master-school-year",

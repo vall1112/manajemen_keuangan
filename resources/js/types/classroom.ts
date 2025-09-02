@@ -5,7 +5,6 @@ export interface Bill {
     school_year_id: number;        // relasi ke school_years
     total: number;
     tanggal_tagih: string;         // format date (YYYY-MM-DD)
-    jatuh_tempo: string;           // format date (YYYY-MM-DD)
     status: "Belum Dibayar" | "Dibayar Sebagian" | "Lunas";
     dibayar: number;
     sisa: number;

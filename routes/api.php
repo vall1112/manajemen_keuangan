@@ -10,7 +10,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SchoolYearController;
-use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -93,6 +93,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::get('school-years', [SchoolYearController::class, 'get']);
             Route::post('school-years', [SchoolYearController::class, 'index']);
             Route::post('school-years/store', [SchoolYearController::class, 'store']);
+            Route::put('school-years/{id}/status', [SchoolYearController::class, 'updateStatus']);
             Route::apiResource('school-years', SchoolYearController::class)
                 ->except(['index', 'store']);
         });
@@ -105,11 +106,11 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
 
-        Route::middleware('can:master-pembayaran')->group(function () {
-            Route::get('pembayaran', [PembayaranController::class, 'get']);
-            Route::post('pembayaran', [PembayaranController::class, 'index']);
-            Route::post('pembayaran', [PembayaranController::class, 'store']);
-            Route::apiResource('pembayaran', PembayaranController::class)
+        Route::middleware('can:transaction')->group(function () {
+            Route::get('transactions', [TransactionController::class, 'get']);
+            Route::post('transactions', [TransactionController::class, 'index']);
+            Route::post('transactions', [TransactionController::class, 'store']);
+            Route::apiResource('transactions', TransactionController::class)
                 ->except(['pembayaran']);
         });
     });

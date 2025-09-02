@@ -60,8 +60,6 @@ class BillController extends Controller
             'school_year_id'      => 'required|exists:school_years,id',
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
-            'jatuh_tempo'         => 'required|date|after_or_equal:tanggal_tagih',
-
             'status'              => 'required|in:Belum Dibayar,Dibayar Sebagian,Lunas',
             'dibayar'             => 'nullable|numeric|min:0',
             'sisa'                => 'nullable|numeric|min:0',
@@ -97,7 +95,6 @@ class BillController extends Controller
             'school_year_id'      => 'required|exists:school_years,id',
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
-            'jatuh_tempo'         => 'required|date|after_or_equal:tanggal_tagih',
             'status'              => 'required|in:Belum Dibayar,Dibayar Sebagian,Lunas',
             'dibayar'             => 'nullable|numeric|min:0',
             'sisa'                => 'nullable|numeric|min:0',

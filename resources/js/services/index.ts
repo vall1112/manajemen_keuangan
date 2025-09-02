@@ -5,3 +5,4 @@ export { useClassroom } from "./useClassroom";
 export { useStudent } from "./useStudent";
 export { usePaymentType } from "./usePaymentType";
 export { useSchoolYear } from "./useSchoolYear";
+export { useBill } from "./useBill";

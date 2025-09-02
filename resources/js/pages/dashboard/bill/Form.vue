@@ -27,13 +27,9 @@ const formSchema = Yup.object().shape({
   school_year_id: Yup.string().required("Pilih tahun ajaran"),
   total: Yup.number().required("Total tagihan harus diisi"),
   tanggal_tagih: Yup.string().required("Tanggal tagih harus diisi"),
-<<<<<<< HEAD
-  jatuh_tempo: Yup.string().required("Jatuh tempo harus diisi"),
-=======
->>>>>>> 8c1ba2f
-  status: Yup.string().required("Status harus diisi"),
-  dibayar: Yup.number().required("Jumlah dibayar harus diisi"),
-  sisa: Yup.number().required("Sisa harus diisi"),
+  status: Yup.string().required("Status harus dipilih"),
+  dibayar: Yup.number().nullable(),
+  sisa: Yup.number().nullable(),
   keterangan: Yup.string().nullable(),
 });
 
@@ -58,10 +54,6 @@ function submit() {
   formData.append("school_year_id", bill.value.school_year_id);
   formData.append("total", bill.value.total);
   formData.append("tanggal_tagih", bill.value.tanggal_tagih);
-<<<<<<< HEAD
-  formData.append("jatuh_tempo", bill.value.jatuh_tempo);
-=======
->>>>>>> 8c1ba2f
   formData.append("status", bill.value.status);
   formData.append("dibayar", bill.value.dibayar);
   formData.append("sisa", bill.value.sisa);
@@ -242,20 +234,6 @@ watch(
           </div>
         </div>
 
-        <!-- jatuh tempo -->
-        <div class="col-md-6">
-          <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Jatuh Tempo</label>
-            <Field
-              class="form-control form-control-lg form-control-solid"
-              type="date"
-              name="jatuh_tempo"
-              v-model="bill.jatuh_tempo"
-            />
-            <ErrorMessage name="jatuh_tempo" class="text-danger" />
-          </div>
-        </div>
-
         <!-- status -->
         <div class="col-md-6">
           <div class="fv-row mb-7">
@@ -273,7 +251,7 @@ watch(
         <!-- dibayar -->
         <div class="col-md-6">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Dibayar</label>
+            <label class="form-label fw-bold fs-6">Dibayar</label>
             <Field
               class="form-control form-control-lg form-control-solid"
               type="number"
@@ -288,7 +266,7 @@ watch(
         <!-- sisa -->
         <div class="col-md-6">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Sisa</label>
+            <label class="form-label fw-bold fs-6">Sisa</label>
             <Field
               class="form-control form-control-lg form-control-solid"
               type="number"

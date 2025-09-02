@@ -15,7 +15,6 @@ class Bill extends Model
         'school_year_id',
         'total',
         'tanggal_tagih',
-        'jatuh_tempo',
         'status',
         'dibayar',
         'sisa',

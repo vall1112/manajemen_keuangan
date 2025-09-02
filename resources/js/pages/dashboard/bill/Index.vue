@@ -37,9 +37,6 @@ const columns = [
     column.accessor("tanggal_tagih", {
         header: "Tagih",
     }),
-    column.accessor("jatuh_tempo", {
-        header: "Jatuh Tempo",
-    }),
     column.accessor("status", {
         header: "Status",
     }),

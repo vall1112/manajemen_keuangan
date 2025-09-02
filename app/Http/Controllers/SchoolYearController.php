@@ -32,8 +32,8 @@ class SchoolYearController extends Controller
         DB::statement('set @no=0+' . $page * $per);
         $data = SchoolYear::when($request->search, function (Builder $query, string $search) {
             $query->where('tahun_ajaran', 'like', "%$search%")
-                  ->orWhere('semester', 'like', "%$search%")
-                  ->orWhere('status', 'like', "%$search%");
+                ->orWhere('semester', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%");
         })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);
@@ -45,7 +45,7 @@ class SchoolYearController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'tahun_ajaran' => 'required|string|max:20|unique:school_years,tahun_ajaran',
+            'tahun_ajaran' => 'required|string|max:20',
             'semester'     => 'required|in:Ganjil,Genap',
             'status'       => 'required|in:Aktif,Tidak Aktif',
         ]);
@@ -74,7 +74,7 @@ class SchoolYearController extends Controller
     public function update(Request $request, SchoolYear $schoolYear)
     {
         $validatedData = $request->validate([
-            'tahun_ajaran' => 'required|string|max:20|unique:school_years,tahun_ajaran,' . $schoolYear->id,
+            'tahun_ajaran' => 'required|string|max:20',
             'semester'     => 'required|in:Ganjil,Genap',
             'status'       => 'required|in:Aktif,Tidak Aktif',
         ]);
@@ -97,5 +97,36 @@ class SchoolYearController extends Controller
         return response()->json([
             'success' => true
         ]);
+    }
+
+    /**
+     * Ubah status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:Aktif,Tidak Aktif',
+        ]);
+
+        $schoolYear = SchoolYear::find($id);
+        if (!$schoolYear) {
+            return response()->json([
+                'message' => 'Tahun ajaran tidak ditemukan'
+            ], 404);
+        }
+
+        $schoolYear->status = $validated['status'];
+        $schoolYear->save();
+
+        $message = match ($validated['status']) {
+            'Aktif'       => 'Tahun ajaran telah diaktifkan',
+            'Tidak Aktif' => 'Tahun ajaran telah dinonaktifkan',
+            default       => 'Status tahun ajaran berhasil diperbarui',
+        };
+
+        return response()->json([
+            'message' => $message,
+            'schoolYear' => $schoolYear
+        ], 200);
     }
 }

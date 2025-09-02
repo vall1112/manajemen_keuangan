@@ -2,6 +2,7 @@
 import { h, ref, watch } from "vue";
 import { useDelete } from "@/libs/hooks";
 import Form from "./Form.vue";
+import { toast } from "vue3-toastify";
 import { createColumnHelper } from "@tanstack/vue-table";
 import type { SchoolYear } from "@/types";
 
@@ -24,35 +25,82 @@ const columns = [
     column.accessor("semester", {
         header: "Semester",
     }),
-    column.accessor("status", {
-        header: "Status",
-    }),
-    column.accessor("id", {
-        header: "Aksi",
-        cell: (cell) =>
-            h("div", { class: "d-flex gap-2" }, [
+    column.accessor("toggle", {
+        header: () =>
+            h("div", { class: "text-center" }, "Status"),
+        cell: (cell) => {
+            const row = cell.row.original;
+            return h("div", { class: "text-center" }, [
                 h(
-                    "button",
+                    "label",
                     {
-                        class: "btn btn-sm btn-icon btn-info",
-                        onClick: () => {
-                            selected.value = cell.getValue();
-                            openForm.value = true;
-                        },
+                        class:
+                            "form-check form-switch form-check-custom form-check-solid d-inline-flex justify-content-center",
                     },
-                    h("i", { class: "la la-pencil fs-2" })
+                    [
+                        h("input", {
+                            type: "checkbox",
+                            checked: row.status === "Aktif",
+                            class: "form-check-input",
+                            onChange: async (e: Event) => {
+                                const newStatus =
+                                    row.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+                                const checkbox = e.target as HTMLInputElement;
+                                checkbox.disabled = true;
+                                try {
+                                    const response = await axios.put(
+                                        `/school-years/${row.id}/status`,
+                                        {
+                                            status: newStatus,
+                                        }
+                                    );
+                                    toast.success(
+                                        response.data.message || "Status berhasil diperbarui!"
+                                    );
+                                    paginateRef.value?.refetch();
+                                } catch (error: any) {
+                                    toast.error(
+                                        error.response?.data?.message ||
+                                        "Gagal memperbarui status!"
+                                    );
+                                    checkbox.checked = !checkbox.checked;
+                                } finally {
+                                    checkbox.disabled = false;
+                                }
+                            },
+                        }),
+                        h("span", { class: "form-check-label" }),
+                    ]
                 ),
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-danger",
-                        onClick: () =>
-                            deleteTeacher(`/master/school-years/${cell.getValue()}`),
-                    },
-                    h("i", { class: "la la-trash fs-2" })
-                ),
-            ]),
+            ]);
+        },
     }),
+    // column.accessor("id", {
+    //     header: "Aksi",
+    //     cell: (cell) =>
+    //         h("div", { class: "d-flex gap-2" }, [
+    //             h(
+    //                 "button",
+    //                 {
+    //                     class: "btn btn-sm btn-icon btn-info",
+    //                     onClick: () => {
+    //                         selected.value = cell.getValue();
+    //                         openForm.value = true;
+    //                     },
+    //                 },
+    //                 h("i", { class: "la la-pencil fs-2" })
+    //             ),
+    //             h(
+    //                 "button",
+    //                 {
+    //                     class: "btn btn-sm btn-icon btn-danger",
+    //                     onClick: () =>
+    //                         deleteTeacher(`/master/school-years/${cell.getValue()}`),
+    //                 },
+    //                 h("i", { class: "la la-trash fs-2" })
+    //             ),
+    //         ]),
+    // }),
 ];
 
 const refresh = () => paginateRef.value.refetch();
