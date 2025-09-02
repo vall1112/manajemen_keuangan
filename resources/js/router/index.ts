@@ -184,15 +184,6 @@ const routes: Array<RouteRecordRaw> = [
                     middleware: "guest",
                 },
             },
-                 {
-                path: "/landing-page",
-                name: "Landing-Page",
-                component: () => import("@/pages/auth/landing-page/Index.vue"),
-                meta: {
-                    pageTitle: "Landing Page",
-                    middleware: "guest",
-                },
-            },
         ],
     },
     {
