@@ -11,28 +11,28 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
-    {
-        pages: [
-            {
-                heading: "Tagihan",
-                name: "bill",
-                route: "/bill",
-                keenthemesIcon: "element-11",
-            },
-        ],
-    },
-    {
-        pages: [
-            {
-                heading: "Transaksi",
-                name: "transaction",
-                route: "/transaction",
-                keenthemesIcon: "element-11",
-            },
-        ],
-    },
 
     // WEBSITE
+    {
+        heading: "PEMBAYARAN",
+        route: "/dashboard/pembayaran",
+        name: "website",
+        pages: [
+            // MASTER
+            {
+                heading: "Tagihan",
+                route: "/bill",
+                name: "bill",
+                keenthemesIcon: "dollar",
+            },
+            {
+               heading: "Transaksi",
+                name: "transaction",
+                route: "/transaction",
+                keenthemesIcon: "wallet",
+            },
+        ],
+    },
     {
         heading: "Website",
         route: "/dashboard/website",
