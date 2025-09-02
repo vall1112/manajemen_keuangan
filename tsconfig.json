@@ -1,23 +1,24 @@
 {
-    "extends": "@vue/tsconfig/tsconfig.web.json",
-    "include": [
-        "env.d.ts",
-        "resources/js/*",
-        "resources/js/**/{*.js,*.ts,*.vue}"
-    ],
-    "compiler_Options": {
-        "lib": ["ES2020", "DOM"],
-        "noImplicitAny": false,
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["./resources/js/*"]
-        },
-        "allowJs": true
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": [
+    "env.d.ts",
+    "resources/js/*",
+    "resources/js/**/{*.js,*.ts,*.vue}"
+  ],
+  "compiler_Options": {
+    "lib": ["ES2020", "DOM"],
+    "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./resources/js/*"]
     },
-    "exclude": ["node_modules", "dist"],
-    "references": [
-        {
-            "path": "./tsconfig.config.json"
-        }
-    ]
+    "allowJs": true,
+    "verbatimModuleSyntax": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "./tsconfig.config.json"
+    }
+  ]
 }

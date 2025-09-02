@@ -20,6 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
@@ -50,6 +51,14 @@ class User extends Authenticatable implements JWTSubject
 
     protected static function booted()
     {
+        // Tambahkan peran default 'user' saat pengguna dibuat
+        static::created(function ($user) {
+            if (!$user->hasRole('student')) {
+                $user->assignRole('student');
+            }
+        });
+
+        // Hapus foto pengguna dari storage saat dihapus
         static::deleted(function ($user) {
             if ($user->photo != null && $user->photo != '') {
                 $old_photo = str_replace('/storage/', '', $user->photo);

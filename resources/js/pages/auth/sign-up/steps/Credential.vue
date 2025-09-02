@@ -1,5 +1,18 @@
 <template>
     <section class="w-100">
+         <!--begin::Input group-->
+        <div class="fv-row mb-7">
+            <label class="form-label fw-bold text-dark fs-6">Username</label>
+            <Field class="form-control form-control-lg form-control-solid" type="text" name="username" autocomplete="off"
+                v-model="formData.username" />
+            <div class="fv-plugins-message-container">
+                <div class="fv-help-block">
+                    <ErrorMessage name="username" />
+                </div>
+            </div>
+        </div>
+        <!--end::Input group-->
+
         <!--begin::Input group-->
         <div class="fv-row mb-7">
             <label class="form-label fw-bold text-dark fs-6">Nama</label>
