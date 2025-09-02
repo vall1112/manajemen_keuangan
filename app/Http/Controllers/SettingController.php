@@ -40,10 +40,21 @@ class SettingController extends Controller
                 Storage::disk('public')->delete($old_photo);
             }
 
+            
+            if ($setting->bg_landingpage != null && $setting->bg_landingpage != '') {
+                $old_photo = str_replace('/storage/', '', $setting->bg_landingpage);
+                Storage::disk('public')->delete($old_photo);
+            }
+
             $data = $request->all();
 
             if ($request->hasFile('logo')) {
                 $data['logo'] = '/storage/' . $request->file('logo')->store('setting', 'public');
+            }
+
+            
+            if ($request->hasFile('bg_landingpage')) {
+                $data['bg_landingpage'] = '/storage/' . $request->file('bg_landingpage')->store('setting', 'public');
             }
 
             if ($request->hasFile('bg_auth')) {

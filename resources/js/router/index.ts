@@ -43,6 +43,7 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
+<<<<<<< HEAD
                 path: "/setor",
                 name: "setor",
                 component: () => import("@/pages/dashboard/saving/setor/Form.vue"),
@@ -70,6 +71,8 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
              {
+=======
+>>>>>>> 4067de179142453dd6c87d123944b65c0e7ae1b9
                 path: "/transaction",
                 name: "transaction",
                 component: () => import("@/pages/dashboard/transaction/Form.vue"),
@@ -184,6 +187,27 @@ const routes: Array<RouteRecordRaw> = [
                     middleware: "guest",
                 },
             },
+<<<<<<< HEAD
+            {
+                path: "/sign-up",
+                name: "sign-up",
+                component: () => import("@/pages/auth/sign-up/Index.vue"),
+                meta: {
+                    pageTitle: "Sign Up",
+                    middleware: "guest",
+                },
+            },
+            {
+                path: "/landing-page",
+                name: "Landing-Page",
+                component: () => import("@/pages/auth/landing-page/Index.vue"),
+                meta: {
+                    pageTitle: "Landing Page",
+                    middleware: "guest",
+                },
+            },
+=======
+>>>>>>> 09ce4ff61a9e74adcac06e61949d29a24047ee74
         ],
     },
     {

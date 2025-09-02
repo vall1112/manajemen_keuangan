@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -14,7 +19,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(Request $request)
+    // Login dengan email
+    public function loginEmail(Request $request)
     {
         $validator = Validator::make($request->post(), [
             'email' => 'required|email',
@@ -39,6 +45,155 @@ class AuthController extends Controller
             'status' => true,
             'user' => auth()->user(),
             'token' => $token
+        ]);
+    }
+
+    // Login dengan username
+    public function loginUsername(Request $request)
+    {
+        $validator = Validator::make($request->post(), [
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first()
+            ]);
+        }
+
+        $credentials = $validator->validated();
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Username / Password salah!'
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => true,
+            'user' => auth()->user(),
+            'token' => $token
+        ]);
+    }
+
+    // Register
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => [
+                'required',                       // harus diisi
+                'string',                         // harus berupa string
+                'min:3',                           // minimal 3 karakter
+                'max:50',                          // maksimal 50 karakter
+                'regex:/^[a-zA-Z][a-zA-Z0-9_]*$/', // harus dimulai huruf, boleh huruf, angka, underscore
+                'unique:users,username',           // harus unik di tabel users
+            ],
+            'nama' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'string',
+                'email',                           // format email valid
+                'max:255',
+                'unique:users,email',              // harus unik di tabel users
+            ],
+            'phone' => [
+                'required',
+                'unique:users,phone'
+            ],
+            'password' => 'required|string|min:8|confirmed', // password_confirmation harus ada
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = User::create([
+            'username' => $request->username,
+            'name' => $request->nama,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $token = auth()->login($user);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Registrasi berhasil. Silahkan login.',
+            'user' => $user,
+            'token' => $token
+        ], 201);
+    }
+
+    // ========================== EMAIL OTP ==========================
+    /**
+     * Kirim OTP ke email.
+     */
+    public function sendEmailOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $email = $request->email;
+
+        // Cek apakah email sudah terdaftar
+        if (User::where('email', $email)->exists()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email sudah terdaftar. Silakan gunakan email lain atau login.'
+            ], 400);
+        }
+
+        // Generate OTP 6 digit
+        $otp = rand(100000, 999999);
+
+        // Simpan OTP di cache selama 5 menit
+        $otpKey = "otp_{$email}";
+        Cache::put($otpKey, $otp, now()->addMinutes(5));
+
+        // Kirim email
+        Mail::to($email)->send(new OtpMail($otp));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kode OTP telah dikirim ke email Anda.'
+        ]);
+    }
+
+     /**
+     * Cek OTP dari email.
+     */
+    public function checkEmailOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|numeric|digits:6'
+        ]);
+
+        $otpKey = "otp_{$request->email}";
+        $cachedOtp = Cache::get($otpKey);
+
+        if (!$cachedOtp || (string)$cachedOtp !== (string)$request->otp) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kode OTP salah atau telah kadaluarsa.'
+            ], 400);
+        }
+
+        // OTP valid, hapus dari cache
+        Cache::forget($otpKey);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Kode OTP berhasil diverifikasi.'
         ]);
     }
 

@@ -23,6 +23,10 @@ const photo = ref<any>([]);
 const formRef = ref();
 
 const formSchema = Yup.object().shape({
+    username: Yup.string()
+        .required("Username harus diisi")
+        .max(50, "Maksimal 50 karakter")
+        .matches(/^[a-zA-Z0-9_-]+$/, "Username hanya boleh huruf, angka, _ atau -"),
     name: Yup.string().required("Nama harus diisi"),
     email: Yup.string()
         .email("Email harus valid")
@@ -54,6 +58,7 @@ function getEdit() {
 
 function submit() {
     const formData = new FormData();
+    formData.append("username", user.value.username);
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
     formData.append("phone", user.value.phone);
@@ -124,20 +129,10 @@ watch(
 </script>
 
 <template>
-    <VForm
-        class="form card mb-10"
-        @submit="submit"
-        :validation-schema="formSchema"
-        id="form-user"
-        ref="formRef"
-    >
+    <VForm class="form card mb-10" @submit="submit" :validation-schema="formSchema" id="form-user" ref="formRef">
         <div class="card-header align-items-center">
             <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} User</h2>
-            <button
-                type="button"
-                class="btn btn-sm btn-light-danger ms-auto"
-                @click="emit('close')"
-            >
+            <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
                 Batal
                 <i class="la la-times-circle p-0"></i>
             </button>
@@ -148,16 +143,26 @@ watch(
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
+                            Username
+                        </label>
+                        <Field class="form-control form-control-lg form-control-solid" type="text" name="username"
+                            autocomplete="off" v-model="user.username" placeholder="Masukkan Username" />
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="username" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </div>
+                <div class="col-md-6">
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6 required">
                             Nama
                         </label>
-                        <Field
-                            class="form-control form-control-lg form-control-solid"
-                            type="text"
-                            name="name"
-                            autocomplete="off"
-                            v-model="user.name"
-                            placeholder="Masukkan Nama"
-                        />
+                        <Field class="form-control form-control-lg form-control-solid" type="text" name="name"
+                            autocomplete="off" v-model="user.name" placeholder="Masukkan Nama" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="name" />
@@ -172,14 +177,8 @@ watch(
                         <label class="form-label fw-bold fs-6 required">
                             Email
                         </label>
-                        <Field
-                            class="form-control form-control-lg form-control-solid"
-                            type="text"
-                            name="email"
-                            autocomplete="off"
-                            v-model="user.email"
-                            placeholder="Masukkan Email"
-                        />
+                        <Field class="form-control form-control-lg form-control-solid" type="text" name="email"
+                            autocomplete="off" v-model="user.email" placeholder="Masukkan Email" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="email" />
@@ -191,17 +190,27 @@ watch(
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6 required">
+                            Nomor Telepon
+                        </label>
+                        <Field class="form-control form-control-lg form-control-solid" type="text" name="phone"
+                            autocomplete="off" v-model="user.phone" placeholder="089" />
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="phone" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </div>
+                <div class="col-md-6">
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
                             Password
                         </label>
-                        <Field
-                            class="form-control form-control-lg form-control-solid"
-                            type="password"
-                            name="password"
-                            autocomplete="off"
-                            v-model="user.password"
-                            placeholder="Masukkan password"
-                        />
+                        <Field class="form-control form-control-lg form-control-solid" type="password" name="password"
+                            autocomplete="off" v-model="user.password" placeholder="Masukkan password" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="password" />
@@ -216,14 +225,9 @@ watch(
                         <label class="form-label fw-bold fs-6">
                             Konfirmasi Password
                         </label>
-                        <Field
-                            class="form-control form-control-lg form-control-solid"
-                            type="password"
-                            name="passwordConfirmation"
-                            autocomplete="off"
-                            v-model="user.passwordConfirmation"
-                            placeholder="Konfirmasi password"
-                        />
+                        <Field class="form-control form-control-lg form-control-solid" type="password"
+                            name="passwordConfirmation" autocomplete="off" v-model="user.passwordConfirmation"
+                            placeholder="Konfirmasi password" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="passwordConfirmation" />
@@ -238,18 +242,9 @@ watch(
                         <label class="form-label fw-bold fs-6 required">
                             Role
                         </label>
-                        <Field
-                            name="role_id"
-                            type="hidden"
-                            v-model="user.role_id"
-                        >
-                            <select2
-                                placeholder="Pilih role"
-                                class="form-select-solid"
-                                :options="roles"
-                                name="role_id"
-                                v-model="user.role_id"
-                            >
+                        <Field name="role_id" type="hidden" v-model="user.role_id">
+                            <select2 placeholder="Pilih role" class="form-select-solid" :options="roles" name="role_id"
+                                v-model="user.role_id">
                             </select2>
                         </Field>
                         <div class="fv-plugins-message-container">
@@ -263,38 +258,12 @@ watch(
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6 required">
-                            Nomor Telepon
-                        </label>
-                        <Field
-                            class="form-control form-control-lg form-control-solid"
-                            type="text"
-                            name="phone"
-                            autocomplete="off"
-                            v-model="user.phone"
-                            placeholder="089"
-                        />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="phone" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
                             User Photo
                         </label>
                         <!--begin::Input-->
-                        <file-upload
-                            :files="photo"
-                            :accepted-file-types="fileTypes"
-                            required
-                            v-on:updatefiles="(file) => (photo = file)"
-                        ></file-upload>
+                        <file-upload :files="photo" :accepted-file-types="fileTypes" required
+                            v-on:updatefiles="(file) => (photo = file)"></file-upload>
                         <!--end::Input-->
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
