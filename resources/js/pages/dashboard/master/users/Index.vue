@@ -18,6 +18,9 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
+    column.accessor("username", {
+        header: "Username",
+    }),
     column.accessor("name", {
         header: "Nama",
     }),

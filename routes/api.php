@@ -26,9 +26,14 @@ use Illuminate\Support\Facades\Route;
 
 // Authentication Route
 Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login'])->withoutMiddleware('auth');
+    Route::post('login/email', [AuthController::class, 'loginEmail'])->withoutMiddleware('auth');
+    Route::post('login/username', [AuthController::class, 'loginUsername'])->withoutMiddleware('auth');
+    Route::post('register', [AuthController::class, 'register'])->withoutMiddleware('auth');
     Route::delete('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
+
+    Route::post('register/get/email/otp', [AuthController::class, 'sendEmailOtp'])->withoutMiddleware('auth'); // Kirim otp email saat register
+    Route::post('register/check/email/otp', [AuthController::class, 'checkEmailOtp'])->withoutMiddleware('auth'); // Check otp email saat register
 });
 
 Route::prefix('setting')->group(function () {

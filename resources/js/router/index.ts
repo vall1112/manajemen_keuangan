@@ -42,7 +42,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Bill"],
                 },
             },
-             {
+            {
                 path: "/transaction",
                 name: "transaction",
                 component: () => import("@/pages/dashboard/transaction/Form.vue"),
@@ -157,7 +157,16 @@ const routes: Array<RouteRecordRaw> = [
                     middleware: "guest",
                 },
             },
-                 {
+            {
+                path: "/sign-up",
+                name: "sign-up",
+                component: () => import("@/pages/auth/sign-up/Index.vue"),
+                meta: {
+                    pageTitle: "Sign Up",
+                    middleware: "guest",
+                },
+            },
+            {
                 path: "/landing-page",
                 name: "Landing-Page",
                 component: () => import("@/pages/auth/landing-page/Index.vue"),
