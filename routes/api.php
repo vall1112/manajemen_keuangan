@@ -10,6 +10,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SchoolYearController;
+use App\Http\Controllers\PembayaranController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -102,6 +103,14 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('bills/store', [BillController::class, 'store']);
             Route::apiResource('bills', BillController::class)
                 ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:master-pembayaran')->group(function () {
+            Route::get('pembayaran', [PembayaranController::class, 'get']);
+            Route::post('pembayaran', [PembayaranController::class, 'index']);
+            Route::post('pembayaran', [PembayaranController::class, 'store']);
+            Route::apiResource('pembayaran', PembayaranController::class)
+                ->except(['pembayaran']);
         });
     });
 });

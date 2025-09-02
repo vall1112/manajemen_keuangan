@@ -27,7 +27,10 @@ const formSchema = Yup.object().shape({
   school_year_id: Yup.string().required("Pilih tahun ajaran"),
   total: Yup.number().required("Total tagihan harus diisi"),
   tanggal_tagih: Yup.string().required("Tanggal tagih harus diisi"),
+<<<<<<< HEAD
   jatuh_tempo: Yup.string().required("Jatuh tempo harus diisi"),
+=======
+>>>>>>> 8c1ba2f
   status: Yup.string().required("Status harus diisi"),
   dibayar: Yup.number().required("Jumlah dibayar harus diisi"),
   sisa: Yup.number().required("Sisa harus diisi"),
@@ -55,7 +58,10 @@ function submit() {
   formData.append("school_year_id", bill.value.school_year_id);
   formData.append("total", bill.value.total);
   formData.append("tanggal_tagih", bill.value.tanggal_tagih);
+<<<<<<< HEAD
   formData.append("jatuh_tempo", bill.value.jatuh_tempo);
+=======
+>>>>>>> 8c1ba2f
   formData.append("status", bill.value.status);
   formData.append("dibayar", bill.value.dibayar);
   formData.append("sisa", bill.value.sisa);
