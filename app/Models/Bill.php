@@ -16,8 +16,8 @@ class Bill extends Model
         'total',
         'tanggal_tagih',
         'status',
-        'dibayar',
-        'sisa',
+        // 'dibayar',
+        // 'sisa',
         'keterangan',
     ];
 

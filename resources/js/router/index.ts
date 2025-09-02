@@ -157,6 +157,7 @@ const routes: Array<RouteRecordRaw> = [
                     middleware: "guest",
                 },
             },
+<<<<<<< HEAD
             {
                 path: "/sign-up",
                 name: "sign-up",
@@ -175,6 +176,8 @@ const routes: Array<RouteRecordRaw> = [
                     middleware: "guest",
                 },
             },
+=======
+>>>>>>> 09ce4ff61a9e74adcac06e61949d29a24047ee74
         ],
     },
     {

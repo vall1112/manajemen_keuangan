@@ -61,8 +61,8 @@ class BillController extends Controller
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
             'status'              => 'required|in:Belum Dibayar,Dibayar Sebagian,Lunas',
-            'dibayar'             => 'nullable|numeric|min:0',
-            'sisa'                => 'nullable|numeric|min:0',
+            // 'dibayar'             => 'nullable|numeric|min:0',
+            // 'sisa'                => 'nullable|numeric|min:0',
             'keterangan'          => 'nullable|string|max:255',
         ]);
 

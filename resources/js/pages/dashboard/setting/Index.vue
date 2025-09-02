@@ -123,7 +123,17 @@
                         <file-upload v-bind:files="files.bgAuth" :accepted-file-types="fileTypes" required
                             v-on:updatefiles="file => files.bgAuth = file"></file-upload>
                         <!--end::Input-->
-                    </div>
+                    </div>  
+                    <div class="fv-row mb-8">
+                        <!--begin::Label-->
+                        <label class="form-label fw-bold required">Background Landing Page</label>
+                        <!--end::Label-->
+
+                        <!--begin::Input-->
+                        <file-upload v-bind:files="files.bgLandingPage" :accepted-file-types="fileTypes" required
+                            v-on:updatefiles="file => files.bgLandingPage = file"></file-upload>
+                        <!--end::Input-->
+                    </div>  
                 </div>
             </div>
         </div>
@@ -159,6 +169,7 @@ export default defineComponent({
         const files = ref({
             logo: setting.data?.value?.logo ? [setting.data.value.logo] : [],
             bgAuth: setting.data?.value?.bg_auth ? [setting.data.value.bg_auth] : [],
+            bgLandingPage: setting.data?.value?.bg_landingpage ? [setting.data.value.bg_landingpage] : [],
         })
 
         const formSchema = Yup.object().shape({
@@ -185,6 +196,7 @@ export default defineComponent({
 
             data.append('logo', this.files.logo[0].file)
             data.append('bg_auth', this.files.bgAuth[0].file)
+            data.append('bg_landingpage', this.files.bgLandingPage[0].file)
 
             block(this.$el)
             axios.post("/setting", data)
@@ -207,6 +219,7 @@ export default defineComponent({
 
                 this.files.logo = setting.data.value.logo ? [setting.data.value.logo] : []
                 this.files.bgAuth = setting.data.value.bg_auth ? [setting.data.value.bg_auth] : []
+                this.files.bgLandingPage = setting.data.value.bg_landingpage ? [setting.data.value.bg_landingpage] : []
             },
             deep: true
         }
