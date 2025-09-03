@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { block, unblock } from "@/libs/utils";
-<<<<<<< HEAD
 import { onMounted, ref, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
@@ -59,7 +58,7 @@ function submit() {
 <template>
   <VForm class="form card mb-10" @submit="submit" :validation-schema="formSchema" id="form-saving" ref="formRef">
     <div class="card-header align-items-center">
-      <h2 class="mb-0">Setor Tabungan</h2>
+      <h2 class="mb-0">Tarik Tabungan</h2>
     </div>
 
     <div class="card-body">

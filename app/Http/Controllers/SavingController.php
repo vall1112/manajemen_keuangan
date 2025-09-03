@@ -35,4 +35,22 @@ class SavingController extends Controller
             'saving'  => $saving
         ]);
     }
+    public function storePull(Request $request)
+    {
+        $validatedData = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'tanggal'    => 'required|date',
+            'nominal'    => 'required|numeric|min:1',
+            'keterangan' => 'nullable|string|max:255',
+        ]);
+
+        $validatedData['jenis'] = 'Tarik';
+
+        $saving = Saving::create($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'saving'  => $saving
+        ]);
+    }
 }

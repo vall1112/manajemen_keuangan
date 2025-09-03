@@ -129,9 +129,9 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
 
-        Route::middleware('can:saving')->group(function () {
-            Route::get('savings', [SavingController::class, 'get']);
-            Route::get('savings/deposits/store', [SavingController::class, 'storeDeposit']);
-        });
     });
 });
+
+    Route::get('savings', [SavingController::class, 'get']);
+    Route::post('savings/deposits/store', [SavingController::class, 'storeDeposit']);
+    Route::post('savings-pulls/store', [SavingController::class, 'storePull']);

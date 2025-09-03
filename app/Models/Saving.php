@@ -9,11 +9,14 @@ class Saving extends Model
 {
     use HasFactory;
 
+    protected $table = 'savings'; // tabel yang dipakai
+
     protected $fillable = [
         'student_id',
         'tanggal',
         'nominal',
         'jenis',
+        'saldo',
         'keterangan',
     ];
 
