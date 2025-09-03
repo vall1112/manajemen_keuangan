@@ -72,7 +72,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/transaction",
                 name: "transaction",
-                component: () => import("@/pages/dashboard/transaction/Form.vue"),
+                component: () => import("@/pages/dashboard/transaction/Index.vue"),
                 meta: {
                     pageTitle: "Transaction",
                     breadcrumbs: ["Transaction"],

@@ -149,7 +149,7 @@ watch(
         <!-- Siswa -->
         <div class="col-md-4">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Siswa</label>
+            <label class="form-label fw-bold fs-6 required">Nama Siswa</label>
             <Field name="siswa_id" type="hidden" v-model="bill.siswa_id">
               <select2
                 placeholder="Pilih siswa"

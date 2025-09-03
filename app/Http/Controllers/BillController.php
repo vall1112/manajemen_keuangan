@@ -37,7 +37,6 @@ class BillController extends Controller
                     ->orWhereHas('schoolYear', function ($q) use ($search) {
                         $q->where('tahun_ajaran', 'like', "%$search%");
                     })
-                    ->orWhere('status', 'like', "%$search%")
                     ->orWhere('keterangan', 'like', "%$search%");
             })
             ->latest()

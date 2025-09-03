@@ -26,15 +26,10 @@ class TransactionController extends Controller
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
-
-        $data = Transaction::with('bill')
-            ->when($request->search, function (Builder $query, string $search) {
-                $query->where('metode', 'like', "%$search%")
-                    ->orWhere('status', 'like', "%$search%")
-                    ->orWhere('keterangan', 'like', "%$search%");
-            })
-            ->latest()
-            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+        $data = Transaction::when($request->search, function (Builder $query, string $search) {
+            $query->where('nominal', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%");
+        })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);
     }

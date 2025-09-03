@@ -2,7 +2,7 @@
     <section class="w-100">
          <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Username</label>
+            <label class="form-label fw-bold fs-6">Username</label>
             <Field class="form-control form-control-lg form-control-solid" type="text" name="username" autocomplete="off"
                 v-model="formData.username" />
             <div class="fv-plugins-message-container">
@@ -15,7 +15,7 @@
 
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Nama</label>
+            <label class="form-label fw-bold fs-6">Nama</label>
             <Field class="form-control form-control-lg form-control-solid" type="text" name="nama" autocomplete="off"
                 v-model="formData.nama" />
             <div class="fv-plugins-message-container">
@@ -28,7 +28,7 @@
 
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Email</label>
+            <label class="form-label fw-bold fs-6">Email</label>
             <Field class="form-control form-control-lg form-control-solid" type="email" name="email" autocomplete="off"
                 v-model="formData.email" />
             <div class="fv-plugins-message-container">
@@ -41,7 +41,7 @@
 
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">No. Telepon</label>
+            <label class="form-label fw-bold fs-6">No. Telepon</label>
             <Field class="form-control form-control-lg form-control-solid" type="phone" name="phone" autocomplete="off"
                 v-model="formData.phone" />
             <div class="fv-plugins-message-container">
