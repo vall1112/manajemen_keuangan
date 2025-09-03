@@ -16,13 +16,14 @@ const student = useStudent();
 const students = computed(() =>
   student.data.value?.map((item: Student) => ({
     id: item.id,
-    text: item.nama,
+    text: `${item.nama} - ${item.classroom?.nama_kelas ?? ''}`,
+    nama: item.nama,
+    nama_kelas: item.classroom?.nama_kelas ?? null,
   }))
 );
 
 const formSchema = Yup.object().shape({
   student_id: Yup.string().required("Siswa harus dipilih"),
-  tanggal: Yup.date().required("Tanggal harus diisi"),
   nominal: Yup.number().required("Nominal harus diisi").min(1, "Minimal 1"),
   keterangan: Yup.string().nullable(),
 });
@@ -30,7 +31,6 @@ const formSchema = Yup.object().shape({
 function submit() {
   const formData = new FormData();
   formData.append("student_id", saving.value.student_id);
-  formData.append("tanggal", saving.value.tanggal);
   formData.append("nominal", saving.value.nominal);
   formData.append("jenis", "Setor");
   formData.append("keterangan", saving.value.keterangan ?? "");
@@ -64,7 +64,7 @@ function submit() {
     <div class="card-body">
       <div class="row">
         <!-- Siswa -->
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Nama Siswa</label>
             <Field name="student_id" type="hidden" v-model="saving.student_id">
@@ -75,18 +75,8 @@ function submit() {
           </div>
         </div>
 
-        <!-- Tanggal -->
-        <div class="col-md-4">
-          <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Tanggal</label>
-            <Field class="form-control form-control-lg form-control-solid" type="date" name="tanggal"
-              v-model="saving.tanggal" />
-            <ErrorMessage name="tanggal" class="text-danger small" />
-          </div>
-        </div>
-
         <!-- Nominal -->
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Nominal</label>
             <Field class="form-control form-control-lg form-control-solid" type="number" name="nominal"
@@ -96,7 +86,7 @@ function submit() {
         </div>
 
         <!-- Keterangan -->
-        <div class="col-md-8">
+        <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6">Keterangan</label>
             <Field as="textarea" class="form-control form-control-lg form-control-solid" name="keterangan"

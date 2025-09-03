@@ -133,4 +133,6 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
 Route::get('savings', [SavingController::class, 'get']);
 Route::post('savings/deposits/store', [SavingController::class, 'storeDeposit']);
-Route::post('savings-pulls/store', [SavingController::class, 'storePull']);
+Route::post('savings/pulls/store', [SavingController::class, 'storePull']);
+Route::post('history/savings', [SavingController::class, 'index']);
+Route::post('savings/balances', [SavingController::class, 'getBalance']);

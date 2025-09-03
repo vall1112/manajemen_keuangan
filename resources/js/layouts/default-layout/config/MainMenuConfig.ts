@@ -52,7 +52,11 @@ const MainMenuConfig: Array<MenuItem> = [
                         route: "/savings/history",
                         name: "savings",
                     },
-
+                    {
+                        heading: "Saldo",
+                        route: "/savings/balance",
+                        name: "savings",
+                    },
                 ],
             },
         ],

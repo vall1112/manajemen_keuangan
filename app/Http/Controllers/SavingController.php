@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Saving;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SavingController extends Controller
 {
-    // ========================== AMBIL SEMUA DATA STUDENT (TANPA PAGINASI) ==========================
+    // ========================== AMBIL SEMUA DATA TABUNGAN (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
         return response()->json([
@@ -16,12 +17,32 @@ class SavingController extends Controller
         ]);
     }
 
-    // ========================== SIMPAN DATA STUDENT BARU ==========================
+    // ========================== AMBIL SEMUA DATA TABUNGAN DENGAN PAGINASI) ==========================
+    public function index(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        $data = Saving::with('student') // relasi ke student
+            ->when($request->search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                })
+                    ->orWhere('jenis', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        return response()->json($data);
+    }
+
+    // ========================== SIMPAN DATA SETOR TABUNGAN ==========================
     public function storeDeposit(Request $request)
     {
         $validatedData = $request->validate([
             'student_id' => 'required|exists:students,id',
-            'tanggal'    => 'required|date',
             'nominal'    => 'required|numeric|min:1',
             'keterangan' => 'nullable|string|max:255',
         ]);
@@ -43,44 +64,90 @@ class SavingController extends Controller
         ]);
     }
 
+    // ========================== SIMPAN DATA TARIK TABUNGAN ==========================
     public function storePull(Request $request)
     {
-        $validatedData = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'tanggal'    => 'required|date',
-            'nominal'    => 'required|numeric|min:1',
-            'keterangan' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'student_id' => 'required|exists:students,id',
+                'nominal'    => 'required|numeric|min:1',
+                'keterangan' => 'nullable|string|max:255',
+            ]);
 
-        // Ambil saldo terakhir siswa
-        $lastSaldo = Saving::where('student_id', $request->student_id)
-            ->orderBy('id', 'desc')
-            ->value('saldo') ?? 0;
+            $lastSaldo = Saving::where('student_id', $request->student_id)
+                ->orderBy('id', 'desc')
+                ->value('saldo') ?? 0;
 
-        // Cek cukup/tidak
-        if ($lastSaldo < $request->nominal) {
+            if ($lastSaldo < $request->nominal) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Saldo tidak mencukupi untuk penarikan.',
+                    'errors'  => [
+                        'nominal' => ['Saldo tidak mencukupi untuk penarikan.']
+                    ]
+                ], 422);
+            }
+
+            $newSaldo = $lastSaldo - $request->nominal;
+
+            $saving = Saving::create([
+                'student_id' => $request->student_id,
+                'nominal'    => $request->nominal,
+                'jenis'      => 'Tarik',
+                'saldo'      => $newSaldo,
+                'keterangan' => $request->keterangan,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Penarikan berhasil disimpan.',
+                'saving'  => $saving
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Saldo tidak mencukupi untuk penarikan.'
+                'message' => 'Validasi gagal.',
+                'errors'  => $e->errors()
             ], 422);
         }
+    }
 
-        // Hitung saldo baru
-        $newSaldo = $lastSaldo - $request->nominal;
+    // ========================== MENGAMBIL DATA SALDO PER SISWA ==========================
+    public function getBalance(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
 
-        // Simpan transaksi
-        $saving = Saving::create([
-            'student_id' => $request->student_id,
-            'tanggal'    => $request->tanggal,
-            'nominal'    => $request->nominal,
-            'jenis'      => 'Tarik',
-            'saldo'      => $newSaldo,
-            'keterangan' => $request->keterangan,
-        ]);
+        DB::statement('set @no=0+' . $page * $per);
+
+        // ambil saving + relasi student + classroom
+        $allData = Saving::with('student.classroom')
+            ->when($request->search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                })
+                    ->orWhere('jenis', 'like', "%$search%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('student_id')   // hanya ambil terbaru per student_id
+            ->values();              // reset index collection
+
+        $data = $allData->forPage($page + 1, $per)->values();
+
+        $data = $data->map(function ($item) {
+            $item->no = DB::selectOne('select @no := @no + 1 as no')->no;
+            $item->nama_siswa = $item->student->nama ?? null;
+            $item->nama_kelas = $item->student->classroom->nama_kelas ?? null;
+            return $item;
+        });
 
         return response()->json([
-            'success' => true,
-            'saving'  => $saving
+            'data' => $data,
+            'total' => $allData->count(),
+            'per_page' => $per,
+            'current_page' => $page + 1,
+            'last_page' => ceil($allData->count() / $per),
         ]);
     }
 }

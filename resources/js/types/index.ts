@@ -8,3 +8,4 @@ export type { PaymentType } from "./paymentType";
 export type { SchoolYear } from "./schoolYear";
 export type { Bill } from "./bill";
 export type { Major } from "./major";
+export type { Saving } from "./saving";

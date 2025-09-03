@@ -70,6 +70,15 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: "/savings/balance",
+                name: "savings.balance",
+                component: () => import("@/pages/dashboard/savings/balance/Index.vue"),
+                meta: {
+                    pageTitle: "Saldo",
+                    breadcrumbs: ["Tabungan", "Saldo"],
+                },
+            },
+            {
                 path: "/transaction",
                 name: "transaction",
                 component: () => import("@/pages/dashboard/transaction/Index.vue"),

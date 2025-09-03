@@ -13,7 +13,6 @@ class Saving extends Model
 
     protected $fillable = [
         'student_id',
-        'tanggal',
         'nominal',
         'jenis',
         'saldo',

@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->date('tanggal');
             $table->decimal('nominal', 15, 2);
             $table->enum('jenis', ['Setor', 'Tarik']);
-/            $table->text('keterangan')->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
 
             // relasi ke tabel siswa
