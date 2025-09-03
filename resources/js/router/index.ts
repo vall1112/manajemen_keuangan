@@ -96,7 +96,6 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Website", "Setting"],
                 },
             },
-
             // MASTER
             {
                 path: "/dashboard/master/users/roles",

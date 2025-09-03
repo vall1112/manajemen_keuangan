@@ -6,15 +6,11 @@
         style="z-index: 1030; backdrop-filter: blur(10px); background: rgba(0, 0, 0, 0.1) !important;">
         <div class="container-fluid px-6">
           <a class="navbar-brand fw-bold fs-4" href="#">
-            <i class="ki-duotone ki-wallet text-primary fs-2x me-2">
-              <span class="path1"></span>
-              <span class="path2"></span>
-              <span class="path3"></span>
-            </i>
-            {{ setting?.app || 'EduFinance' }}
+            {{ setting?.app || 'EduFinance' }} <!-- Menghapus ikon ki-wallet -->
           </a>
-          <div class="navbar-nav ms-auto">
-            <router-link to="/sign-in" class="btn btn-primary btn-sm px-4">
+          <div class="navbar-nav ms-auto d-flex align-items-center">
+            <img alt="Logo" :src="setting?.logo" class="h-50px app-sidebar-logo-default" />
+            <router-link to="/sign-in" class="btn btn-primary btn-sm px-4 ms-4">
               <i class="ki-duotone ki-entrance-right me-2">
                 <span class="path1"></span>
                 <span class="path2"></span>
@@ -57,7 +53,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-6">
+            <!-- <div class="col-lg-6">
               <div class="hero-stats fade-in-up" style="animation-delay: 0.3s">
                 <div class="row g-4">
                   <div class="col-6" v-for="(stat, index) in stats" :key="index">
@@ -74,8 +70,10 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
+          <!-- Updated transparent box -->
+          <div class="transparent-box"></div>
         </div>
 
         <!-- Scroll Indicator -->
@@ -137,7 +135,7 @@
       </section>
 
       <!-- Why Choose Us Section -->
-      <section class="why-section py-20 bg-light">
+      <!-- <section class="why-section py-20 bg-light">
         <div class="container-fluid">
           <div class="row align-items-center">
             <div class="col-lg-6">
@@ -192,10 +190,10 @@
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
       <!-- Articles Section -->
-      <section id="articles" class="articles-section py-20">
+      <!-- <section id="articles" class="articles-section py-20">
         <div class="container-fluid">
           <div class="text-center mb-15 fade-in-up">
             <span class="badge badge-info badge-lg mb-4">Artikel & Berita</span>
@@ -242,7 +240,7 @@
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
       <!-- CTA Section -->
       <section class="cta-section py-20 bg-primary position-relative overflow-hidden">
@@ -255,21 +253,21 @@
               kami
             </p>
             <div class="d-flex flex-wrap justify-content-center gap-4">
-              <router-link to="/register" class="btn btn-light btn-lg px-8 hover-scale">
+              <router-link to="/sign-up" class="btn btn-light btn-lg px-8 hover-scale">
+                <i class="ki-duotone ki-user-tick me-2">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+                Login
+              </router-link>
+              <router-link to="/sign-up" class="btn btn-light btn-lg px-8 hover-scale">
                 <i class="ki-duotone ki-user-tick me-2">
                   <span class="path1"></span>
                   <span class="path2"></span>
                   <span class="path3"></span>
                 </i>
                 Daftar Gratis
-              </router-link>
-              <router-link to="/demo" class="btn btn-outline-light btn-lg px-8 hover-scale">
-                <i class="ki-duotone ki-eye me-2">
-                  <span class="path1"></span>
-                  <span class="path2"></span>
-                  <span class="path3"></span>
-                </i>
-                Lihat Demo
               </router-link>
             </div>
           </div>
@@ -356,13 +354,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useSetting } from '@/services';
 
 // State
 const router = useRouter();
 const { data: setting } = useSetting();
+const { data: newSetting } = useSetting(); // Asumsikan ini sumber baru untuk bg_landingpage
 
 // Computed
 const taglineText = computed(() => 'Solusi manajemen keuangan sekolah yang terintegrasi, transparan, dan mudah digunakan untuk semua stakeholder pendidikan.');
@@ -370,6 +369,20 @@ const taglineText = computed(() => 'Solusi manajemen keuangan sekolah yang terin
 const featuresBackgroundStyle = computed(() => ({
   background: 'linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%)',
 }));
+
+const heroBackgroundStyle = computed(() => {
+  const bgImage = newSetting?.value?.bg_landingpage || '';
+  return {
+    backgroundImage: bgImage ? `url(${bgImage})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  };
+});
 
 // Stats Data
 const stats = ref([
@@ -499,22 +512,22 @@ const advantages = ref([
 const achievements = ref([
   {
     icon: 'ki-medal-star',
-    value: 1500,
+    value: 0,
     label: 'Sekolah Partner'
   },
   {
     icon: 'ki-heart',
-    value: 98,
+    value: 0,
     label: 'Tingkat Kepuasan'
   },
   {
     icon: 'ki-award',
-    value: 15,
+    value: 0,
     label: 'Penghargaan'
   },
   {
     icon: 'ki-discount',
-    value: 85,
+    value: 0,
     label: 'Efisiensi Biaya'
   }
 ]);
@@ -623,6 +636,13 @@ onMounted(() => {
   initSmoothScroll();
   initScrollAnimations();
 });
+
+// Watch untuk memperbarui background saat newSetting berubah
+watch(() => newSetting.value, (newVal) => {
+  if (newVal?.bg_landingpage) {
+    document.querySelector('.hero-background').style.backgroundImage = `url(${newVal.bg_landingpage})`;
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>
@@ -719,7 +739,6 @@ onMounted(() => {
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
 }
@@ -730,8 +749,9 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-  animation: float 8s ease-in-out infinite;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-overlay {
@@ -743,13 +763,66 @@ onMounted(() => {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.hero-content h1 {
-  line-height: 1.2;
-}
-
 .hero-stats .stat-card {
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Styling untuk logo di pojok kiri atas */
+.app-sidebar-logo-default {
+  position: absolute;
+  top: 10px;
+  /* Jarak dari atas */
+  left: 20px;
+  /* Jarak dari kiri */
+  max-height: 50px;
+  /* Pastikan tinggi maksimum sesuai class h-50px */
+  object-fit: contain;
+  /* Memastikan logo tidak terdistorsi */
+  z-index: 1031;
+  /* Di atas navbar */
+}
+
+/* Pastikan navbar cukup tinggi untuk menampung logo */
+.navbar {
+  min-height: 70px;
+  /* Sesuaikan tinggi navbar jika perlu */
+}
+
+/* Responsive adjustment untuk logo */
+@media (max-width: 768px) {
+  .app-sidebar-logo-default {
+    top: 5px;
+    /* Mengurangi jarak atas pada layar kecil */
+    left: 10px;
+    /* Mengurangi jarak kiri pada layar kecil */
+    max-height: 40px;
+    /* Mengurangi ukuran logo pada layar kecil */
+  }
+}
+
+/* Posisi dan styling untuk teks */
+.hero-content {
+  position: relative;
+  /* Membuat teks bisa digeser */
+  margin-top: -100px;
+  /* Geser teks ke atas (sesuaikan nilai ini, misalnya -50px atau -150px) */
+  z-index: 2;
+  /* Pastikan teks berada di atas kotak */
+}
+
+/* Styling untuk kotak transparan */
+.transparent-box {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 60%;
+  background: rgba(36, 33, 33, 0.8);
+  /* Sesuaikan warna jika perlu */
+  z-index: 1;
+  /* Kotak di bawah teks */
 }
 
 .scroll-indicator .bounce {
