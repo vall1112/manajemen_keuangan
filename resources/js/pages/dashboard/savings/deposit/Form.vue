@@ -6,8 +6,10 @@ import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import type { Student } from "@/types";
 import { useStudent } from "@/services/useStudent";
+import { useRouter } from "vue-router";
 
 const emit = defineEmits(["close", "refresh"]);
+const router = useRouter();
 
 const saving = ref<any>({});
 const formRef = ref();
@@ -43,7 +45,13 @@ function submit() {
       emit("close");
       emit("refresh");
       toast.success("Data berhasil disimpan");
+
       formRef.value.resetForm();
+
+      // jeda 3 detik, lalu redirect
+      setTimeout(() => {
+        router.push({ name: "savings.history" });
+      }, 3000);
     })
     .catch((err: any) => {
       formRef.value.setErrors(err.response.data.errors);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Saving;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -148,6 +149,28 @@ class SavingController extends Controller
             'per_page' => $per,
             'current_page' => $page + 1,
             'last_page' => ceil($allData->count() / $per),
+        ]);
+    }
+
+    public function detailSavings($id)
+    {
+        // ambil data siswa + relasi kelas & jurusan
+        $student = Student::with(['classroom.major'])
+            ->findOrFail($id);
+
+        // ambil semua riwayat tabungan siswa
+        $savings = Saving::where('student_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // hitung saldo terakhir (ambil dari saving terakhir)
+        $lastBalance = $savings->first()?->saldo ?? 0;
+
+        return response()->json([
+            'success'      => true,
+            'student'      => $student,
+            'savings'      => $savings,
+            'last_balance' => $lastBalance,
         ]);
     }
 }
