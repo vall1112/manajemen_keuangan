@@ -2,7 +2,7 @@
     <section class="w-100">
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">No. Telepon</label>
+            <label class="form-label fw-bold fs-6">No. Telepon</label>
             <Field class="form-control form-control-lg form-control-solid" type="text" name="phone" autocomplete="off"
                 v-model="formData.phone" disabled />
             <div class="fv-plugins-message-container">
@@ -15,7 +15,7 @@
 
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6 d-flex align-items-center justify-content-between">Kode OTP
+            <label class="form-label fw-bold fs-6 d-flex align-items-center justify-content-between">Kode OTP
             </label>
             <v-otp-input input-classes="form-control form-control-lg form-control-solid text-center" name="otp_phone"
                 separator="-" :num-inputs="6" :should-auto-focus="true" input-type="numeric"

@@ -24,59 +24,76 @@ const columns = [
     }),
     column.accessor("jenis_pembayaran_id", {
         header: "Jenis Pembayaran",
-        cell: (info) => info.row.original.paymentType?.nama ?? "-",
+        cell: (info) => info.row.original.payment_type?.nama_jenis ?? "-",
     }),
-    // column.accessor("school_year_id", {
-    //     header: "Tahun Ajaran",
-    //     cell: (info) => info.row.original.schoolYear?.tahun_ajaran ?? "-",
-    // }),
+    column.accessor("school_year_id", {
+        header: "Tahun Ajaran",
+        cell: (info) => {
+            const sy = info.row.original.school_year;
+            if (!sy) return "-";
+            return `${sy.tahun_ajaran} (${sy.semester})`;
+        },
+    }),
     column.accessor("total", {
-        header: "Total",
-        cell: (info) => new Intl.NumberFormat("id-ID").format(info.getValue() ?? 0),
+        header: "Total Bayar",
+        cell: (info) =>
+            new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 2,
+            }).format(info.getValue() ?? 0),
     }),
     column.accessor("tanggal_tagih", {
-        header: "Tagih",
+        header: "Tanggal Tagih",
+        cell: (info) =>
+            info.getValue()
+                ? new Date(info.getValue()).toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                })
+                : "-",
     }),
-    column.accessor("status", {
-        header: "Status",
-    }),
-    // column.accessor("dibayar", {
-    //     header: "Dibayar",
-    //     cell: (info) => new Intl.NumberFormat("id-ID").format(info.getValue() ?? 0),
-    // }),
-    column.accessor("sisa", {
-        header: "Sisa",
-        cell: (info) => new Intl.NumberFormat("id-ID").format(info.getValue() ?? 0),
-    }),
-    // column.accessor("keterangan", {
-    //     header: "Keterangan",
-    //     cell: (info) => info.getValue() || "-",
-    // }),
     column.accessor("id", {
         header: "Aksi",
-        cell: (cell) =>
-            h("div", { class: "d-flex gap-2" }, [
+        cell: (cell) => {
+            const row = cell.row.original;
+            return h("div", { class: "d-flex gap-2" }, [
+                // h(
+                //     "button",
+                //     {
+                //         class: "btn btn-sm btn-icon btn-info",
+                //         onClick: () => {
+                //             selected.value = cell.getValue();
+                //             openForm.value = true;
+                //         },
+                //     },
+                //     h("i", { class: "la la-pencil fs-2" })
+                // ),
+                // h(
+                //     "button",
+                //     {
+                //         class: "btn btn-sm btn-icon btn-danger",
+                //         onClick: () =>
+                //             deleteBill(`/master/bills/${cell.getValue()}`),
+                //     },
+                //     h("i", { class: "la la-trash fs-2" })
+                // ),
                 h(
                     "button",
                     {
-                        class: "btn btn-sm btn-icon btn-info",
+                        class: "btn btn-sm btn-light-success",
                         onClick: () => {
-                            selected.value = cell.getValue();
-                            openForm.value = true;
+                            alert(`Bayar tagihan ID: ${cell.getValue()}`);
                         },
                     },
-                    h("i", { class: "la la-pencil fs-2" })
+                    [
+                        h("i", { class: "la la-credit-card fs-2 me-1" }),
+                        "Bayar"
+                    ]
                 ),
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-danger",
-                        onClick: () =>
-                            deleteBill(`/master/bills/${cell.getValue()}`),
-                    },
-                    h("i", { class: "la la-trash fs-2" })
-                ),
-            ]),
+            ]);
+        },
     }),
 ];
 
@@ -91,33 +108,18 @@ watch(openForm, (val) => {
 </script>
 
 <template>
-    <Form
-        :selected="selected"
-        @close="openForm = false"
-        v-if="openForm"
-        @refresh="refresh"
-    />
+    <Form :selected="selected" @close="openForm = false" v-if="openForm" @refresh="refresh" />
 
     <div class="card">
         <div class="card-header align-items-center">
             <h2 class="mb-0">Daftar Tagihan</h2>
-            <button
-                type="button"
-                class="btn btn-sm btn-primary ms-auto"
-                v-if="!openForm"
-                @click="openForm = true"
-            >
+            <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate
-                ref="paginateRef"
-                id="table-bills"
-                url="/master/bills"
-                :columns="columns"
-            ></paginate>
+            <paginate ref="paginateRef" id="table-bills" url="/master/bills" :columns="columns"></paginate>
         </div>
     </div>
 </template>

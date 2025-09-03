@@ -114,16 +114,9 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         Route::middleware('can:transaction')->group(function () {
             Route::get('transactions', [TransactionController::class, 'get']);
             Route::post('transactions', [TransactionController::class, 'index']);
-            Route::post('transactions', [TransactionController::class, 'store']);
+            Route::post('transactions/store', [TransactionController::class, 'store']);
             Route::apiResource('transactions', TransactionController::class)
-                ->except(['pembayaran']);
+                ->except(['index', 'store']);
         });
     });
 });
-  
-            Route::get('bills', [BillController::class, 'get']);
-            Route::post('bills', [BillController::class, 'index']);
-            Route::post('bills/store', [BillController::class, 'store']);
-            Route::apiResource('bills', BillController::class)
-                ->except(['index', 'store']);
-
