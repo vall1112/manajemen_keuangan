@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tagihan_id');
+            $table->unsignedBigInteger('bill_id');
             $table->decimal('nominal', 10, 2);
             $table->string('metode', 50);
             $table->string('bukti')->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             // foreign key ke tabel bills/tagihan
-            $table->foreign('tagihan_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
         });
     }
 

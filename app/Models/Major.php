@@ -5,20 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Saving extends Model
+class Major extends Model
 {
     use HasFactory;
 
+    protected $table = 'majors'; // tabel yang dipakai
+
     protected $fillable = [
-        'student_id',
-        'tanggal',
-        'nominal',
-        'jenis',
+        'kode',
+        'nama_jurusan',
         'keterangan',
     ];
-
-    public function student()
-    {
-        return $this->belongsTo(Student::class);
-    }
 }

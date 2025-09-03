@@ -36,20 +36,18 @@ mata_pelajaran: Yup.string().nullable(),
 });
 
 function getEdit() {
-    block(document.getElementById("form-teacher"));
-    ApiService.get("master/teachers", props.selected)
-        .then(({ data }) => {
-            teacher.value = data.teacher;
-            foto.value = data.teacher.foto
-                ? ["/storage/" + data.teacher.foto]
-                : [];
-        })
-        .catch((err: any) => {
-            toast.error(err.response.data.message);
-        })
-        .finally(() => {
-            unblock(document.getElementById("form-teacher"));
-        });
+  block(document.getElementById("form-teacher"));
+  ApiService.get("master/teachers", props.selected)
+    .then(({ data }) => {
+      teacher.value = data.teacher;
+      foto.value = data.teacher.foto ? ["/storage/" + data.teacher.foto] : [];
+    })
+    .catch((err: any) => {
+      toast.error(err.response.data.message);
+    })
+    .finally(() => {
+      unblock(document.getElementById("form-teacher"));
+    });
 }
 
 function submit() {

@@ -47,9 +47,9 @@ const schoolYears = computed(() =>
 );
 
 const formSchema = Yup.object().shape({
-  siswa_id: Yup.string().required("Siswa harus dipilih"),
-  jenis_pembayaran_id: Yup.string().required("Jenis pembayaran harus dipilih"),
-  tahun_ajaran_id: Yup.string().required("Tahun ajaran harus dipilih"),
+  student_id: Yup.string().required("Siswa harus dipilih"),
+  payment_type_id: Yup.string().required("Jenis pembayaran harus dipilih"),
+  school_year_id: Yup.string().required("Tahun ajaran harus dipilih"),
   total: Yup.number().required("Total harus diisi").min(1, "Minimal 1"),
   tanggal_tagih: Yup.date().required("Tanggal tagih harus diisi"),
   keterangan: Yup.string().nullable(),
@@ -71,9 +71,9 @@ function getEdit() {
 
 function submit() {
   const formData = new FormData();
-  formData.append("siswa_id", bill.value.siswa_id);
-  formData.append("jenis_pembayaran_id", bill.value.jenis_pembayaran_id);
-  formData.append("tahun_ajaran_id", bill.value.tahun_ajaran_id);
+  formData.append("student_id", bill.value.student_id);
+  formData.append("payment_type_id", bill.value.payment_type_id);
+  formData.append("school_year_id", bill.value.school_year_id);
   formData.append("total", bill.value.total);
   formData.append("tanggal_tagih", bill.value.tanggal_tagih);
   formData.append("keterangan", bill.value.keterangan ?? "");
@@ -150,16 +150,16 @@ watch(
         <div class="col-md-4">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Nama Siswa</label>
-            <Field name="siswa_id" type="hidden" v-model="bill.siswa_id">
+            <Field name="student_id" type="hidden" v-model="bill.student_id">
               <select2
                 placeholder="Pilih siswa"
                 class="form-select-solid"
                 :options="students"
-                name="siswa_id"
-                v-model="bill.siswa_id"
+                name="student_id"
+                v-model="bill.student_id"
               />
             </Field>
-            <ErrorMessage name="siswa_id" class="text-danger small" />
+            <ErrorMessage name="student_id" class="text-danger small" />
           </div>
         </div>
 
@@ -168,19 +168,19 @@ watch(
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Jenis Pembayaran</label>
             <Field
-              name="jenis_pembayaran_id"
+              name="payment_type_id"
               type="hidden"
-              v-model="bill.jenis_pembayaran_id"
+              v-model="bill.payment_type_id"
             >
               <select2
                 placeholder="Pilih jenis pembayaran"
                 class="form-select-solid"
                 :options="paymentTypes"
-                name="jenis_pembayaran_id"
-                v-model="bill.jenis_pembayaran_id"
+                name="payment_type_id"
+                v-model="bill.payment_type_id"
               />
             </Field>
-            <ErrorMessage name="jenis_pembayaran_id" class="text-danger small" />
+            <ErrorMessage name="payment_type_id" class="text-danger small" />
           </div>
         </div>
 
@@ -188,16 +188,16 @@ watch(
         <div class="col-md-4">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Tahun Ajaran</label>
-            <Field name="tahun_ajaran_id" type="hidden" v-model="bill.tahun_ajaran_id">
+            <Field name="school_year_id" type="hidden" v-model="bill.school_year_id">
               <select2
                 placeholder="Pilih tahun ajaran"
                 class="form-select-solid"
                 :options="schoolYears"
-                name="tahun_ajaran_id"
-                v-model="bill.tahun_ajaran_id"
+                name="school_year_id"
+                v-model="bill.school_year_id"
               />
             </Field>
-            <ErrorMessage name="tahun_ajaran_id" class="text-danger small" />
+            <ErrorMessage name="school_year_id" class="text-danger small" />
           </div>
         </div>
 

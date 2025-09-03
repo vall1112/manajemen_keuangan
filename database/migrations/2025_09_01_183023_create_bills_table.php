@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('siswa_id');
-            $table->unsignedBigInteger('jenis_pembayaran_id');
-            $table->unsignedBigInteger('tahun_ajaran_id');
+            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('payment_type_id');
+            $table->unsignedBigInteger('school_year_id');
             $table->decimal('total', 10, 2);
             $table->date('tanggal_tagih');
             $table->enum('status', ['Belum Dibayar', 'Dibayar Sebagian', 'Lunas'])->default('Belum Dibayar');
@@ -25,9 +25,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign keys
-            $table->foreign('siswa_id')->references('id')->on('students')->onDelete('cascade');
-            $table->foreign('jenis_pembayaran_id')->references('id')->on('payment_types')->onDelete('cascade');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('school_years')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('cascade');
+            $table->foreign('school_year_id')->references('id')->on('school_years')->onDelete('cascade');
         });
     }
 

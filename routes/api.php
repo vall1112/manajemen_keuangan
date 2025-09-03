@@ -7,10 +7,12 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SavingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,6 +88,14 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
 
+        Route::middleware('can:master-major')->group(function () {
+            Route::get('majors', [MajorController::class, 'get']);
+            Route::post('majors', [MajorController::class, 'index']);
+            Route::post('majors/store', [MajorController::class, 'store']);
+            Route::apiResource('majors', MajorController::class)
+                ->except(['index', 'store']);
+        });
+
         Route::middleware('can:master-payment')->group(function () {
             Route::get('payment-types', [PaymentTypeController::class, 'get']);
             Route::post('payment-types', [PaymentTypeController::class, 'index']);
@@ -117,6 +127,11 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('transactions/store', [TransactionController::class, 'store']);
             Route::apiResource('transactions', TransactionController::class)
                 ->except(['index', 'store']);
+        });
+
+        Route::middleware('can:saving')->group(function () {
+            Route::get('savings', [SavingController::class, 'get']);
+            Route::get('savings/deposits/store', [SavingController::class, 'storeDeposit']);
         });
     });
 });

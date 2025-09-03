@@ -20,7 +20,7 @@ const transaction = ref<any>({});
 const formRef = ref();
 
 const formSchema = Yup.object().shape({
-  tagihan_id: Yup.string().required("Pilih tagihan"),
+  bill_id: Yup.string().required("Pilih tagihan"),
   nominal: Yup.number().required("Nominal harus diisi"),
   metode: Yup.string().required("Metode pembayaran harus diisi"),
   bukti: Yup.mixed().nullable(),
@@ -44,7 +44,7 @@ function getEdit() {
 
 function submit() {
   const formData = new FormData();
-  formData.append("tagihan_id", transaction.value.tagihan_id);
+  formData.append("bill_id", transaction.value.bill_id);
   formData.append("nominal", transaction.value.nominal);
   formData.append("metode", transaction.value.metode);
   if (transaction.value.bukti instanceof File) {
@@ -120,11 +120,11 @@ watch(
         <div class="col-md-6">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Tagihan</label>
-            <Field name="tagihan_id" type="hidden" v-model="transaction.tagihan_id">
-              <select2 placeholder="Pilih Tagihan" class="form-select-solid" :options="bills" name="tagihan_id"
-                v-model="transaction.tagihan_id" />
+            <Field name="bill_id" type="hidden" v-model="transaction.bill_id">
+              <select2 placeholder="Pilih Tagihan" class="form-select-solid" :options="bills" name="bill_id"
+                v-model="transaction.bill_id" />
             </Field>
-            <ErrorMessage name="tagihan_id" class="text-danger" />
+            <ErrorMessage name="bill_id" class="text-danger" />
           </div>
         </div>
 

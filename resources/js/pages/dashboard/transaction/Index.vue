@@ -18,7 +18,7 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
-    column.accessor("tagihan_id", {
+    column.accessor("bill_id", {
         header: "Tagihan",
         cell: (info) => info.row.original.bill?.student?.nama ?? "-", 
         // kalau mau tampilkan nama siswa dari tagihan

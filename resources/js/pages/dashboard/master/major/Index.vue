@@ -3,14 +3,14 @@ import { h, ref, watch } from "vue";
 import { useDelete } from "@/libs/hooks";
 import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
-import type { Classroom } from "@/types";
+import type { Major } from "@/types";
 
-const column = createColumnHelper<Classroom>();
+const column = createColumnHelper<Major>();
 const paginateRef = ref<any>(null);
 const selected = ref<number | null>(null);
 const openForm = ref<boolean>(false);
 
-const { delete: deleteTeacher } = useDelete({
+const { delete: deleteMajor } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
@@ -18,19 +18,15 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
-    column.accessor("nama_kelas", {
-        header: "Kelas",
+    column.accessor("kode", {
+        header: "Kode",
     }),
-    column.accessor("major_id", {
+    column.accessor("nama_jurusan", {
         header: "Jurusan",
-        cell: (info) => info.row.original.major?.nama_jurusan ?? "-",
     }),
-    column.accessor("wali_kelas_id", {
-        header: "Wali Kelas",
-        cell: (info) => info.row.original.teacher?.nama ?? "-",
-    }),
-    column.accessor("jumlah_anak", {
-        header: "Jumlah Anak",
+    column.accessor("keterangan", {
+        header: "Keterangan",
+        cell: (info) => info.getValue() ?? "-",
     }),
     column.accessor("id", {
         header: "Aksi",
@@ -52,7 +48,7 @@ const columns = [
                     {
                         class: "btn btn-sm btn-icon btn-danger",
                         onClick: () =>
-                            deleteTeacher(`/master/classrooms/${cell.getValue()}`),
+                            deleteMajor(`/master/majors/${cell.getValue()}`),
                     },
                     h("i", { class: "la la-trash fs-2" })
                 ),
@@ -75,14 +71,14 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">Daftar Kelas</h2>
+            <h2 class="mb-0">Daftar Jurusan</h2>
             <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate ref="paginateRef" id="table-classrooms" url="/master/classrooms" :columns="columns"></paginate>
+            <paginate ref="paginateRef" id="table-majors" url="/master/majors" :columns="columns"></paginate>
         </div>
     </div>
 </template>
