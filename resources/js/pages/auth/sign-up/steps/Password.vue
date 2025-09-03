@@ -2,7 +2,7 @@
     <section class="w-100">
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Password</label>
+            <label class="form-label fw-bold fs-6">Password</label>
             <div class="position-relative mb-3">
                 <!--begin::Input-->
                 <Field class="form-control form-control-lg form-control-solid" type="password" name="password"
@@ -25,7 +25,7 @@
 
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Konfirmasi Password</label>
+            <label class="form-label fw-bold fs-6">Konfirmasi Password</label>
             <div class="position-relative mb-3">
                 <!--begin::Input-->
                 <Field class="form-control form-control-lg form-control-solid" type="password" name="password_confirmation"

@@ -6,7 +6,7 @@
                 <router-link to="/">
                     <img :src="setting?.logo" :alt="setting?.app" class="w-200px mb-8" />
                 </router-link>
-                <h1 class="text-dark mb-3">
+                <h1 class="mb-3">
                     Daftar Akun ke <span class="text-primary">{{ setting?.app }}</span>
                 </h1>
             </div>

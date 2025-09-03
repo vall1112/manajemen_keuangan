@@ -2,7 +2,7 @@
     <section class="w-100">
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Email</label>
+            <label class="form-label fw-bold fs-6">Email</label>
             <Field 
                 class="form-control form-control-lg form-control-solid" 
                 type="text" 
@@ -21,7 +21,7 @@
 
         <!--begin::Input group-->
         <div class="fv-row mb-7">
-            <label class="form-label fw-bold text-dark fs-6">Kode OTP</label>
+            <label class="form-label fw-bold fs-6">Kode OTP</label>
             
             <!-- Manual Input Mode -->
             <Field 
