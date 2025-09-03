@@ -52,9 +52,31 @@ class SavingController extends Controller
             'keterangan' => 'nullable|string|max:255',
         ]);
 
-        $validatedData['jenis'] = 'Tarik';
+        // Ambil saldo terakhir siswa
+        $lastSaldo = Saving::where('student_id', $request->student_id)
+            ->orderBy('id', 'desc')
+            ->value('saldo') ?? 0;
 
-        $saving = Saving::create($validatedData);
+        // Cek cukup/tidak
+        if ($lastSaldo < $request->nominal) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saldo tidak mencukupi untuk penarikan.'
+            ], 422);
+        }
+
+        // Hitung saldo baru
+        $newSaldo = $lastSaldo - $request->nominal;
+
+        // Simpan transaksi
+        $saving = Saving::create([
+            'student_id' => $request->student_id,
+            'tanggal'    => $request->tanggal,
+            'nominal'    => $request->nominal,
+            'jenis'      => 'Tarik',
+            'saldo'      => $newSaldo,
+            'keterangan' => $request->keterangan,
+        ]);
 
         return response()->json([
             'success' => true,

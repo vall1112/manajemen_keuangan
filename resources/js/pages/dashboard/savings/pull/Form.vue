@@ -58,7 +58,7 @@ function submit() {
 <template>
   <VForm class="form card mb-10" @submit="submit" :validation-schema="formSchema" id="form-saving" ref="formRef">
     <div class="card-header align-items-center">
-      <h2 class="mb-0">Setor Tabungan</h2>
+      <h2 class="mb-0">Tarik Tabungan</h2>
     </div>
 
     <div class="card-body">
