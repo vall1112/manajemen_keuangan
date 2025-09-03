@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { getAssetPath } from "@/core/helpers/assets";
 import KTHeaderNavbar from "@/layouts/default-layout/components/header/Navbar.vue";
 import {
@@ -7,6 +8,28 @@ import {
     layout,
     themeMode,
 } from "@/layouts/default-layout/config/helper";
+import { useSetting } from "@/services";
+import { useAuthStore } from '@/stores/auth'; // Tambahkan import ini
+import { useRouter } from 'vue-router'; // Tambahkan import ini
+import * as Yup from 'yup'; // Tambahkan import ini
+
+// Setup function digantikan dengan composition API
+const store = useAuthStore();
+const router = useRouter();
+const { data: setting = {} } = useSetting();
+const submitButton = ref(null);
+
+// Create form validation object
+const login = Yup.object().shape({
+    identifier: Yup.string()
+        .email("Email/No. Telepon tidak valid")
+        .required("Harap masukkan Email/No. Telepon")
+        .label("Email"),
+    password: Yup.string()
+        .min(8, "Password minimal terdiri dari 8 karakter")
+        .required("Harap masukkan password")
+        .label("Password"),
+});
 </script>
 
 <template>
@@ -20,36 +43,33 @@ import {
                 'container-xxl': !headerWidthFluid,
             }"
         >
+            <!-- Logo section for desktop -->
             <div
                 v-if="layout === 'light-header' || layout === 'dark-header'"
                 class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15"
             >
                 <router-link to="/">
                     <img
-                        v-if="
-                            themeMode === 'light' && layout === 'light-header'
-                        "
+                        v-if="themeMode === 'light' && layout === 'light-header'"
                         alt="Logo"
                         :src="getAssetPath('media/logos/default.svg')"
                         class="h-20px h-lg-30px app-sidebar-logo-default theme-light-show"
                     />
                     <img
-                        v-if="
-                            layout === 'dark-header' ||
-                            (themeMode === 'dark' && layout === 'light-header')
-                        "
+                        v-if="layout === 'dark-header' || (themeMode === 'dark' && layout === 'light-header')"
                         alt="Logo"
                         :src="getAssetPath('media/logos/default-dark.svg')"
                         class="h-20px h-lg-30px app-sidebar-logo-default"
                     />
                 </router-link>
             </div>
+
+            <!-- Mobile layout -->
             <template v-else>
                 <!--begin::sidebar mobile toggle-->
                 <div
                     class="d-flex align-items-center d-lg-none ms-n3 me-1 me-md-2"
-                    v-tooltip
-                    title="Show sidebar menu"
+                    v-tooltip="'Show sidebar menu'"
                 >
                     <div
                         class="btn btn-icon btn-active-color-primary w-35px h-35px"
@@ -62,20 +82,20 @@ import {
                     </div>
                 </div>
                 <!--end::sidebar mobile toggle-->
+
                 <!--begin::Mobile logo-->
-                <div
-                    class="d-flex align-items-center flex-grow-1 flex-lg-grow-0"
-                >
+                <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
                     <router-link to="/" class="d-lg-none">
                         <img
-                            alt="Logo"
-                            :src="getAssetPath('media/logos/default-small.svg')"
-                            class="h-30px"
+                            :alt="setting?.app"
+                            :src="setting?.logo"
+                            class="w-40px mb-1"
                         />
                     </router-link>
                 </div>
                 <!--end::Mobile logo-->
             </template>
+
             <!--begin::Header wrapper-->
             <div
                 class="d-flex align-items-stretch justify-content-end flex-lg-grow-1"
