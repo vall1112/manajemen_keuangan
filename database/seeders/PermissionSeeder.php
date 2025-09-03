@@ -35,6 +35,10 @@ class PermissionSeeder extends Seeder
             'master-school-year',
             'bill',
             'transaction',
+            'savings-deposit',
+            'savings-pull',
+            'savings-history',
+            'savings',
         ];
 
         // Insert permission kalau belum ada

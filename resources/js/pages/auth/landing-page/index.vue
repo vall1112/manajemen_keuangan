@@ -2,15 +2,16 @@
   <main>
     <div class="d-flex flex-column min-vh-100">
       <!-- Navigation Bar -->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-transparent position-fixed w-100"
-        style="z-index: 1030; backdrop-filter: blur(10px); background: rgba(0, 0, 0, 0.1) !important;">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-transparent position-fixed w-100" style="z-index: 1030;">
         <div class="container-fluid px-6">
-          <a class="navbar-brand fw-bold fs-4" href="#">
-            {{ setting?.app || 'EduFinance' }} <!-- Menghapus ikon ki-wallet -->
-          </a>
-          <div class="navbar-nav ms-auto d-flex align-items-center">
-            <img alt="Logo" :src="setting?.logo" class="h-50px app-sidebar-logo-default" />
-            <router-link to="/sign-in" class="btn btn-primary btn-sm px-4 ms-4">
+          <div class="d-flex align-items-center">
+            <img alt="Logo" :src="setting?.logo" class="h-50px me-4" />
+            <a class="navbar-brand fw-bold fs-4" href="#">
+              {{ setting?.app || 'EduFinance' }}
+            </a>
+          </div>
+          <div class="navbar-nav ms-auto">
+            <router-link to="/sign-in" class="btn btn-primary btn-sm px-4">
               <i class="ki-duotone ki-entrance-right me-2">
                 <span class="path1"></span>
                 <span class="path2"></span>
@@ -54,7 +55,7 @@
               </div>
             </div>
             <!-- <div class="col-lg-6">
-              <div class="hero-stats fade-in-up" style="animation-delay: 0.3s">
+              <div class="hero-stats fade-in-up">
                 <div class="row g-4">
                   <div class="col-6" v-for="(stat, index) in stats" :key="index">
                     <div class="stat-card bg-white bg-opacity-10 rounded-4 p-6 text-center hover-scale"
@@ -72,11 +73,8 @@
               </div>
             </div> -->
           </div>
-          <!-- Updated transparent box -->
           <div class="transparent-box"></div>
         </div>
-
-        <!-- Scroll Indicator -->
         <div class="scroll-indicator position-absolute bottom-0 start-50 translate-middle-x mb-8">
           <a href="#features" class="text-white opacity-75 hover-opacity-100 smooth-scroll">
             <i class="ki-duotone ki-down fs-2x bounce">
@@ -87,7 +85,7 @@
       </section>
 
       <!-- Features Section -->
-      <section id="features" class="features-section py-20" :style="featuresBackgroundStyle">
+      <section id="features" class="features-section py-20">
         <div class="container-fluid">
           <div class="text-center mb-15 fade-in-up">
             <span class="badge badge-primary badge-lg mb-4">Fitur Unggulan</span>
@@ -98,7 +96,6 @@
               Kelola semua aspek keuangan sekolah dalam satu platform yang terintegrasi dan mudah digunakan
             </p>
           </div>
-
           <div class="row g-8">
             <div class="col-xl-4 col-md-6" v-for="(feature, index) in features" :key="index">
               <div class="feature-card card border-0 shadow-lg h-100 hover-scale fade-in-up"
@@ -148,7 +145,6 @@
                   Platform kami telah membantu sekolah-sekolah mencapai transparansi dan efisiensi dalam pengelolaan
                   keuangan.
                 </p>
-
                 <div class="row g-6">
                   <div class="col-6" v-for="(advantage, index) in advantages" :key="index">
                     <div class="d-flex align-items-start">
@@ -170,7 +166,7 @@
               </div>
             </div>
             <div class="col-lg-6">
-              <div class="text-center fade-in-up" style="animation-delay: 0.3s">
+              <div class="text-center fade-in-up">
                 <div class="bg-primary rounded-3 p-10 position-relative overflow-hidden">
                   <div class="achievement-bg"></div>
                   <div class="row g-6 position-relative">
@@ -204,14 +200,12 @@
               Dapatkan tips, panduan, dan insight terbaru untuk meningkatkan efisiensi keuangan sekolah Anda
             </p>
           </div>
-
           <div class="row g-6">
             <div class="col-lg-4 col-md-6" v-for="(article, index) in articles" :key="index">
               <article class="article-card card border-0 shadow-lg h-100 hover-scale fade-in-up"
                 :style="{ 'animation-delay': `${0.2 + index * 0.1}s` }">
                 <div class="article-image">
-                  <img :src="article.image" class="card-img-top" :alt="article.title"
-                    style="height: 200px; object-fit: cover;">
+                  <img :src="article.image" class="card-img-top" :alt="article.title" style="height: 200px; object-fit: cover;">
                   <div class="article-badge">
                     <span class="badge badge-primary">{{ article.category }}</span>
                   </div>
@@ -245,12 +239,11 @@
       <!-- CTA Section -->
       <section class="cta-section py-20 bg-primary position-relative overflow-hidden">
         <div class="cta-background"></div>
-        <div class="container-fluid position-relative">
+        <div class="container-fluid">
           <div class="text-center text-white fade-in-up">
             <h2 class="display-5 fw-bold mb-4">Siap Memulai Transformasi Digital?</h2>
             <p class="fs-4 opacity-85 mb-8 mx-auto" style="max-width: 600px;">
-              Bergabunglah dengan ribuan sekolah yang telah merasakan kemudahan pengelolaan keuangan dengan platform
-              kami
+              Bergabunglah dengan ribuan sekolah yang telah merasakan kemudahan pengelolaan keuangan dengan platform kami
             </p>
             <div class="d-flex flex-wrap justify-content-center gap-4">
               <router-link to="/sign-up" class="btn btn-light btn-lg px-8 hover-scale">
@@ -655,7 +648,6 @@ watch(() => newSetting.value, (newVal) => {
     opacity: 0;
     transform: translateY(50px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -663,43 +655,30 @@ watch(() => newSetting.value, (newVal) => {
 }
 
 @keyframes bounce {
-
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
+  0%, 20%, 50%, 80%, 100% {
     transform: translateY(0);
   }
-
   40% {
     transform: translateY(-10px);
   }
-
   60% {
     transform: translateY(-5px);
   }
 }
 
 @keyframes float {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-20px);
   }
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1);
   }
-
   50% {
     transform: scale(1.05);
   }
@@ -768,50 +747,12 @@ watch(() => newSetting.value, (newVal) => {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Styling untuk logo di pojok kiri atas */
-.app-sidebar-logo-default {
-  position: absolute;
-  top: 10px;
-  /* Jarak dari atas */
-  left: 20px;
-  /* Jarak dari kiri */
-  max-height: 50px;
-  /* Pastikan tinggi maksimum sesuai class h-50px */
-  object-fit: contain;
-  /* Memastikan logo tidak terdistorsi */
-  z-index: 1031;
-  /* Di atas navbar */
-}
-
-/* Pastikan navbar cukup tinggi untuk menampung logo */
-.navbar {
-  min-height: 70px;
-  /* Sesuaikan tinggi navbar jika perlu */
-}
-
-/* Responsive adjustment untuk logo */
-@media (max-width: 768px) {
-  .app-sidebar-logo-default {
-    top: 5px;
-    /* Mengurangi jarak atas pada layar kecil */
-    left: 10px;
-    /* Mengurangi jarak kiri pada layar kecil */
-    max-height: 40px;
-    /* Mengurangi ukuran logo pada layar kecil */
-  }
-}
-
-/* Posisi dan styling untuk teks */
 .hero-content {
   position: relative;
-  /* Membuat teks bisa digeser */
   margin-top: -100px;
-  /* Geser teks ke atas (sesuaikan nilai ini, misalnya -50px atau -150px) */
   z-index: 2;
-  /* Pastikan teks berada di atas kotak */
 }
 
-/* Styling untuk kotak transparan */
 .transparent-box {
   position: absolute;
   top: 50%;
@@ -820,9 +761,7 @@ watch(() => newSetting.value, (newVal) => {
   width: 100%;
   height: 60%;
   background: rgba(36, 33, 33, 0.8);
-  /* Sesuaikan warna jika perlu */
   z-index: 1;
-  /* Kotak di bawah teks */
 }
 
 .scroll-indicator .bounce {
@@ -836,7 +775,6 @@ watch(() => newSetting.value, (newVal) => {
 
 .navbar-scrolled {
   background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px);
 }
 
 /* Features Section */
@@ -847,13 +785,10 @@ watch(() => newSetting.value, (newVal) => {
 .feature-card {
   border-radius: 20px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
 }
 
 .feature-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
 }
 
 .feature-icon .symbol-label {
@@ -880,7 +815,6 @@ watch(() => newSetting.value, (newVal) => {
 
 .article-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
 }
 
 .article-image {
@@ -926,43 +860,20 @@ watch(() => newSetting.value, (newVal) => {
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
 }
 
-.footer-brand img {
-  filter: brightness(0) invert(1);
-}
-
 /* Button Styles */
 .btn {
   border-radius: 12px;
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.btn:hover::before {
-  left: 100%;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
   border: none;
-  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(33, 150, 243, 0.4);
 }
 
 .btn-outline-light:hover {
@@ -992,18 +903,15 @@ watch(() => newSetting.value, (newVal) => {
 .badge {
   border-radius: 20px;
   font-weight: 600;
-  letter-spacing: 0.5px;
 }
 
 .badge-lg {
   padding: 0.5rem 1rem;
-  font-size: 0.875rem;
 }
 
 /* Symbol Styles */
 .symbol-label {
   border-radius: 15px;
-  transition: all 0.3s ease;
 }
 
 .card:hover .symbol-label {
@@ -1015,7 +923,6 @@ watch(() => newSetting.value, (newVal) => {
   .display-3 {
     font-size: 3rem;
   }
-
   .display-5 {
     font-size: 2.5rem;
   }
@@ -1025,20 +932,16 @@ watch(() => newSetting.value, (newVal) => {
   .hero-section {
     padding-top: 8rem;
   }
-
   .display-3 {
     font-size: 2.5rem;
   }
-
   .display-5 {
     font-size: 2rem;
   }
-
   .py-20 {
     padding-top: 4rem !important;
     padding-bottom: 4rem !important;
   }
-
   .py-15 {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
@@ -1049,34 +952,27 @@ watch(() => newSetting.value, (newVal) => {
   .hero-section {
     padding-top: 6rem;
   }
-
   .display-3 {
     font-size: 2rem;
   }
-
   .display-5 {
     font-size: 1.75rem;
   }
-
   .fs-4 {
     font-size: 1.1rem !important;
   }
-
   .btn-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
   }
-
   .py-20 {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
   }
-
   .py-15 {
     padding-top: 2rem !important;
     padding-bottom: 2rem !important;
   }
-
   .px-6 {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -1087,30 +983,15 @@ watch(() => newSetting.value, (newVal) => {
   .hero-section {
     padding-top: 5rem;
   }
-
   .display-3 {
     font-size: 1.75rem;
   }
-
   .display-5 {
     font-size: 1.5rem;
   }
-
   .btn-lg {
     padding: 0.625rem 1.25rem;
     font-size: 0.9rem;
-  }
-
-  .card-body {
-    padding: 2rem 1.5rem;
-  }
-
-  .p-8 {
-    padding: 2rem !important;
-  }
-
-  .p-6 {
-    padding: 1.5rem !important;
   }
 }
 
@@ -1160,103 +1041,16 @@ watch(() => newSetting.value, (newVal) => {
   .bg-light {
     background: #1a1a1a !important;
   }
-
   .text-gray-900 {
     color: #ffffff !important;
   }
-
   .text-muted {
     color: #8a8a8a !important;
-  }
-
-  .card {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
   }
 }
 
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
-}
-
-/* Loading Animation */
-.loading {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-/* Focus States */
-.btn:focus,
-.btn:focus-visible {
-  box-shadow: 0 0 0 0.25rem rgba(33, 150, 243, 0.25);
-}
-
-/* Print Styles */
-@media print {
-
-  .navbar,
-  .scroll-indicator,
-  .cta-section,
-  .footer {
-    display: none !important;
-  }
-
-  .hero-section {
-    background: none !important;
-    color: #000 !important;
-  }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  .btn-outline-light {
-    border-width: 2px;
-  }
-
-  .card {
-    border-width: 2px;
-  }
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .scroll-behavior {
-    scroll-behavior: auto;
-  }
-}
-
-/* Selection Styles */
-::selection {
-  background: rgba(33, 150, 243, 0.3);
-  color: #ffffff;
-}
-
-::-moz-selection {
-  background: rgba(33, 150, 243, 0.3);
-  color: #ffffff;
-}
-
-/* Scrollbar Styles */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #45a049 0%, #1976d2 100%);
 }
 </style>
