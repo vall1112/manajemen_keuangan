@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { block, unblock } from "@/libs/utils";
-<<<<<<< HEAD
 import { onMounted, ref, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
