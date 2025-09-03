@@ -82,7 +82,7 @@
             <!-- Link Sign-in -->
             <div class="text-gray-400 fw-semobold fs-4 text-center">
                 Sudah memiliki akun?
-                <router-link to="/auth/sign-in" class="link-primary fw-bold">Masuk</router-link>
+                <router-link to="/sign-in" class="link-primary fw-bold">Masuk</router-link>
             </div>
         </main>
     </div>

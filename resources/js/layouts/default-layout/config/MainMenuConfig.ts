@@ -32,10 +32,28 @@ const MainMenuConfig: Array<MenuItem> = [
                 keenthemesIcon: "wallet",
             },
             {
-               heading: "Tabungan",
-                name: "transaction",
-                route: "/transaction",
+                sectionTitle: "Tabungan",
+                route: "savings",
                 keenthemesIcon: "bank",
+                name: "savings",
+                sub: [
+                    {
+                        heading: "Tarik",
+                        route: "/savings/deposit",
+                        name: "savings-deposit",
+                    },
+                    {
+                        heading: "Setor",
+                        route: "/savings/pull",
+                        name: "savings-pull",
+                    },
+                    {
+                        heading: "Histori",
+                        route: "/savings/history",
+                        name: "savings-history",
+                    },
+                    
+                ],
             },
         ],
     },

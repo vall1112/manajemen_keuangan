@@ -18,7 +18,7 @@ declare module "vue-router" {
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",
-        redirect: "/landing-page",
+        redirect: "/sikaz",
         component: () => import("@/layouts/default-layout/DefaultLayout.vue"),
         meta: {
             middleware: "auth",
@@ -40,6 +40,33 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     pageTitle: "Bill",
                     breadcrumbs: ["Bill"],
+                },
+            },
+            {
+                path: "/savings/deposit",
+                name: "deposit",
+                component: () => import("@/pages/dashboard/savings/setor/Form.vue"),
+                meta: {
+                    pageTitle: "Deposit",
+                    breadcrumbs: ["Savings", "Deposit"],
+                },
+            },
+            {
+                path: "/savings/pull",
+                name: "pull",
+                component: () => import("@/pages/dashboard/savings/setor/Form.vue"),
+                meta: {
+                    pageTitle: "Pull",
+                    breadcrumbs: ["Savings", "Pull"],
+                },
+            },
+            {
+                path: "/savings/history",
+                name: "history",
+                component: () => import("@/pages/dashboard/savings/setor/Index.vue"),
+                meta: {
+                    pageTitle: "History",
+                    breadcrumbs: ["Savings", "History"],
                 },
             },
             {
@@ -146,6 +173,20 @@ const routes: Array<RouteRecordRaw> = [
     },
     {
         path: "/",
+        children: [
+            {
+                path: "/sikaz",
+                name: "sikaz",
+                component: () => import("@/pages/auth/landing-page/Index.vue"),
+                meta: {
+                    pageTitle: "SIKAZ",
+                    middleware: "guest",
+                },
+            },
+        ],
+    },
+    {
+        path: "/",
         component: () => import("@/layouts/AuthLayout.vue"),
         children: [
             {
@@ -157,21 +198,18 @@ const routes: Array<RouteRecordRaw> = [
                     middleware: "guest",
                 },
             },
+        ],
+    },
+    {
+        path: "/",
+        component: () => import("@/layouts/AuthLayout.vue"),
+        children: [
             {
                 path: "/sign-up",
                 name: "sign-up",
                 component: () => import("@/pages/auth/sign-up/Index.vue"),
                 meta: {
                     pageTitle: "Sign Up",
-                    middleware: "guest",
-                },
-            },
-            {
-                path: "/landing-page",
-                name: "Landing-Page",
-                component: () => import("@/pages/auth/landing-page/Index.vue"),
-                meta: {
-                    pageTitle: "Landing Page",
                     middleware: "guest",
                 },
             },
