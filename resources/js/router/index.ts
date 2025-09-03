@@ -161,7 +161,7 @@ const routes: Array<RouteRecordRaw> = [
     },
     // LANDING PAGE
     {
-        path: "/",
+        path: "/sikaz",
         children: [
             {
                 path: "/sikaz",
