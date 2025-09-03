@@ -45,7 +45,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/savings/deposit",
                 name: "deposit",
-                component: () => import("@/pages/dashboard/savings/setor/Form.vue"),
+                component: () => import("@/pages/dashboard/savings/deposit/Form.vue"),
                 meta: {
                     pageTitle: "Deposit",
                     breadcrumbs: ["Savings", "Deposit"],
@@ -54,7 +54,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/savings/pull",
                 name: "pull",
-                component: () => import("@/pages/dashboard/savings/setor/Form.vue"),
+                component: () => import("@/pages/dashboard/savings/pull/Form.vue"),
                 meta: {
                     pageTitle: "Pull",
                     breadcrumbs: ["Savings", "Pull"],
@@ -63,7 +63,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/savings/history",
                 name: "history",
-                component: () => import("@/pages/dashboard/savings/setor/Index.vue"),
+                component: () => import("@/pages/dashboard/savings/history/Index.vue"),
                 meta: {
                     pageTitle: "History",
                     breadcrumbs: ["Savings", "History"],
