@@ -13,6 +13,7 @@ use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SavingController;
+use App\Http\Controllers\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,6 +134,15 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
 Route::get('savings', [SavingController::class, 'get']);
 Route::post('savings/deposits/store', [SavingController::class, 'storeDeposit']);
+<<<<<<< HEAD
 Route::post('savings/pulls/store', [SavingController::class, 'storePull']);
 Route::post('history/savings', [SavingController::class, 'index']);
 Route::post('savings/balances', [SavingController::class, 'getBalance']);
+=======
+Route::post('savings-pulls/store', [SavingController::class, 'storePull']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
+    Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
+});
+>>>>>>> a0d6370d508f9939020595d7c5c1256774dafcd7

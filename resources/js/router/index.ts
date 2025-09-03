@@ -34,6 +34,15 @@ const routes: Array<RouteRecordRaw> = [
                 },
             },
             {
+                path: "/home",
+                name: "home",
+                component: () => import("@/pages/dashboard/student-display/dashboard/Index.vue"),
+                meta: {
+                    pageTitle: "Dashboard",
+                    breadcrumbs: ["Dashboard"],
+                },
+            },
+            {
                 path: "/bill",
                 name: "bill",
                 component: () => import("@/pages/dashboard/bill/Index.vue"),
