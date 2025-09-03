@@ -30,19 +30,6 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
-    column.accessor("user_id", {
-        header: "Username",
-        cell: (info) => {
-            const username = info.row.original.user?.username;
-            if (username) return username;
-
-            return h(
-                "span",
-                { class: "text-muted fst-italic" }, // text muted dan italic
-                "Belum mempunyai akun"
-            );
-        },
-    }),
     column.accessor("nama", {
         header: "Nama",
     }),

@@ -15,8 +15,10 @@ class AuthController extends Controller
     // ========================== AMBIL DATA USER YANG SEDANG LOGIN ==========================
     public function me()
     {
+        $user = auth()->user()->load('student.classroom');
+
         return response()->json([
-            'user' => auth()->user()
+            'user' => $user
         ]);
     }
 
@@ -100,10 +102,6 @@ class AuthController extends Controller
                 'max:255',
                 'unique:users,email',
             ],
-            'phone' => [
-                'required',
-                'unique:users,phone'
-            ],
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -119,7 +117,6 @@ class AuthController extends Controller
             'username' => $request->username,
             'name' => $request->nama,
             'email' => $request->email,
-            'phone' => $request->phone,
             'password' => Hash::make($request->password),
         ]);
 

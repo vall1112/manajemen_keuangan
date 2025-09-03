@@ -63,7 +63,8 @@ const userPhoto = computed(() => authStore.user?.photo ? `/storage/${authStore.u
 </script>
 
 <template>
-    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold py-4 fs-6 w-275px" data-kt-menu="true">
+    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold py-4 fs-6 w-275px"
+        data-kt-menu="true">
         <div class="menu-item px-3">
             <div class="menu-content d-flex align-items-center px-3">
                 <div class="symbol symbol-50px me-5">
@@ -73,10 +74,24 @@ const userPhoto = computed(() => authStore.user?.photo ? `/storage/${authStore.u
                     <div class="fw-bold d-flex align-items-center fs-5">
                         {{ authStore.user?.name ?? 'Guest' }}
                         <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">
-                            {{ authStore.user?.role?.name ?? 'N/A' }}
+                            <!-- jika punya student -->
+                            <template v-if="authStore.user?.student">
+                                {{ authStore.user?.student?.classroom?.nama_kelas ?? 'N/A' }}
+                            </template>
+                            <!-- jika tidak punya student -->
+                            <template v-else>
+                                {{ authStore.user?.role?.name ?? 'N/A' }}
+                            </template>
                         </span>
                     </div>
-                    <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">
+
+                    <!-- jika punya student -->
+                    <a v-if="authStore.user?.student" href="#" class="fw-semibold text-muted text-hover-primary fs-7">
+                        {{ authStore.user?.student?.nama ?? 'N/A' }}
+                    </a>
+
+                    <!-- jika tidak punya student -->
+                    <a v-else href="#" class="fw-semibold text-muted text-hover-primary fs-7">
                         {{ authStore.user?.email ?? 'N/A' }}
                     </a>
                 </div>

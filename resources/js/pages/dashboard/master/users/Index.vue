@@ -24,11 +24,12 @@ const columns = [
     column.accessor("name", {
         header: "Nama",
     }),
+    column.accessor("student_id", {
+        header: "Siswa",
+        cell: (info) => info.row.original.student?.nama ?? "-",
+    }),
     column.accessor("email", {
         header: "Email",
-    }),
-    column.accessor("phone", {
-        header: "No. Telp",
     }),
     column.accessor("uuid", {
         header: "Aksi",
@@ -69,33 +70,18 @@ watch(openForm, (val) => {
 </script>
 
 <template>
-    <Form
-        :selected="selected"
-        @close="openForm = false"
-        v-if="openForm"
-        @refresh="refresh"
-    />
+    <Form :selected="selected" @close="openForm = false" v-if="openForm" @refresh="refresh" />
 
     <div class="card">
         <div class="card-header align-items-center">
             <h2 class="mb-0">List Users</h2>
-            <button
-                type="button"
-                class="btn btn-sm btn-primary ms-auto"
-                v-if="!openForm"
-                @click="openForm = true"
-            >
+            <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate
-                ref="paginateRef"
-                id="table-users"
-                url="/master/users"
-                :columns="columns"
-            ></paginate>
+            <paginate ref="paginateRef" id="table-users" url="/master/users" :columns="columns"></paginate>
         </div>
     </div>
 </template>

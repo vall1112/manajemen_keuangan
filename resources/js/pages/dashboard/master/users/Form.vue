@@ -4,9 +4,10 @@ import { onMounted, ref, watch, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
-import type { User, Role } from "@/types";
+import type { User, Role, Student } from "@/types";
 import ApiService from "@/core/services/ApiService";
 import { useRole } from "@/services/useRole";
+import { useStudent } from "@/services/useStudent";
 
 const props = defineProps({
     selected: {
@@ -35,8 +36,8 @@ const formSchema = Yup.object().shape({
     passwordConfirmation: Yup.string()
         .oneOf([Yup.ref("password")], "Konfirmasi password harus sama")
         .nullable(),
-    phone: Yup.string().required("Nomor Telepon harus diisi"),
     role_id: Yup.string().required("Pilih role"),
+    student_id: Yup.string().nullable(),
 });
 
 function getEdit() {
@@ -61,8 +62,8 @@ function submit() {
     formData.append("username", user.value.username);
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
-    formData.append("phone", user.value.phone);
     formData.append("role_id", user.value.role_id);
+    formData.append("student_id", user.value.student_id);
 
     if (user.value?.password) {
         formData.append("password", user.value.password);
@@ -96,9 +97,19 @@ function submit() {
             formRef.value.resetForm();
         })
         .catch((err: any) => {
-            formRef.value.setErrors(err.response.data.errors);
-            toast.error(err.response.data.message);
+            if (err.response?.status === 422) {
+                const errors = err.response.data.errors;
+                formRef.value.setErrors(errors);
+
+                Object.values(errors).forEach((messages: any) => {
+                    toast.error(messages[0]);
+                });
+            } else {
+                const message = err.response?.data?.message || "Terjadi kesalahan server";
+                toast.error(message);
+            }
         })
+
         .finally(() => {
             unblock(document.getElementById("form-user"));
         });
@@ -109,6 +120,16 @@ const roles = computed(() =>
     role.data.value?.map((item: Role) => ({
         id: item.id,
         text: item.full_name,
+    }))
+);
+
+const student = useStudent();
+const students = computed(() =>
+    student.data.value?.map((item: Student) => ({
+        id: item.id,
+        text: `${item.nama} - ${item.classroom?.nama_kelas ?? ''}`,
+        nama: item.nama,
+        nama_kelas: item.classroom?.nama_kelas ?? null,
     }))
 );
 
@@ -190,22 +211,6 @@ watch(
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6 required">
-                            Nomor Telepon
-                        </label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="phone"
-                            autocomplete="off" v-model="user.phone" placeholder="089" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="phone" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
                             Password
                         </label>
@@ -231,6 +236,25 @@ watch(
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="passwordConfirmation" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </div>
+                <div class="col-md-6">
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6 required">
+                            Siswa
+                        </label>
+                        <Field name="student_id" type="hidden" v-model="user.student_id">
+                            <select2 placeholder="Pilih siswa" class="form-select-solid" :options="students"
+                                name="student_id" v-model="user.student_id">
+                            </select2>
+                        </Field>
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="student_id" />
                             </div>
                         </div>
                     </div>

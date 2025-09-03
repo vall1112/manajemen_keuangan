@@ -38,15 +38,14 @@ const columns = [
     }),
     column.accessor("jabatan", {
         header: "Jabatan",
-        cell: ({ row }) => {
-            const jabatan = row.original.jabatan || "";
-            const mapel = row.original.mata_pelajaran || "";
-
-            return mapel
-                ? `${jabatan} ( ${mapel} )`
-                : jabatan;
-        },
     }),
+    // column.accessor("mata_pelajaran", {
+    //     header: "Mapel",
+    //     cell: ({ row }) => {
+    //         const mapel = row?.original?.mata_pelajaran?.trim();
+    //         return mapel ? mapel : "-";
+    //     },
+    // }),
     column.accessor("status", {
         header: "Status",
         cell: (cell) => {

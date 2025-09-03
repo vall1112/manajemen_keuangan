@@ -7,7 +7,7 @@
                     <img :src="setting?.logo" :alt="setting?.app" class="w-200px mb-8" />
                 </router-link>
                 <h1 class="mb-3">
-                    Daftar Akun ke <span class="text-primary">{{ setting?.app }}</span>
+                    Daftar ke <span class="text-primary">{{ setting?.app }}</span>
                 </h1>
             </div>
 
@@ -108,7 +108,6 @@ interface ICredential {
     username?: string;
     nama?: string;
     email?: string;
-    phone?: string;
 }
 interface IVerifyEmail { otp_email?: string; }
 interface IPassword { password?: string; password_confirmation?: string; }
@@ -138,7 +137,6 @@ export default defineComponent({
             username: "",
             nama: "",
             email: "",
-            phone: "",
             otp_email: "",
             password: "",
             password_confirmation: "",
@@ -158,10 +156,6 @@ export default defineComponent({
                     .label("Username"),
                 nama: Yup.string().required("Nama tidak boleh kosong").label("Nama"),
                 email: Yup.string().email().required("Email tidak boleh kosong").label("Email"),
-                phone: Yup.string()
-                    .matches(/^08[0-9]\d{8,11}$/, "No. Telepon tidak valid")
-                    .required("No. Telepon tidak boleh kosong")
-                    .label("No. Telepon"),
             }),
             Yup.object({}), // step verifikasi email
             Yup.object({
@@ -221,7 +215,14 @@ export default defineComponent({
             }
         });
 
-        const previousStep = () => { currentStepIndex.value--; _stepperObj.value?.goPrev(); };
+        const previousStep = () => {
+            if (currentStepIndex.value === 0) {
+                router.push({ name: "sign-in" });
+            } else {
+                currentStepIndex.value--;
+                _stepperObj.value?.goPrev();
+            }
+        };
 
         const formSubmit = (values: CreateAccount) => {
             blockBtn("#submit-form");

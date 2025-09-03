@@ -64,7 +64,6 @@ class StudentController extends Controller
             'nama_ibu'      => 'nullable|string|max:255',
             'telepon_ibu'   => 'nullable|string|max:20',
             'foto'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'user_id'       => 'nullable|exists:users,id|unique:students,user_id',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -105,7 +104,6 @@ class StudentController extends Controller
             'telepon_ayah'  => 'nullable|string|max:20',
             'nama_ibu'      => 'nullable|string|max:255',
             'telepon_ibu'   => 'nullable|string|max:20',
-            'user_id'       => 'nullable|unique:students,user_id,' . $student->id,
             'foto'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 

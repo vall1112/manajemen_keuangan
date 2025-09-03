@@ -27,9 +27,19 @@ class StoreUserRequest extends FormRequest
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => ['required', 'confirmed', Password::default()],
-            'phone' => 'required|unique:users',
             'photo' => 'nullable|image',
-            'role_id' => 'required'
+            'role_id' => 'required',
+            'student_id' => 'nullable|exists:students,id|unique:users,student_id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'username.unique'    => 'Username sudah digunakan.',
+            'email.unique'       => 'Email sudah digunakan.',
+            'student_id.unique'  => 'Siswa ini sudah memiliki akun pengguna.',
+            'student_id.exists'  => 'Siswa tidak ditemukan.',
         ];
     }
 }
