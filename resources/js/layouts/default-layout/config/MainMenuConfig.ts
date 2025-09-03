@@ -26,7 +26,7 @@ const MainMenuConfig: Array<MenuItem> = [
                 keenthemesIcon: "dollar",
             },
             {
-               heading: "Transaksi",
+                heading: "Transaksi",
                 name: "transaction",
                 route: "/transaction",
                 keenthemesIcon: "wallet",
@@ -38,21 +38,21 @@ const MainMenuConfig: Array<MenuItem> = [
                 name: "savings",
                 sub: [
                     {
-                        heading: "Tarik",
+                        heading: "Setor",
                         route: "/savings/deposit",
-                        name: "savings-deposit",
+                        name: "savings",
                     },
                     {
-                        heading: "Setor",
+                        heading: "Tarik",
                         route: "/savings/pull",
-                        name: "savings-pull",
+                        name: "savings",
                     },
                     {
                         heading: "Histori",
                         route: "/savings/history",
-                        name: "savings-history",
+                        name: "savings",
                     },
-                    
+
                 ],
             },
         ],
@@ -93,6 +93,11 @@ const MainMenuConfig: Array<MenuItem> = [
                         heading: "Kelas",
                         route: "/dashboard/master/classrooms",
                         name: "master-classroom",
+                    },
+                    {
+                        heading: "Jurusan",
+                        route: "/dashboard/master/majors",
+                        name: "master-major",
                     },
                     {
                         heading: "Tahun Ajaran",

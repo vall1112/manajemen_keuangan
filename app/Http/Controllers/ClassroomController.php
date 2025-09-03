@@ -26,10 +26,12 @@ class ClassroomController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = Classroom::with('teacher') // 👈 tambahkan ini
+        $data = Classroom::with(['teacher', 'major']) // ambil teacher & major
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where('nama_kelas', 'like', "%$search%")
-                    ->orWhere('jurusan', 'like', "%$search%");
+                    ->orWhereHas('major', function (Builder $q) use ($search) {
+                        $q->where('nama', 'like', "%$search%");
+                    });
             })
             ->latest()
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
@@ -42,7 +44,7 @@ class ClassroomController extends Controller
     {
         $validatedData = $request->validate([
             'nama_kelas'   => 'required|string|max:255',
-            'jurusan'      => 'required|string|max:255',
+            'major_id'     => 'required',
             'wali_kelas_id' => 'required|exists:teachers,id',
             'jumlah_anak'  => 'required|integer|min:0',
         ]);
@@ -68,7 +70,7 @@ class ClassroomController extends Controller
     {
         $validatedData = $request->validate([
             'nama_kelas'   => 'required|string|max:255',
-            'jurusan'      => 'required|string|max:255',
+            'major_id'      => 'required',
             'wali_kelas_id' => 'required|exists:teachers,id',
             'jumlah_anak'  => 'required|integer|min:0',
         ]);

@@ -12,7 +12,7 @@ class Transaction extends Model
     protected $table = 'transactions';
 
     protected $fillable = [
-        'tagihan_id',
+        'bill_id',
         'nominal',
         'metode',
         'bukti',
@@ -25,7 +25,7 @@ class Transaction extends Model
      */
     public function bill()
     {
-        return $this->belongsTo(Bill::class, 'tagihan_id');
+        return $this->belongsTo(Bill::class, 'bill_id');
     }
 }
 

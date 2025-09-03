@@ -38,7 +38,7 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'tagihan_id' => 'required|exists:bills,id',
+            'bill_id' => 'required|exists:bills,id',
             'nominal' => 'required|numeric|min:0',
             'metode' => 'required|string|max:50',
             'bukti' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -71,7 +71,7 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $transaction)
     {
         $validatedData = $request->validate([
-            'tagihan_id' => 'required|exists:bills,id',
+            'bill_id' => 'required|exists:bills,id',
             'nominal' => 'required|numeric|min:0',
             'metode' => 'required|string|max:50',
             'bukti' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

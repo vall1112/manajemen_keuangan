@@ -10,9 +10,9 @@ class Bill extends Model
     use HasFactory;
 
     protected $fillable = [
-        'siswa_id',
-        'jenis_pembayaran_id',
-        'tahun_ajaran_id',
+        'student_id',
+        'payment_type_id',
+        'school_year_id',
         'total',
         'tanggal_tagih',
         // 'status',
@@ -26,7 +26,7 @@ class Bill extends Model
      */
     public function student()
     {
-        return $this->belongsTo(Student::class, 'siswa_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     /**
@@ -34,7 +34,7 @@ class Bill extends Model
      */
     public function paymentType()
     {
-        return $this->belongsTo(PaymentType::class, 'jenis_pembayaran_id');
+        return $this->belongsTo(PaymentType::class, 'payment_type_id');
     }
 
     /**
@@ -42,6 +42,6 @@ class Bill extends Model
      */
     public function schoolYear()
     {
-        return $this->belongsTo(SchoolYear::class, 'tahun_ajaran_id');
+        return $this->belongsTo(SchoolYear::class, 'school_year_id');
     }
 }

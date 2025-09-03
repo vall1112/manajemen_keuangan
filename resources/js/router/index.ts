@@ -38,35 +38,35 @@ const routes: Array<RouteRecordRaw> = [
                 name: "bill",
                 component: () => import("@/pages/dashboard/bill/Index.vue"),
                 meta: {
-                    pageTitle: "Bill",
-                    breadcrumbs: ["Bill"],
+                    pageTitle: "Tagihan",
+                    breadcrumbs: ["Tagihan"],
                 },
             },
             {
                 path: "/savings/deposit",
-                name: "deposit",
+                name: "savings.deposit",
                 component: () => import("@/pages/dashboard/savings/deposit/Form.vue"),
                 meta: {
-                    pageTitle: "Deposit",
-                    breadcrumbs: ["Savings", "Deposit"],
+                    pageTitle: "Setor",
+                    breadcrumbs: ["Tabungan", "Setor"],
                 },
             },
             {
                 path: "/savings/pull",
-                name: "pull",
+                name: "savings.pull",
                 component: () => import("@/pages/dashboard/savings/pull/Form.vue"),
                 meta: {
-                    pageTitle: "Pull",
-                    breadcrumbs: ["Savings", "Pull"],
+                    pageTitle: "Tarik",
+                    breadcrumbs: ["Tabungan", "Tarik"],
                 },
             },
             {
                 path: "/savings/history",
-                name: "history",
+                name: "savings.history",
                 component: () => import("@/pages/dashboard/savings/history/Index.vue"),
                 meta: {
-                    pageTitle: "History",
-                    breadcrumbs: ["Savings", "History"],
+                    pageTitle: "Riwayat",
+                    breadcrumbs: ["Tabungan", "Riwayat"],
                 },
             },
             {
@@ -123,8 +123,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/teacher/Index.vue"),
                 meta: {
-                    pageTitle: "Teacher",
-                    breadcrumbs: ["Teacher"],
+                    pageTitle: "Guru",
+                    breadcrumbs: ["Guru"],
                 },
             },
             {
@@ -133,8 +133,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/student/Index.vue"),
                 meta: {
-                    pageTitle: "Student",
-                    breadcrumbs: ["Student"],
+                    pageTitle: "Siswa",
+                    breadcrumbs: ["Siswa"],
                 },
             },
 
@@ -144,8 +144,18 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/classroom/Index.vue"),
                 meta: {
-                    pageTitle: "Classrooms",
-                    breadcrumbs: ["Classrooms"],
+                    pageTitle: "Kelas",
+                    breadcrumbs: ["Kelas"],
+                },
+            },
+            {
+                path: "/dashboard/master/majors",
+                name: "/dashboard.master.majors",
+                component: () =>
+                    import("@/pages/dashboard/master/major/Index.vue"),
+                meta: {
+                    pageTitle: "Jurusan",
+                    breadcrumbs: ["Jurusan"],
                 },
             },
             {
@@ -154,8 +164,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/school_year/Index.vue"),
                 meta: {
-                    pageTitle: "School Year",
-                    breadcrumbs: ["School Year"],
+                    pageTitle: "Tahun Ajaran",
+                    breadcrumbs: ["Tahun Ajaran"],
                 },
             },
             {
@@ -164,8 +174,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/payment_type/Index.vue"),
                 meta: {
-                    pageTitle: "Payment Type",
-                    breadcrumbs: ["Payment Type"],
+                    pageTitle: "Jenis Pembayaran",
+                    breadcrumbs: ["Jenis Pembayaran"],
                 },
             },
         ],

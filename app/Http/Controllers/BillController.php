@@ -49,9 +49,9 @@ class BillController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'siswa_id'            => 'required|exists:students,id',
-            'jenis_pembayaran_id' => 'required|exists:payment_types,id',
-            'tahun_ajaran_id'     => 'required|exists:school_years,id',
+            'student_id'            => 'required|exists:students,id',
+            'payment_type_id' => 'required|exists:payment_types,id',
+            'school_year_id'     => 'required|exists:school_years,id',
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
             'keterangan'          => 'nullable|string|max:255',
@@ -77,9 +77,9 @@ class BillController extends Controller
     public function update(Request $request, Bill $bill)
     {
         $validatedData = $request->validate([
-            'siswa_id'            => 'required|exists:students,id',
-            'jenis_pembayaran_id' => 'required|exists:payment_types,id',
-            'tahun_ajaran_id'     => 'required|exists:school_years,id',
+            'student_id'            => 'required|exists:students,id',
+            'payment_type_id' => 'required|exists:payment_types,id',
+            'school_year_id'     => 'required|exists:school_years,id',
             'total'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
             'keterangan'          => 'nullable|string|max:255',

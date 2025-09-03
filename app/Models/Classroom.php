@@ -13,7 +13,7 @@ class Classroom extends Model
 
     protected $fillable = [
         'nama_kelas',
-        'jurusan',
+        'major_id',
         'wali_kelas_id',
         'jumlah_anak',
     ];
@@ -21,5 +21,10 @@ class Classroom extends Model
     public function teacher()
     {
         return $this->belongsTo(Teacher::class, 'wali_kelas_id');
+    }
+
+     public function major()
+    {
+        return $this->belongsTo(Major::class, 'major_id');
     }
 }

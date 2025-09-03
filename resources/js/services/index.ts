@@ -7,3 +7,4 @@ export { usePaymentType } from "./usePaymentType";
 export { useSchoolYear } from "./useSchoolYear";
 export { useBill } from "./useBill";
 export { useUser } from "./useUser";
+export { useMajor } from "./useMajor";

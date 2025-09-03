@@ -18,11 +18,11 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
-    column.accessor("siswa_id", {
+    column.accessor("student_id", {
         header: "Siswa",
         cell: (info) => info.row.original.student?.nama ?? "-",
     }),
-    column.accessor("jenis_pembayaran_id", {
+    column.accessor("payment_type_id", {
         header: "Jenis Pembayaran",
         cell: (info) => info.row.original.payment_type?.nama_jenis ?? "-",
     }),
@@ -88,7 +88,7 @@ const columns = [
                         },
                     },
                     [
-                        h("i", { class: "la la-credit-card fs-2 me-1" }),
+                        h("i", { class: "la la-credit-card fs-2 me-1" }), // ikon dompet
                         "Bayar"
                     ]
                 ),
