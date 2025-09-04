@@ -12,6 +12,7 @@ class PaymentType extends Model
     protected $table = 'payment_types';
 
     protected $fillable = [
+        'kode',
         'nama_jenis',
         'keterangan',
     ];

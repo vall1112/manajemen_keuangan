@@ -57,7 +57,7 @@ const formSchema = Yup.object().shape({
 
 function getEdit() {
   block(document.getElementById("form-bill"));
-  ApiService.get("master/bills", props.selected)
+  ApiService.get("/bills", props.selected)
     .then(({ data }) => {
       bill.value = data.bill;
     })
@@ -86,8 +86,8 @@ function submit() {
   axios({
     method: "post",
     url: props.selected
-      ? `/master/bills/${props.selected}`
-      : "/master/bills/store",
+      ? `/bills/${props.selected}`
+      : "/bills/store",
     data: formData,
     headers: {
       "Content-Type": "multipart/form-data",

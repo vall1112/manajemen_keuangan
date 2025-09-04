@@ -3,7 +3,7 @@ import { h, ref, watch } from "vue";
 import { useDelete } from "@/libs/hooks";
 import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
-import type { Transaction } from "@/types"; // ubah ke Transaction
+import type { Transaction } from "@/types";
 
 const column = createColumnHelper<Transaction>();
 const paginateRef = ref<any>(null);
@@ -18,10 +18,11 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
-    column.accessor("bill_id", {
-        header: "Tagihan",
-        cell: (info) => info.row.original.bill?.student?.nama ?? "-", 
-        // kalau mau tampilkan nama siswa dari tagihan
+    column.accessor("student_name", {
+        header: "Siswa",
+    }),
+    column.accessor("kode_tagihan", {
+        header: "Kode Tagihan",
     }),
     column.accessor("nominal", {
         header: "Nominal",
@@ -32,57 +33,25 @@ const columns = [
                 minimumFractionDigits: 2,
             }).format(info.getValue() ?? 0),
     }),
-    column.accessor("metode", {
-        header: "Metode",
-    }),
-    column.accessor("bukti", {
-        header: "Bukti",
-        cell: (info) =>
-            info.getValue()
-                ? h("a", { href: info.getValue(), target: "_blank" }, "Lihat")
-                : "-",
+    column.accessor("created_at", {
+        header: "Tanggal Bayar",
+        cell: (info) => {
+            const date = new Date(info.getValue() as string);
+            return new Intl.DateTimeFormat("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+            }).format(date);
+        },
     }),
     column.accessor("status", {
         header: "Status",
         cell: (info) => {
-            const status = info.getValue();
-            const badgeClass =
-                status === "lunas"
-                    ? "badge bg-success"
-                    : status === "pending"
-                    ? "badge bg-warning"
-                    : "badge bg-secondary";
-            return h("span", { class: badgeClass }, status ?? "-");
-        },
-    }),
-    column.accessor("keterangan", {
-        header: "Keterangan",
-    }),
-    column.accessor("id", {
-        header: "Aksi",
-        cell: (cell) =>
-            h("div", { class: "d-flex gap-2" }, [
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-info",
-                        onClick: () => {
-                            selected.value = cell.getValue();
-                            openForm.value = true;
-                        },
-                    },
-                    h("i", { class: "la la-pencil fs-2" })
-                ),
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-danger",
-                        onClick: () =>
-                            deleteTransaction(`/transactions/${cell.getValue()}`),
-                    },
-                    h("i", { class: "la la-trash fs-2" })
-                ),
-            ]),
+            const value = info.getValue() ?? "-";
+            return h("span", {
+                class: value === "Berhasil" ? "text-success" : "text-danger",
+            }, value);
+        }
     }),
 ];
 

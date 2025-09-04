@@ -26,10 +26,36 @@ class TransactionController extends Controller
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
-        $data = Transaction::when($request->search, function (Builder $query, string $search) {
-            $query->where('nominal', 'like', "%$search%")
-                ->orWhere('status', 'like', "%$search%");
-        })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        $data = Transaction::with([
+            'bill.student', // ambil nama siswa
+        ])
+            ->when($request->search, function ($query, $search) {
+                $query->where('nominal', 'like', "%$search%")
+                    ->orWhere('status', 'like', "%$search%")
+                    ->orWhereHas('bill', function ($q) use ($search) {
+                        $q->where('kode', 'like', "%$search%")
+                            ->orWhereHas('student', function ($q2) use ($search) {
+                                $q2->where('nama', 'like', "%$search%");
+                            });
+                    });
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        $data->getCollection()->transform(function ($item) {
+            return [
+                'no' => $item->no,
+                'id' => $item->id,
+                'bill_id' => $item->bill_id,
+                'kode_tagihan' => $item->bill->kode ?? null,
+                'student_name' => $item->bill->student->nama ?? null,
+                'nominal' => $item->nominal,
+                'status' => $item->status,
+                'catatan' => $item->catatan,
+                'created_at' => $item->created_at,
+            ];
+        });
 
         return response()->json($data);
     }
@@ -40,17 +66,15 @@ class TransactionController extends Controller
         $validatedData = $request->validate([
             'bill_id' => 'required|exists:bills,id',
             'nominal' => 'required|numeric|min:0',
-            'metode' => 'required|string|max:50',
-            'bukti' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'in:Pending,Berhasil,Gagal',
-            'keterangan' => 'nullable|string',
+            'catatan' => 'nullable|string',
         ]);
 
-        if ($request->hasFile('bukti')) {
-            $validatedData['bukti'] = $request->file('bukti')->store('transactions', 'public');
-        }
-
         $transaction = Transaction::create($validatedData);
+
+        if ($validatedData['status'] === 'Berhasil') {
+            $transaction->bill()->update(['status' => 'Lunas']);
+        }
 
         return response()->json([
             'success' => true,
@@ -76,7 +100,7 @@ class TransactionController extends Controller
             'metode' => 'required|string|max:50',
             'bukti' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'in:Pending,Berhasil,Gagal',
-            'keterangan' => 'nullable|string',
+            'catatan' => 'nullable|string',
         ]);
 
         if ($request->hasFile('bukti')) {

@@ -18,6 +18,9 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
+    column.accessor("kode", {
+        header: "Kode",
+    }),
     column.accessor("student_id", {
         header: "Siswa",
         cell: (info) => info.row.original.student?.nama ?? "-",
@@ -54,45 +57,17 @@ const columns = [
                 })
                 : "-",
     }),
-    column.accessor("id", {
-        header: "Aksi",
-        cell: (cell) => {
-            const row = cell.row.original;
-            return h("div", { class: "d-flex gap-2" }, [
-                // h(
-                //     "button",
-                //     {
-                //         class: "btn btn-sm btn-icon btn-info",
-                //         onClick: () => {
-                //             selected.value = cell.getValue();
-                //             openForm.value = true;
-                //         },
-                //     },
-                //     h("i", { class: "la la-pencil fs-2" })
-                // ),
-                // h(
-                //     "button",
-                //     {
-                //         class: "btn btn-sm btn-icon btn-danger",
-                //         onClick: () =>
-                //             deleteBill(`/master/bills/${cell.getValue()}`),
-                //     },
-                //     h("i", { class: "la la-trash fs-2" })
-                // ),
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-light-success",
-                        onClick: () => {
-                            alert(`Bayar tagihan ID: ${cell.getValue()}`);
-                        },
-                    },
-                    [
-                        h("i", { class: "la la-credit-card fs-2 me-1" }), // ikon dompet
-                        "Bayar"
-                    ]
-                ),
-            ]);
+    column.accessor("status", {
+        header: "Status",
+        cell: (info) => {
+            const status = info.getValue();
+            return h(
+                "span",
+                {
+                    class: status === "Lunas" ? "text-success" : "text-danger",
+                },
+                status
+            );
         },
     }),
 ];
@@ -119,7 +94,7 @@ watch(openForm, (val) => {
             </button>
         </div>
         <div class="card-body">
-            <paginate ref="paginateRef" id="table-bills" url="/master/bills" :columns="columns"></paginate>
+            <paginate ref="paginateRef" id="table-bills" url="/bills" :columns="columns"></paginate>
         </div>
     </div>
 </template>

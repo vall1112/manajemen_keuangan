@@ -38,6 +38,7 @@ class PaymentTypeController extends Controller
     {
         $validatedData = $request->validate([
             'nama_jenis' => 'required|string|max:255|unique:payment_types,nama_jenis',
+            'kode'       => 'required|string|max:255',
             'keterangan' => 'nullable|string',
         ]);
 
@@ -62,6 +63,7 @@ class PaymentTypeController extends Controller
     {
         $validatedData = $request->validate([
             'nama_jenis' => 'required|string|max:255|unique:payment_types,nama_jenis,' . $paymentType->id,
+            'kode'       => 'required|string|max:255',
             'keterangan' => 'nullable|string',
         ]);
 

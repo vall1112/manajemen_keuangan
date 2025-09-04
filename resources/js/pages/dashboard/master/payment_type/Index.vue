@@ -18,6 +18,9 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
+     column.accessor("kode", {
+        header: "Kode",
+    }),
     column.accessor("nama_jenis", {
         header: "Jenis Pembayaran",
     }),

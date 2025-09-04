@@ -49,13 +49,26 @@ class BillController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'student_id'            => 'required|exists:students,id',
-            'payment_type_id' => 'required|exists:payment_types,id',
-            'school_year_id'     => 'required|exists:school_years,id',
-            'total'               => 'required|numeric|min:0',
-            'tanggal_tagih'       => 'required|date',
-            'keterangan'          => 'nullable|string|max:255',
+            'student_id' => 'required|exists:students,id',
+            'payment_type_id' => [
+                'required',
+                'exists:payment_types,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    $exists = \App\Models\Bill::where('student_id', $request->student_id)
+                        ->where('payment_type_id', $value)
+                        ->exists();
+                    if ($exists) {
+                        $fail('Siswa sudah memiliki jenis pembayaran ini.');
+                    }
+                },
+            ],
+            'school_year_id' => 'required|exists:school_years,id',
+            'total' => 'required|numeric|min:0',
+            'tanggal_tagih' => 'required|date',
+            'keterangan' => 'nullable|string|max:255',
         ]);
+
+        $validatedData['status'] = 'Belum Dibayar';
 
         $bill = Bill::create($validatedData);
 
@@ -69,7 +82,12 @@ class BillController extends Controller
     public function show(Bill $bill)
     {
         return response()->json([
-            'bill' => $bill->load(['student', 'paymentType', 'schoolYear'])
+            'id' => $bill->id,
+            'student_name' => $bill->student ? $bill->student->nama : '',
+            'payment_type_name' => $bill->paymentType ? $bill->paymentType->nama_jenis : '',
+            'school_year' => $bill->schoolYear ? $bill->schoolYear->tahun_ajaran : '',
+            'total' => $bill->total,
+            'status' => $bill->status,
         ]);
     }
 

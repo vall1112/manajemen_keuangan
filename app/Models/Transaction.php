@@ -17,7 +17,7 @@ class Transaction extends Model
         'metode',
         'bukti',
         'status',
-        'keterangan',
+        'catatan',
     ];
 
     /**

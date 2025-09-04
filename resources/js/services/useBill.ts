@@ -5,7 +5,7 @@ export function useBill(options = {}) {
     return useQuery({
         queryKey: ["bills"],
         queryFn: async () =>
-            await axios.get("/master/bills").then((res: any) => res.data.data),
+            await axios.get("/bills").then((res: any) => res.data.data),
         ...options,
     });
 }
