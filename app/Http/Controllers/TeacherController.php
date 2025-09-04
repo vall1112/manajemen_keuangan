@@ -20,16 +20,15 @@ class TeacherController extends Controller
     }
 
     // ========================== AMBIL DATA TEACHER DENGAN PAGINASI ==========================
-    public function index(Request $request)
+     public function index(Request $request)
     {
         $per = $request->per ?? 10;
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
         $data = Teacher::when($request->search, function (Builder $query, string $search) {
-            $query->where('nama', 'like', "%$search%")
-                ->orWhere('nip', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('nip', 'like', "%$search%");
         })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);

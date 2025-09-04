@@ -124,6 +124,17 @@
                             v-on:updatefiles="file => files.bgAuth = file"></file-upload>
                         <!--end::Input-->
                     </div>  
+
+                    <div class="fv-row mb-8">
+                        <!--begin::Label-->
+                        <label class="form-label fw-bold required">Logo Sekolah</label>
+                        <!--end::Label-->
+
+                        <!--begin::Input-->
+                        <file-upload v-bind:files="files.bgAuth" :accepted-file-types="fileTypes" required
+                            v-on:updatefiles="file => files.bgAuth = file"></file-upload>
+                        <!--end::Input-->
+                    </div>  
                     <div class="fv-row mb-8">
                         <!--begin::Label-->
                         <label class="form-label fw-bold required">Background Landing Page</label>

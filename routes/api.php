@@ -7,10 +7,13 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SavingController;
+use App\Http\Controllers\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,6 +89,14 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
 
+        Route::middleware('can:master-major')->group(function () {
+            Route::get('majors', [MajorController::class, 'get']);
+            Route::post('majors', [MajorController::class, 'index']);
+            Route::post('majors/store', [MajorController::class, 'store']);
+            Route::apiResource('majors', MajorController::class)
+                ->except(['index', 'store']);
+        });
+
         Route::middleware('can:master-payment')->group(function () {
             Route::get('payment-types', [PaymentTypeController::class, 'get']);
             Route::post('payment-types', [PaymentTypeController::class, 'index']);
@@ -119,4 +130,16 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
                 ->except(['index', 'store']);
         });
     });
+});
+
+Route::get('savings', [SavingController::class, 'get']);
+Route::post('savings/deposits/store', [SavingController::class, 'storeDeposit']);
+Route::post('history/savings', [SavingController::class, 'index']);
+Route::post('savings/balances', [SavingController::class, 'getBalance']);
+Route::post('savings-pulls/store', [SavingController::class, 'storePull']);
+Route::get('/students/{id}/savings', [SavingController::class, 'detailSavings']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
+    Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
 });

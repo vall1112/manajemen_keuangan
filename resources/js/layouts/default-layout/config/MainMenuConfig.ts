@@ -11,7 +11,6 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
-
     // WEBSITE
     {
         heading: "PEMBAYARAN",
@@ -26,7 +25,7 @@ const MainMenuConfig: Array<MenuItem> = [
                 keenthemesIcon: "dollar",
             },
             {
-               heading: "Transaksi",
+                heading: "Transaksi",
                 name: "transaction",
                 route: "/transaction",
                 keenthemesIcon: "wallet",
@@ -38,21 +37,25 @@ const MainMenuConfig: Array<MenuItem> = [
                 name: "savings",
                 sub: [
                     {
-                        heading: "Tarik",
+                        heading: "Setor",
                         route: "/savings/deposit",
-                        name: "savings-deposit",
+                        name: "savings",
                     },
                     {
-                        heading: "Setor",
+                        heading: "Tarik",
                         route: "/savings/pull",
-                        name: "savings-pull",
+                        name: "savings",
                     },
                     {
                         heading: "Histori",
                         route: "/savings/history",
-                        name: "savings-history",
+                        name: "savings",
                     },
-                    
+                    {
+                        heading: "Saldo",
+                        route: "/savings/balance",
+                        name: "savings",
+                    },
                 ],
             },
         ],
@@ -95,6 +98,11 @@ const MainMenuConfig: Array<MenuItem> = [
                         name: "master-classroom",
                     },
                     {
+                        heading: "Jurusan",
+                        route: "/dashboard/master/majors",
+                        name: "master-major",
+                    },
+                    {
                         heading: "Tahun Ajaran",
                         route: "/dashboard/master/school_years",
                         name: "master-school-year",
@@ -103,6 +111,46 @@ const MainMenuConfig: Array<MenuItem> = [
                         heading: "Jenis Pembayaran",
                         route: "/dashboard/master/payment_types",
                         name: "master-payment",
+                    },
+                ],
+            },
+            {
+                heading: "Setting",
+                route: "/dashboard/setting",
+                name: "setting",
+                keenthemesIcon: "setting-2",
+            },
+        ],
+    },
+    {
+        heading: "SISWA",
+        route: "/dashboard/website",
+        name: "website",
+        pages: [
+            // DASHBOARD SISWA
+            {
+                heading: "Dashboard",
+                route: "/home",
+                name: "dashboard",
+                keenthemesIcon: "home",
+            },
+
+            // MASTER
+            {
+                sectionTitle: "Master",
+                route: "/master",
+                keenthemesIcon: "cube-3",
+                name: "master",
+                sub: [
+                    {
+                        heading: "User",
+                        route: "/dashboard/master/users",
+                        name: "master-user",
+                    },
+                    {
+                        heading: "Role",
+                        route: "/dashboard/master/users/roles",
+                        name: "master-role",
                     },
                 ],
             },

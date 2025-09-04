@@ -13,9 +13,11 @@ class StudentController extends Controller
     // ========================== AMBIL SEMUA DATA STUDENT (TANPA PAGINASI) ==========================
     public function get(Request $request)
     {
+        $students = Student::with('classroom')->get();
+
         return response()->json([
             'success' => true,
-            'data' => Student::all()
+            'data' => $students
         ]);
     }
 
