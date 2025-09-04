@@ -143,3 +143,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
     Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
 });
+
+Route::prefix('profile')->group(function () {
+    Route::get('', [AuthController::class, 'profile']);
+    Route::post('update', [AuthController::class, 'update']);
+});

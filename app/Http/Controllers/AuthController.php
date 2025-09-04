@@ -190,4 +190,18 @@ class AuthController extends Controller
         auth()->logout();
         return response()->json(['success' => true]);
     }
+
+    // ========================== MENGAMBIL DATA USER SISWA ==========================
+    public function profile()
+    {
+        $user = auth()->user()->load([
+            'student.classroom'
+        ]);
+
+        return response()->json([
+            'user'      => $user,
+            'siswa'     => $user->student,
+            'classroom' => $user->student?->classroom,
+        ]);
+    }
 }

@@ -58,8 +58,13 @@ const setLang = (lang: string) => {
 const currentLanguage = computed(() => i18n.locale.value);
 const currentLanguageLocale = computed(() => countries[i18n.locale.value as keyof typeof countries] || countries.en);
 
-// User photo handling
-const userPhoto = computed(() => authStore.user?.photo ? `/storage/${authStore.user.photo}` : "/media/avatars/blank.png");
+// Student photo handling
+const studentFoto = computed(() => {
+    if (authStore.user?.student?.foto) {
+        return `/storage/${authStore.user.student.foto}`;
+    }
+    return "/media/avatars/blank.png";
+});
 </script>
 
 <template>
@@ -68,7 +73,7 @@ const userPhoto = computed(() => authStore.user?.photo ? `/storage/${authStore.u
         <div class="menu-item px-3">
             <div class="menu-content d-flex align-items-center px-3">
                 <div class="symbol symbol-50px me-5">
-                    <img :src="userPhoto" alt="User Photo" />
+                    <img :src="studentFoto" alt="Student Photo" />
                 </div>
                 <div class="d-flex flex-column">
                     <div class="fw-bold d-flex align-items-center fs-5">
