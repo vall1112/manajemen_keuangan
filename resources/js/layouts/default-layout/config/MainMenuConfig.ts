@@ -134,31 +134,17 @@ const MainMenuConfig: Array<MenuItem> = [
                 name: "dashboard",
                 keenthemesIcon: "home",
             },
-
-            // MASTER
             {
-                sectionTitle: "Master",
-                route: "/master",
-                keenthemesIcon: "cube-3",
-                name: "master",
-                sub: [
-                    {
-                        heading: "User",
-                        route: "/dashboard/master/users",
-                        name: "master-user",
-                    },
-                    {
-                        heading: "Role",
-                        route: "/dashboard/master/users/roles",
-                        name: "master-role",
-                    },
-                ],
+                heading: "Tagihan",
+                route: "/home/bill",
+                name: "setting",
+                keenthemesIcon: "dollar",
             },
             {
-                heading: "Setting",
-                route: "/dashboard/setting",
+                heading: "Tabungan",
+                route: "/home/saving",
                 name: "setting",
-                keenthemesIcon: "setting-2",
+                keenthemesIcon: "bank",
             },
         ],
     },

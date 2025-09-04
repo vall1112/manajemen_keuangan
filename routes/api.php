@@ -139,6 +139,9 @@ Route::post('history/savings', [SavingController::class, 'index']);
 Route::post('savings/balances', [SavingController::class, 'getBalance']);
 Route::get('/students/{id}/savings', [SavingController::class, 'detailSavings']);
 
+Route::post('student/savings/balances', [SavingController::class, 'getBalanceStudent']);
+
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
     Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
