@@ -40,15 +40,15 @@ const formatDate = (dateString: string) => {
 
 // Get status badge class
 const getStatusBadge = (status: string) => {
-    return status === 'Aktif' 
-        ? 'badge badge-light-success fw-bold' 
+    return status === 'Aktif'
+        ? 'badge badge-light-success fw-bold'
         : 'badge badge-light-secondary fw-bold';
 };
 
 // Get transaction type class
 const getTransactionTypeClass = (jenis: string) => {
-    return jenis === 'Setor' 
-        ? 'text-success fw-bold' 
+    return jenis === 'Setor'
+        ? 'text-success fw-bold'
         : 'text-danger fw-bold';
 };
 </script>
@@ -62,14 +62,16 @@ const getTransactionTypeClass = (jenis: string) => {
                     <div class="d-flex flex-center flex-column py-5">
                         <!-- Avatar -->
                         <div class="symbol symbol-100px symbol-circle mb-7">
-                            <div class="symbol-label fs-3 bg-light-primary text-primary">
-                                <i class="ki-duotone ki-user fs-1">
+                            <div class="symbol-label fs-3 bg-light-primary text-primary overflow-hidden">
+                                <img v-if="data.student.foto" :src="data.student.foto" alt="Foto Siswa"
+                                    class="w-100 h-100 object-fit-cover" />
+                                <i v-else class="ki-duotone ki-user fs-1">
                                     <span class="path1"></span>
                                     <span class="path2"></span>
                                 </i>
                             </div>
                         </div>
-                        
+
                         <!-- Student Info -->
                         <div v-if="!isLoading && data" class="text-center">
                             <h3 class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3">
@@ -84,7 +86,7 @@ const getTransactionTypeClass = (jenis: string) => {
                                     </i>
                                     <span class="fw-semibold text-muted">{{ data.student.nis }}</span>
                                 </div>
-                                
+
                                 <div class="d-flex align-items-center justify-content-center mb-2">
                                     <i class="ki-duotone ki-bank fs-4 me-2 text-muted">
                                         <span class="path1"></span>
@@ -94,7 +96,7 @@ const getTransactionTypeClass = (jenis: string) => {
                                         {{ data.student.classroom?.nama_kelas ?? "-" }}
                                     </span>
                                 </div>
-                                
+
                                 <div class="d-flex align-items-center justify-content-center">
                                     <i class="ki-duotone ki-graduatecap fs-4 me-2 text-muted">
                                         <span class="path1"></span>
@@ -105,13 +107,13 @@ const getTransactionTypeClass = (jenis: string) => {
                                     </span>
                                 </div>
                             </div>
-                            
+
                             <!-- Status Badge -->
                             <span :class="getStatusBadge(data.student.status)">
                                 {{ data.student.status }}
                             </span>
                         </div>
-                        
+
                         <!-- Loading State -->
                         <div v-else class="text-center">
                             <div class="spinner-border spinner-border-sm text-primary" role="status">
@@ -122,7 +124,7 @@ const getTransactionTypeClass = (jenis: string) => {
                 </div>
             </div>
         </div>
-        
+
         <!-- Main Content -->
         <div class="flex-lg-row-fluid ms-lg-15">
             <!-- Balance Card -->
@@ -165,7 +167,7 @@ const getTransactionTypeClass = (jenis: string) => {
                     </div>
                 </div>
             </div>
-            
+
             <!-- Transaction History -->
             <div class="card">
                 <div class="card-header border-0 pt-6">
@@ -181,7 +183,7 @@ const getTransactionTypeClass = (jenis: string) => {
                         </h3>
                     </div>
                 </div>
-                
+
                 <div class="card-body py-4">
                     <!-- Data Table -->
                     <div v-if="!isLoading && data && data.savings?.length > 0" class="table-responsive">
@@ -258,8 +260,10 @@ const getTransactionTypeClass = (jenis: string) => {
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="symbol symbol-30px me-2">
-                                                <div :class="item.jenis === 'Setor' ? 'symbol-label bg-light-success' : 'symbol-label bg-light-danger'">
-                                                    <i :class="item.jenis === 'Setor' ? 'ki-duotone ki-arrow-up fs-7 text-success' : 'ki-duotone ki-arrow-down fs-7 text-danger'">
+                                                <div
+                                                    :class="item.jenis === 'Setor' ? 'symbol-label bg-light-success' : 'symbol-label bg-light-danger'">
+                                                    <i
+                                                        :class="item.jenis === 'Setor' ? 'ki-duotone ki-arrow-up fs-7 text-success' : 'ki-duotone ki-arrow-down fs-7 text-danger'">
                                                         <span class="path1"></span>
                                                         <span class="path2"></span>
                                                     </i>
@@ -271,8 +275,10 @@ const getTransactionTypeClass = (jenis: string) => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span :class="item.jenis === 'Setor' ? 'fw-bold text-success' : 'fw-bold text-danger'">
-                                            {{ item.jenis === 'Setor' ? '+' : '-' }}{{ formatCurrency(Number(item.nominal)) }}
+                                        <span
+                                            :class="item.jenis === 'Setor' ? 'fw-bold text-success' : 'fw-bold text-danger'">
+                                            {{ item.jenis === 'Setor' ? '+' : '-' }}{{
+                                            formatCurrency(Number(item.nominal)) }}
                                         </span>
                                     </td>
                                     <td>
@@ -289,9 +295,10 @@ const getTransactionTypeClass = (jenis: string) => {
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Empty State -->
-                    <div v-else-if="!isLoading && data && (!data.savings || data.savings.length === 0)" class="d-flex flex-column flex-center py-20">
+                    <div v-else-if="!isLoading && data && (!data.savings || data.savings.length === 0)"
+                        class="d-flex flex-column flex-center py-20">
                         <div class="symbol symbol-100px symbol-circle mb-7">
                             <div class="symbol-label bg-light-warning text-warning">
                                 <i class="ki-duotone ki-bank fs-1">
@@ -305,7 +312,7 @@ const getTransactionTypeClass = (jenis: string) => {
                             Siswa ini belum memiliki riwayat transaksi tabungan
                         </p>
                     </div>
-                    
+
                     <!-- Loading State -->
                     <div v-else-if="isLoading" class="d-flex align-items-center justify-content-center py-20">
                         <div class="d-flex flex-column align-items-center">

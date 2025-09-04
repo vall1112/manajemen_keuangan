@@ -25,19 +25,16 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'username' => 'required|string|max:50|alpha_dash',
-            'name' => 'required|min:3|max:255',
-            'email' => [
+            'name'     => 'required|min:3|max:255',
+            'email'    => [
                 'required',
                 'email',
-                Rule::unique('users')->ignore($this->user->id)
+                Rule::unique('users')->ignore($this->user->id),
             ],
             'password' => ['nullable', 'confirmed', Password::default()],
-            'phone' => [
-                'required',
-                Rule::unique('users')->ignore($this->user->id)
-            ],
-            'photo' => 'nullable|image',
-            'role_id' => 'required|numeric'
+            'photo'    => 'nullable|image',
+            'role_id'  => 'required|numeric',
+            'student_id' => 'nullable|exists:students,id',
         ];
     }
 }

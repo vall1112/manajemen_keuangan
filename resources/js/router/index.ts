@@ -16,6 +16,7 @@ declare module "vue-router" {
 }
 
 const routes: Array<RouteRecordRaw> = [
+    // HALAMAN AWAL SAAT MENGAKSES URL
     {
         path: "/",
         redirect: "/sikaz",
@@ -24,6 +25,7 @@ const routes: Array<RouteRecordRaw> = [
             middleware: "auth",
         },
         children: [
+            // DASHBOARD
             {
                 path: "/dashboard",
                 name: "dashboard",
@@ -42,6 +44,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Dashboard"],
                 },
             },
+            // TAGIHAN
             {
                 path: "/bill",
                 name: "bill",
@@ -51,6 +54,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tagihan"],
                 },
             },
+            // SETOR TABUNGAN
             {
                 path: "/savings/deposit",
                 name: "savings.deposit",
@@ -60,6 +64,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tabungan", "Setor"],
                 },
             },
+            // TARIK TABUNGAN
             {
                 path: "/savings/pull",
                 name: "savings.pull",
@@ -69,6 +74,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tabungan", "Tarik"],
                 },
             },
+            // HISTORI TABUNGAN
             {
                 path: "/savings/history",
                 name: "savings.history",
@@ -78,6 +84,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tabungan", "Riwayat"],
                 },
             },
+            // DETAIL TABUNGAN PER SISWA
             {
                 path: "/savings/detail/:id",
                 name: "savings.detail",
@@ -88,6 +95,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Detail", "Tabungan"],
                 },
             },
+            // SALDO TABUNGAN
             {
                 path: "/savings/balance",
                 name: "savings.balance",
@@ -97,15 +105,17 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tabungan", "Saldo"],
                 },
             },
+            // TRANSAKSI TAGIHAN
             {
                 path: "/transaction",
                 name: "transaction",
                 component: () => import("@/pages/dashboard/transaction/Index.vue"),
                 meta: {
-                    pageTitle: "Transaction",
-                    breadcrumbs: ["Transaction"],
+                    pageTitle: "Transaksi",
+                    breadcrumbs: ["Transaksi"],
                 },
             },
+            // PROFIL SELAIN SISWA
             {
                 path: "/dashboard/profile",
                 name: "dashboard.profile",
@@ -115,6 +125,17 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Profile"],
                 },
             },
+            // PROFIL SISWA
+            {
+                path: "/dashboard/profile/student",
+                name: "dashboard.profile/student",
+                component: () => import("@/pages/dashboard/profile/Student.vue"),
+                meta: {
+                    pageTitle: "Profile",
+                    breadcrumbs: ["Profile"],
+                },
+            },
+            // PENGATURAN
             {
                 path: "/dashboard/setting",
                 name: "dashboard.setting",
@@ -124,7 +145,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Website", "Setting"],
                 },
             },
-            // MASTER
+            // ROLE / PERAN
             {
                 path: "/dashboard/master/users/roles",
                 name: "dashboard.master.users.roles",
@@ -135,6 +156,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users", "Roles"],
                 },
             },
+            // USER / PENGGUNA
             {
                 path: "/dashboard/master/users",
                 name: "dashboard.master.users",
@@ -145,6 +167,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users"],
                 },
             },
+            // GURU
             {
                 path: "/dashboard/master/teachers",
                 name: "/dashboard.master.teachers",
@@ -155,6 +178,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Guru"],
                 },
             },
+            // SISWA
             {
                 path: "/dashboard/master/students",
                 name: "/dashboard.master.students",
@@ -165,7 +189,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Siswa"],
                 },
             },
-
+            // KELAS
             {
                 path: "/dashboard/master/classrooms",
                 name: "/dashboard.master.classrooms",
@@ -176,6 +200,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Kelas"],
                 },
             },
+            // JURUSAN
             {
                 path: "/dashboard/master/majors",
                 name: "/dashboard.master.majors",
@@ -186,6 +211,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Jurusan"],
                 },
             },
+            // TAHUN AJARAN
             {
                 path: "/dashboard/master/school_years",
                 name: "/dashboard.master.school_years",
@@ -196,6 +222,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tahun Ajaran"],
                 },
             },
+            // JENIS PEMBAYARAN
             {
                 path: "/dashboard/master/payment_types",
                 name: "/dashboard.master.payment_types",
@@ -208,6 +235,7 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+    // LANDING PAGE
     {
         path: "/",
         children: [
@@ -222,6 +250,7 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+    // LOGIN
     {
         path: "/",
         component: () => import("@/layouts/AuthLayout.vue"),
@@ -237,6 +266,7 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+    // REGISTER
     {
         path: "/",
         component: () => import("@/layouts/AuthLayout.vue"),
@@ -252,6 +282,7 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+    // ERROR
     {
         path: "/",
         component: () => import("@/layouts/SystemLayout.vue"),
