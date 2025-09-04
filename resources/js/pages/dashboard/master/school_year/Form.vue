@@ -20,7 +20,7 @@ const formRef = ref();
 
 const formSchema = Yup.object().shape({
     tahun_ajaran: Yup.string().required("Tahun ajaran harus diisi"),
-    semester: Yup.string().required("Semester harus dipilih"),
+    // semester: Yup.string().required("Semester harus dipilih"),
     status: Yup.string().required("Status harus dipilih"),
 });
 
@@ -41,7 +41,7 @@ function getEdit() {
 function submit() {
     const formData = new FormData();
     formData.append("tahun_ajaran", schoolYear.value.tahun_ajaran);
-    formData.append("semester", schoolYear.value.semester);
+    // formData.append("semester", schoolYear.value.semester);
     formData.append("status", schoolYear.value.status);
 
     if (props.selected) {
@@ -124,8 +124,7 @@ watch(
                         <ErrorMessage name="tahun_ajaran" class="text-danger small" />
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <!-- Semester -->
+                <!-- <div class="col-md-4">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
                             Semester
@@ -142,7 +141,7 @@ watch(
                         </Field>
                         <ErrorMessage name="semester" class="text-danger small" />
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-4">
                     <!-- Status -->
                     <div class="fv-row mb-7">

@@ -4,7 +4,9 @@ import { useDelete } from "@/libs/hooks";
 import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import type { Bill } from "@/types";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const column = createColumnHelper<Bill>();
 const paginateRef = ref<any>(null);
 const selected = ref<number | null>(null);
@@ -22,7 +24,7 @@ const columns = [
         header: "Kode",
     }),
     column.accessor("student_id", {
-        header: "Siswa",
+        header: "Nama",
         cell: (info) => info.row.original.student?.nama ?? "-",
     }),
     column.accessor("payment_type_id", {
@@ -31,11 +33,7 @@ const columns = [
     }),
     column.accessor("school_year_id", {
         header: "Tahun Ajaran",
-        cell: (info) => {
-            const sy = info.row.original.school_year;
-            if (!sy) return "-";
-            return `${sy.tahun_ajaran} (${sy.semester})`;
-        },
+        cell: (info) => info.row.original.school_year?.tahun_ajaran ?? "-",
     }),
     column.accessor("total", {
         header: "Total Bayar",
@@ -69,6 +67,30 @@ const columns = [
                 status
             );
         },
+    }),
+    column.accessor("id", {
+        header: "Aksi",
+        cell: (cell) =>
+            h("div", { class: "d-flex gap-2" }, [
+                h(
+                    "button",
+                    {
+                        class: "btn btn-sm btn-light-success d-flex align-items-center ",
+                        title: "Bayar Tagihan",
+                        onClick: () => {
+                            const kodeTagihan = cell.row.original.kode; // sesuaikan field kode
+                            router.push({
+                                name: "form.transaction",
+                                query: { kode: kodeTagihan },
+                            });
+                        },
+                    },
+                    [
+                        h("i", { class: "la la-credit-card fs-2" }), // icon bayar
+                        h("span", "Bayar") // teks tombol
+                    ]
+                ),
+            ]),
     }),
 ];
 

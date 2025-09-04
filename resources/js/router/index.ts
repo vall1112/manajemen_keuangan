@@ -133,6 +133,16 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Transaksi"],
                 },
             },
+            // TRANSAKSI TAGIHAN
+            {
+                path: "/form/transaction",
+                name: "form.transaction",
+                component: () => import("@/pages/dashboard/transaction/Form.vue"),
+                meta: {
+                    pageTitle: "Transaksi",
+                    breadcrumbs: ["Transaksi"],
+                },
+            },
             // PROFIL SELAIN SISWA
             {
                 path: "/dashboard/profile",

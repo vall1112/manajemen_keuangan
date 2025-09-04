@@ -15,7 +15,7 @@ const { delete: deleteBalance } = useDelete({
 
 const columns = [
   column.accessor("no", {
-    header: "No.",
+    header: "#",
   }),
   column.accessor("student", {
     header: "Nama",
@@ -44,11 +44,14 @@ const columns = [
         h(
           "button",
           {
-            class: "btn btn-sm btn-icon btn-primary",
+            class: "btn btn-sm btn-light-info d-flex align-items-center gap-1",
             onClick: () => router.push({ name: "savings.detail", params: { id: studentId } }),
           },
-          h("i", { class: "la la-eye fs-2" })
-        ),
+          [
+            h("i", { class: "la la-eye fs-2" }),
+            h("span", "Detail")
+          ]
+        )
       ]);
     },
   }),
@@ -58,12 +61,12 @@ const refresh = () => paginateRef.value.refetch();
 </script>
 
 <template>
-    <div class="card">
-        <div class="card-header align-items-center">
-            <h2 class="mb-0">Saldo Tabungan</h2>
-        </div>
-        <div class="card-body">
-            <paginate ref="paginateRef" id="table-savings" url="/savings/balances" :columns="columns"></paginate>
-        </div>
+  <div class="card">
+    <div class="card-header align-items-center">
+      <h2 class="mb-0">Saldo Tabungan</h2>
     </div>
+    <div class="card-body">
+      <paginate ref="paginateRef" id="table-savings" url="/savings/balances" :columns="columns"></paginate>
+    </div>
+  </div>
 </template>

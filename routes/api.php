@@ -98,7 +98,6 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         Route::get('school-years', [SchoolYearController::class, 'get']);
         Route::post('school-years', [SchoolYearController::class, 'index']);
         Route::post('school-years/store', [SchoolYearController::class, 'store']);
-        Route::put('school-years/{id}/status', [SchoolYearController::class, 'updateStatus']);
         Route::apiResource('school-years', SchoolYearController::class)
             ->except(['index', 'store']);
     });
@@ -130,6 +129,8 @@ Route::post('bills', [BillController::class, 'index']);
 Route::post('bills/store', [BillController::class, 'store']);
 Route::apiResource('bills', BillController::class)
     ->except(['index', 'store']);
+
+Route::put('school-years/{id}/status', [SchoolYearController::class, 'updateStatus']);
 
 Route::get('transactions', [TransactionController::class, 'get']);
 Route::post('transactions', [TransactionController::class, 'index']);

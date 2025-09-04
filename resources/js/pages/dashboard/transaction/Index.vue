@@ -19,7 +19,7 @@ const columns = [
         header: "#",
     }),
     column.accessor("student_name", {
-        header: "Siswa",
+        header: "Nama",
     }),
     column.accessor("kode_tagihan", {
         header: "Kode Tagihan",

@@ -28,12 +28,16 @@ const columns = [
     }),
     column.accessor("school_year_id", {
         header: "Tahun Ajaran",
-        cell: (info) => {
-            const sy = info.row.original.school_year;
-            if (!sy) return "-";
-            return `${sy.tahun_ajaran} (${sy.semester})`;
-        },
+        cell: (info) => info.row.original.school_year?.tahun_ajaran ?? "-",
     }),
+    // column.accessor("school_year_id", {
+    //     header: "Tahun Ajaran",
+    //     cell: (info) => {
+    //         const sy = info.row.original.school_year;
+    //         if (!sy) return "-";
+    //         return `${sy.tahun_ajaran} (${sy.semester})`;
+    //     },
+    // }),
     column.accessor("total", {
         header: "Total Bayar",
         cell: (info) =>
