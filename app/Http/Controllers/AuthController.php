@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -204,4 +207,92 @@ class AuthController extends Controller
             'classroom' => $user->student?->classroom,
         ]);
     }
+
+    // ========================== MENGUPDATE DATA USER SISWA ==========================
+    public function updateStudent(Request $request)
+    {
+        $user = Auth::user();
+
+        // --- Update User ---
+        $userData = [
+            'username' => $request->input('username', $user->username),
+            'email'    => $request->input('email', $user->email), // <-- sinkronkan email
+        ];
+
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($userData);
+
+        // --- Update Student ---
+        $studentData = [
+            'nama'          => $request->input('nama', $user->student->nama),
+            'nis'           => $request->input('nis', $user->student->nis),
+            'jenis_kelamin' => $request->input('jenis_kelamin', $user->student->jenis_kelamin),
+            'tempat_lahir'  => $request->input('tempat_lahir', $user->student->tempat_lahir),
+            'tanggal_lahir' => $request->input('tanggal_lahir', $user->student->tanggal_lahir),
+            'email'         => $request->input('email', $user->student->email),
+            'telepon'       => $request->input('telepon', $user->student->telepon),
+            'alamat'        => $request->input('alamat', $user->student->alamat),
+            'classroom_id'  => $request->input('classroom_id', $user->student->classroom_id),
+            'status'        => $request->input('status', $user->student->status),
+        ];
+
+        $user->student()->update($studentData);
+
+        return response()->json([
+            'success' => true,
+            'user'    => $user->fresh('student'),
+        ]);
+    }
+
+    // ========================== MENGUPDATE DATA USER SELAIN SISWA ==========================
+    public function updateUser(Request $request)
+    {
+        $user = auth()->user(); // ambil user login
+
+        $validatedData = $request->validate([
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users')->ignore($user->id),
+            ],
+            'name'  => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($user->id),
+            ],
+            'password' => 'nullable|string|min:6|confirmed',
+            'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        if (!empty($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']);
+        }
+
+        if ($request->hasFile('photo')) {
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
+            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
+        } else {
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+                $validatedData['photo'] = null;
+            }
+
+        $user->update($validatedData);
+
+        return response()->json([
+            'success' => true,
+            'user'    => $user->fresh(),
+        ]);
+    }
+}
 }

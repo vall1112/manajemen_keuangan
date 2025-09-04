@@ -115,11 +115,21 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Transaksi"],
                 },
             },
-            // PROFIL
+            // PROFIL SELAIN SISWA
             {
                 path: "/dashboard/profile",
                 name: "dashboard.profile",
                 component: () => import("@/pages/dashboard/profile/Index.vue"),
+                meta: {
+                    pageTitle: "Profile",
+                    breadcrumbs: ["Profile"],
+                },
+            },
+            // PROFIL SISWA
+            {
+                path: "/dashboard/profile/student",
+                name: "dashboard.profile/student",
+                component: () => import("@/pages/dashboard/profile/Student.vue"),
                 meta: {
                     pageTitle: "Profile",
                     breadcrumbs: ["Profile"],

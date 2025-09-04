@@ -104,8 +104,15 @@ const studentFoto = computed(() => {
         </div>
         <div class="separator my-2"></div>
         <div class="menu-item px-5 my-1">
-            <router-link to="/dashboard/profile" class="menu-link px-5">Account Settings</router-link>
+            <router-link v-if="authStore.user?.student_id" to="/dashboard/profile/student" class="menu-link px-5">
+                Account Settings
+            </router-link>
+
+            <router-link v-else to="/dashboard/profile" class="menu-link px-5">
+                Account Settings
+            </router-link>
         </div>
+
         <div class="menu-item px-5">
             <a @click="signOut" class="menu-link px-5">Sign Out</a>
         </div>

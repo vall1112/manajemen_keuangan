@@ -146,5 +146,6 @@ Route::middleware('auth:api')->group(function () {
 
 Route::prefix('profile')->group(function () {
     Route::get('', [AuthController::class, 'profile']);
-    Route::post('update', [AuthController::class, 'update']);
+    Route::post('update/student', [AuthController::class, 'updateStudent']);
+    Route::post('update/user', [AuthController::class, 'updateUser']);
 });
