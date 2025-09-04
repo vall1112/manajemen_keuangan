@@ -15,7 +15,7 @@ const { delete: deleteBalance } = useDelete({
 
 const columns = [
   column.accessor("no", {
-    header: "#",
+    header: "No.",
   }),
   column.accessor("student", {
     header: "Nama",
