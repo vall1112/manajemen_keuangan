@@ -44,6 +44,24 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Dashboard"],
                 },
             },
+            {
+                path: "/home/bill",
+                name: "home.bill",
+                component: () => import("@/pages/dashboard/student-display/bill/Index.vue"),
+                meta: {
+                    pageTitle: "Tagihan",
+                    breadcrumbs: ["Tagihan"],
+                },
+            },
+            {
+                path: "/home/saving",
+                name: "home.saving",
+                component: () => import("@/pages/dashboard/student-display/saving/Index.vue"),
+                meta: {
+                    pageTitle: "Tabungan",
+                    breadcrumbs: ["Tabungan"],
+                },
+            },
             // TAGIHAN
             {
                 path: "/bill",

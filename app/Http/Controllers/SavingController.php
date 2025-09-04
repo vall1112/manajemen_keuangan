@@ -152,6 +152,48 @@ class SavingController extends Controller
         ]);
     }
 
+    public function getBalanceStudent(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        // Ambil student_id dari user yang login
+        $studentId = auth()->user()->student_id;
+
+        // ambil saving + relasi student + classroom
+        $allData = Saving::with('student.classroom')
+            ->where('student_id', $studentId) // hanya ambil data milik student login
+            ->when($request->search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                })
+                    ->orWhere('jenis', 'like', "%$search%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique('student_id')   // hanya ambil terbaru per student_id
+            ->values();              // reset index collection
+
+        $data = $allData->forPage($page + 1, $per)->values();
+
+        $data = $data->map(function ($item) {
+            $item->no = DB::selectOne('select @no := @no + 1 as no')->no;
+            $item->nama_siswa = $item->student->nama ?? null;
+            $item->nama_kelas = $item->student->classroom->nama_kelas ?? null;
+            return $item;
+        });
+
+        return response()->json([
+            'data' => $data,
+            'total' => $allData->count(),
+            'per_page' => $per,
+            'current_page' => $page + 1,
+            'last_page' => ceil($allData->count() / $per),
+        ]);
+    }
+
     // ========================== MENGAMBIL DETAIL TABUNGAN SETIAP SISWA ==========================
     public function detailSavings($id)
     {
