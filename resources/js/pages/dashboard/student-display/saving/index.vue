@@ -136,7 +136,7 @@ const fetchSavingDetails = async (studentId: number) => {
   errorDetail.value = null;
   
   try {
-    const response = await axios.get(`/api/students/${studentId}/savings`);
+    const response = await axios.get(`/students/${studentId}/savings`);
     savingDetails.value = response.data.data || [];
   } catch (error: any) {
     console.error('Error fetching saving details:', error);
