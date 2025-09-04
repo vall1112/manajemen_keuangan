@@ -249,50 +249,50 @@ class AuthController extends Controller
 
     // ========================== MENGUPDATE DATA USER SELAIN SISWA ==========================
     public function updateUser(Request $request)
-    {
-        $user = auth()->user(); // ambil user login
+{
+    $user = auth()->user(); // ambil user login
 
-        $validatedData = $request->validate([
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
-            'name'  => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
-            'password' => 'nullable|string|min:6|confirmed',
-            'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    $validatedData = $request->validate([
+        'username' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('users')->ignore($user->id),
+        ],
+        'name'  => 'required|string|max:255',
+        'email' => [
+            'required',
+            'email',
+            'max:255',
+            Rule::unique('users')->ignore($user->id),
+        ],
+        'password' => 'nullable|string|min:6|confirmed',
+        'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-        } else {
-            unset($validatedData['password']);
-        }
-
-        if ($request->hasFile('photo')) {
-            if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
-            }
-            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
-        } else {
-            if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
-                $validatedData['photo'] = null;
-            }
-
-        $user->update($validatedData);
-
-        return response()->json([
-            'success' => true,
-            'user'    => $user->fresh(),
-        ]);
+    // password
+    if (!empty($validatedData['password'])) {
+        $validatedData['password'] = Hash::make($validatedData['password']);
+    } else {
+        unset($validatedData['password']);
     }
+
+    // foto
+    if ($request->hasFile('photo')) {
+        // hapus foto lama
+        if ($user->photo) {
+            Storage::disk('public')->delete($user->photo);
+        }
+        // simpan foto baru
+        $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
+    }
+
+    // update user
+    $user->update($validatedData);
+
+    return response()->json([
+        'success' => true,
+        'user'    => $user->fresh(), // ambil data terbaru
+    ]);
 }
 }
