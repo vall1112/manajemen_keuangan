@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->string('bg_logosekolah', 255)->nullable()->after('bg_auth');
+            $table->string('logo_sekolah', 255)->nullable()->after('bg_auth');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->dropColumn('bg_logosekolah');
+            $table->dropColumn('logo_sekolah');
         });
     }
 };
