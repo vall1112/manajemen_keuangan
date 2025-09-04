@@ -42,8 +42,8 @@ class SettingController extends Controller
                 Storage::disk('public')->delete($old_photo);
             }
 
-            if ($setting->bg_logosekolah != null && $setting->bg_logosekolah != '') {
-                $old_photo = str_replace('/storage/', '', $setting->bg_logosekolah);
+            if ($setting->logo_sekolah != null && $setting->logo_sekolah != '') {
+                $old_photo = str_replace('/storage/', '', $setting->logo_sekolah);
                 Storage::disk('public')->delete($old_photo);
             }
 
@@ -68,8 +68,8 @@ class SettingController extends Controller
                 $data['bg_auth'] = '/storage/' . $request->file('bg_auth')->store('setting', 'public');
             }
 
-            if ($request->hasFile('bg_logosekolah')) {
-                $data['bg_logosekolah'] = '/storage/' . $request->file('bg_logosekolah')->store('setting', 'public');
+            if ($request->hasFile('logo_sekolah')) {
+                $data['logo_sekolah'] = '/storage/' . $request->file('logo_sekolah')->store('setting', 'public');
             }
 
             $setting->update($data);

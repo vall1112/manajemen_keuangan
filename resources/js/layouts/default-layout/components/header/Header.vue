@@ -88,7 +88,7 @@ const login = Yup.object().shape({
                     <router-link to="/" class="d-lg-none">
                         <img
                             :alt="setting?.app"
-                            :src="setting?.logo"
+                            :src="setting?.logo_sekolah"
                             class="w-40px mb-1"
                         />
                     </router-link>
