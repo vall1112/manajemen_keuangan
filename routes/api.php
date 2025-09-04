@@ -110,7 +110,7 @@ Route::post('history/savings', [SavingController::class, 'index']);
 Route::post('savings/balances', [SavingController::class, 'getBalance']);
 Route::get('/students/{id}/savings', [SavingController::class, 'detailSavings']);
 Route::post('student/savings/balances', [SavingController::class, 'getBalanceStudent']);
-
+Route::post('history/savings/user', [SavingController::class, 'indexUser']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
@@ -129,6 +129,8 @@ Route::post('bills', [BillController::class, 'index']);
 Route::post('bills/store', [BillController::class, 'store']);
 Route::apiResource('bills', BillController::class)
     ->except(['index', 'store']);
+Route::post('bills/user', [BillController::class, 'indexUser']);
+
 
 Route::put('school-years/{id}/status', [SchoolYearController::class, 'updateStatus']);
 

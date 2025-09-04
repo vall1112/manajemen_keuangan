@@ -120,4 +120,35 @@ class BillController extends Controller
             'success' => true
         ]);
     }
+
+    // ========================== AMBIL DATA BILL SETIAP SISWAA DENGAN PAGINASI ==========================
+    public function indexUser(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        // Ambil student_id dari user yang sedang login
+        $studentId = auth()->user()->student_id;
+
+        $data = Bill::with(['student', 'paymentType', 'schoolYear'])
+            ->where('student_id', $studentId) // filter berdasarkan student_id
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                })
+                    ->orWhereHas('paymentType', function ($q) use ($search) {
+                        $q->where('nama_jenis', 'like', "%$search%");
+                    })
+                    ->orWhereHas('schoolYear', function ($q) use ($search) {
+                        $q->where('tahun_ajaran', 'like', "%$search%");
+                    })
+                    ->orWhere('keterangan', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        return response()->json($data);
+    }
 }

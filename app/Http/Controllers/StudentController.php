@@ -29,21 +29,23 @@ class StudentController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = Student::with(['classroom', 'user']) // ambil relasi kelas dan user
+        $data = Student::with('classroom') // hanya ambil relasi classroom
             ->when($request->search, function (Builder $query, string $search) {
-                $query->where('nama', 'like', "%$search%")
-                    ->orWhere('nis', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhereHas('user', function (Builder $q) use ($search) { // cari berdasarkan username
-                        $q->where('username', 'like', "%$search%");
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%")
+                        ->orWhere('nis', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        // search di relasi classroom
+                        ->orWhereHas('classroom', function (Builder $q3) use ($search) {
+                            $q3->where('nama_kelas', 'like', "%$search%");
+                        });
+                });
             })
             ->latest()
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);
     }
-
 
     // ========================== SIMPAN DATA STUDENT BARU ==========================
     public function store(Request $request)

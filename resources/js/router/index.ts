@@ -35,28 +35,31 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Dashboard"],
                 },
             },
+            // USER DASHBOARD
             {
-                path: "/home",
-                name: "home",
-                component: () => import("@/pages/dashboard/student-display/dashboard/Index.vue"),
+                path: "/user/Dashboard",
+                name: "user.dashboard",
+                component: () => import("@/pages/student/dashboard/Index.vue"),
                 meta: {
                     pageTitle: "Dashboard",
                     breadcrumbs: ["Dashboard"],
                 },
             },
+            // USER TAGIHAN
             {
-                path: "/home/bill",
-                name: "home.bill",
-                component: () => import("@/pages/dashboard/student-display/bill/Index.vue"),
+                path: "/user/bill",
+                name: "user.bill",
+                component: () => import("@/pages/student/bill/Index.vue"),
                 meta: {
                     pageTitle: "Tagihan",
                     breadcrumbs: ["Tagihan"],
                 },
             },
+            // USER TABUNGAN
             {
-                path: "/home/saving",
-                name: "home.saving",
-                component: () => import("@/pages/dashboard/student-display/saving/Index.vue"),
+                path: "/user/savings",
+                name: "user.savings",
+                component: () => import("@/pages/student/savings/Index.vue"),
                 meta: {
                     pageTitle: "Tabungan",
                     breadcrumbs: ["Tabungan"],
@@ -133,7 +136,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Transaksi"],
                 },
             },
-            // TRANSAKSI TAGIHAN
+            // FORM TRANSAKSI TAGIHAN
             {
                 path: "/form/transaction",
                 name: "form.transaction",
