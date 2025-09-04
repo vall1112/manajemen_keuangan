@@ -130,8 +130,8 @@
                         <!--end::Label-->
 
                         <!--begin::Input-->
-                        <file-upload v-bind:files="files.bgAuth" :accepted-file-types="fileTypes" required
-                            v-on:updatefiles="file => files.bgAuth = file"></file-upload>
+                        <file-upload v-bind:files="files.bgLogoSekolah" :accepted-file-types="fileTypes" required
+                            v-on:updatefiles="file => files.bgLogoSekolah = file"></file-upload>
                         <!--end::Input-->
                     </div>  
                     <div class="fv-row mb-8">
@@ -179,6 +179,7 @@ export default defineComponent({
         const files = ref({
             logo: setting.data?.value?.logo ? [setting.data.value.logo] : [],
             bgAuth: setting.data?.value?.bg_auth ? [setting.data.value.bg_auth] : [],
+            bgLogoSekolah: setting.data?.value?.bg_logosekolah ? [setting.data.value.bg_logosekolah] : [],
             bgLandingPage: setting.data?.value?.bg_landingpage ? [setting.data.value.bg_landingpage] : [],
         })
 
@@ -206,6 +207,7 @@ export default defineComponent({
 
             data.append('logo', this.files.logo[0].file)
             data.append('bg_auth', this.files.bgAuth[0].file)
+            data.append('bg_logosekolah', this.files.bgLogoSekolah[0].file)
             data.append('bg_landingpage', this.files.bgLandingPage[0].file)
 
             block(this.$el)
@@ -229,6 +231,7 @@ export default defineComponent({
 
                 this.files.logo = setting.data.value.logo ? [setting.data.value.logo] : []
                 this.files.bgAuth = setting.data.value.bg_auth ? [setting.data.value.bg_auth] : []
+                this.files.bgLogoSekolah = setting.data.value.bg_logosekolah ? [setting.data.value.bg_logosekolah] : []
                 this.files.bgLandingPage = setting.data.value.bg_landingpage ? [setting.data.value.bg_landingpage] : []
             },
             deep: true

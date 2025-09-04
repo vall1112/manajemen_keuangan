@@ -9,27 +9,27 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('student_id')->nullable()->after('id');
+    // public function up(): void
+    // {
+    //     Schema::table('users', function (Blueprint $table) {
+    //         $table->unsignedBigInteger('student_id')->nullable()->after('id');
 
-            // tambahkan foreign key ke tabel students
-            $table->foreign('student_id')
-                ->references('id')
-                ->on('students')
-                ->onDelete('set null'); // kalau siswa dihapus, student_id jadi null
-        });
-    }
+    //         // tambahkan foreign key ke tabel students
+    //         $table->foreign('student_id')
+    //             ->references('id')
+    //             ->on('students')
+    //             ->onDelete('set null'); // kalau siswa dihapus, student_id jadi null
+    //     });
+    // }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['student_id']);
-            $table->dropColumn('student_id');
-        });
-    }
+    // public function down(): void
+    // {
+    //     Schema::table('users', function (Blueprint $table) {
+    //         $table->dropForeign(['student_id']);
+    //         $table->dropColumn('student_id');
+    //     });
+    // }
 };

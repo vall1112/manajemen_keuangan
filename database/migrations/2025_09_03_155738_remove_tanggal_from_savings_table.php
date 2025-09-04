@@ -6,18 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::table('savings', function (Blueprint $table) {
-            $table->dropColumn('tanggal');
-        });
-    }
+    // public function up(): void
+    // {
+    //     Schema::table('savings', function (Blueprint $table) {
+    //         $table->dropColumn('tanggal');
+    //     });
+    // }
 
-    public function down(): void
-    {
-        Schema::table('savings', function (Blueprint $table) {
-            $table->date('tanggal')->nullable();
-        });
-    }
+    // public function down(): void
+    // {
+    //     Schema::table('savings', function (Blueprint $table) {
+    //         $table->date('tanggal')->nullable();
+    //     });
+    // }
 };
 
