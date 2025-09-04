@@ -11,7 +11,7 @@ class SchoolYear extends Model
 
     protected $fillable = [
         'tahun_ajaran',
-        'semester',
+        // 'semester',
         'status',
     ];
 }

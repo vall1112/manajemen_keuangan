@@ -216,4 +216,29 @@ class SavingController extends Controller
             'last_balance' => $lastBalance,
         ]);
     }
+
+    // ========================== AMBIL SEMUA DATA TABUNGAN SETIAP SISWA DENGAN PAGINASI) ==========================
+    public function indexUser(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        // Ambil student_id dari user yang sedang login
+        $studentId = auth()->user()->student_id;
+
+        $data = Saving::with('student') // relasi ke student
+            ->where('student_id', $studentId) // filter berdasarkan student_id
+            ->when($request->search, function ($query, $search) {
+                $query->whereHas('student', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                })
+                    ->orWhere('jenis', 'like', "%$search%");
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        return response()->json($data);
+    }
 }

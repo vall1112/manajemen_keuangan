@@ -40,7 +40,7 @@ class Student extends Model
     // relasi ke user
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasOne(User::class, 'student_id', 'id');
     }
 
     // Student.php

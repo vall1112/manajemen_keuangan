@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import { block, unblock } from "@/libs/utils";
 import { useRouter } from 'vue-router';
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const router = useRouter();
 
 const props = defineProps({
@@ -22,6 +24,12 @@ const transaction = ref<any>({
   total: 0,
   status: "Berhasil", // hanya di script
   catatan: "",
+});
+
+onMounted(() => {
+    if (route.query.kode) {
+        kodeTagihan.value = String(route.query.kode);
+    }
 });
 
 const formRef = ref();

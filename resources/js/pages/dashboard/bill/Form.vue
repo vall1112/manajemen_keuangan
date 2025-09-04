@@ -42,7 +42,7 @@ const schoolYear = useSchoolYear();
 const schoolYears = computed(() =>
   schoolYear.data.value?.map((item: SchoolYear) => ({
     id: item.id,
-    text: `${item.tahun_ajaran} - ${item.semester}`,
+    text: item.tahun_ajaran,
   }))
 );
 

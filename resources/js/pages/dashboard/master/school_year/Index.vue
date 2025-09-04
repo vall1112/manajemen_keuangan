@@ -22,9 +22,9 @@ const columns = [
     column.accessor("tahun_ajaran", {
         header: "Tahun Ajaran",
     }),
-    column.accessor("semester", {
-        header: "Semester",
-    }),
+    // column.accessor("semester", {
+    //     header: "Semester",
+    // }),
     column.accessor("toggle", {
         header: () =>
             h("div", { class: "text-center" }, "Status"),
@@ -50,9 +50,7 @@ const columns = [
                                 try {
                                     const response = await axios.put(
                                         `/school-years/${row.id}/status`,
-                                        {
-                                            status: newStatus,
-                                        }
+                                        { status: newStatus }
                                     );
                                     toast.success(
                                         response.data.message || "Status berhasil diperbarui!"

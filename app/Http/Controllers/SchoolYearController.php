@@ -28,7 +28,7 @@ class SchoolYearController extends Controller
         DB::statement('set @no=0+' . $page * $per);
         $data = SchoolYear::when($request->search, function (Builder $query, string $search) {
             $query->where('tahun_ajaran', 'like', "%$search%")
-                ->orWhere('semester', 'like', "%$search%")
+                // ->orWhere('semester', 'like', "%$search%")
                 ->orWhere('status', 'like', "%$search%");
         })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
@@ -40,7 +40,7 @@ class SchoolYearController extends Controller
     {
         $validatedData = $request->validate([
             'tahun_ajaran' => 'required|string|max:20',
-            'semester'     => 'required|in:Ganjil,Genap',
+            // 'semester'     => 'required|in:Ganjil,Genap',
             'status'       => 'required|in:Aktif,Tidak Aktif',
         ]);
 
@@ -65,7 +65,7 @@ class SchoolYearController extends Controller
     {
         $validatedData = $request->validate([
             'tahun_ajaran' => 'required|string|max:20',
-            'semester'     => 'required|in:Ganjil,Genap',
+            // 'semester'     => 'required|in:Ganjil,Genap',
             'status'       => 'required|in:Aktif,Tidak Aktif',
         ]);
 

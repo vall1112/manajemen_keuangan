@@ -24,12 +24,18 @@ for (let i = currentYear; i >= currentYear - 2; i--) {
     tahuns.value.push(i);
 }
 
-// Student photo handling
-const studentFoto = computed(() => {
-    if (authStore.user?.student?.foto) {
+// Foto dinamis: student atau user
+const userFoto = computed(() => {
+    if (authStore.user?.student_id && authStore.user.student?.foto) {
+        // User punya student_id dan foto di student
         return `/storage/${authStore.user.student.foto}`;
+    } else if (authStore.user?.photo) {
+        // User tidak punya student_id atau foto student, ambil foto user
+        return `/storage/${authStore.user.photo}`;
+    } else {
+        // Default avatar
+        return "/media/avatars/blank.png";
     }
-    return "/media/avatars/blank.png";
 });
 
 // Logika untuk waktu dan tanggal
@@ -121,7 +127,7 @@ onUnmounted(() => {
             <!--begin::Menu wrapper-->
             <div class="cursor-pointer symbol symbol-35px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
                 data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-                <img :src="studentFoto" class="rounded-3" alt="Student Foto" />
+                <img :src="userFoto" class="rounded-3" alt="User Foto" />
             </div>
             <KTUserMenu />
             <!--end::Menu wrapper-->

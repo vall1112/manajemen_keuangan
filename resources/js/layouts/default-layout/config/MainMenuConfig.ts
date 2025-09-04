@@ -122,29 +122,36 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
+    // DASHBOARD USER
     {
-        heading: "SISWA",
-        route: "/dashboard/website",
-        name: "website",
         pages: [
-            // DASHBOARD SISWA
             {
                 heading: "Dashboard",
-                route: "/home",
-                name: "dashboard",
-                keenthemesIcon: "home",
+                name: "user-dashboard",
+                route: "/user/dashboard",
+                keenthemesIcon: "element-11",
             },
+        ],
+    },
+    // TAGIHAN USER
+    {
+        pages: [
             {
                 heading: "Tagihan",
-                route: "/home/bill",
-                name: "setting",
-                keenthemesIcon: "dollar",
+                name: "user-bill",
+                route: "/user/bill",
+                keenthemesIcon: "element-11",
             },
+        ],
+    },
+    // TABUNGAN USER
+    {
+        pages: [
             {
                 heading: "Tabungan",
-                route: "/home/saving",
-                name: "setting",
-                keenthemesIcon: "bank",
+                name: "user-savings",
+                route: "/user/savings",
+                keenthemesIcon: "element-11",
             },
         ],
     },
