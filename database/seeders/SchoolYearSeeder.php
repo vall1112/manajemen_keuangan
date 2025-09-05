@@ -10,37 +10,31 @@ class SchoolYearSeeder extends Seeder
     public function run(): void
     {
         SchoolYear::create([
-            'tahun_ajaran' => '2023/2024',
-            'semester' => 'Ganjil',
-            'status' => 'aktif',
+            'tahun_ajaran' => '2020/2021',
+            'status' => 'Tidak Aktif',
+        ]);
+
+        SchoolYear::create([
+            'tahun_ajaran' => '2021/2022',
+            'status' => 'Tidak Aktif',
+        ]);
+        SchoolYear::create([
+            'tahun_ajaran' => '2022/2023',
+            'status' => 'Tidak Aktif',
         ]);
 
         SchoolYear::create([
             'tahun_ajaran' => '2023/2024',
-            'semester' => 'Genap',
-            'status' => 'tidak aktif',
+            'status' => 'Aktif',
         ]);
         SchoolYear::create([
             'tahun_ajaran' => '2024/2025',
-            'semester' => 'Ganjil',
-            'status' => 'aktif',
-        ]);
-
-        SchoolYear::create([
-            'tahun_ajaran' => '2024/2025',
-            'semester' => 'Genap',
-            'status' => 'tidak aktif',
-        ]);
-        SchoolYear::create([
-            'tahun_ajaran' => '2025/2026',
-            'semester' => 'Ganjil',
-            'status' => 'aktif',
+            'status' => 'Aktif',
         ]);
 
         SchoolYear::create([
             'tahun_ajaran' => '2025/2026',
-            'semester' => 'Genap',
-            'status' => 'tidak aktif',
+            'status' => 'Aktif',
         ]);
     }
 }

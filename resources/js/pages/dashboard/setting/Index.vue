@@ -1,158 +1,204 @@
 <template>
-    <VForm class="card mb-10" @submit="submit" :validation-schema="formSchema">
-        <div class="card-header align-items-center">
-            <h2 class="mb-0">Konfigurasi Website</h2>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Nama Aplikasi</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="app"
-                            autocomplete="off" v-model="formData.app" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="app" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
+  <VForm class="card mb-10" @submit="submit" :validation-schema="formSchema">
+    <div class="card-header align-items-center">
+      <h2 class="mb-0">Konfigurasi Website</h2>
+    </div>
 
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Nama Sekolah</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="school"
-                            autocomplete="off" v-model="formData.school" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="school" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Deskripsi</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="textarea"
-                            name="description" autocomplete="off" v-model="formData.description" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="description" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Pemerintahan</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="pemerintah"
-                            autocomplete="off" v-model="formData.pemerintah" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="pemerintah" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Alamat</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="alamat"
-                            autocomplete="off" v-model="formData.alamat" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="alamat" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Telepon</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="telepon"
-                            autocomplete="off" v-model="formData.telepon" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="telepon" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-8">
-                        <label class="form-label fw-bold fs-6 required">Email</label>
-                        <Field class="form-control form-control-lg form-control-solid" type="text" name="email"
-                            autocomplete="off" v-model="formData.email" />
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="email" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-
-                <div class="col-12 d-md-none">
-                    <div class="border border-bottom border-gray mt-8 mb-12"></div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="fv-row mb-8">
-                        <!--begin::Label-->
-                        <label class="form-label fw-bold required">Logo</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <file-upload v-bind:files="files.logo" :accepted-file-types="fileTypes" required
-                            v-on:updatefiles="file => files.logo = file"></file-upload>
-                        <!--end::Input-->
-                    </div>
-
-                    <div class="fv-row mb-8">
-                        <!--begin::Label-->
-                        <label class="form-label fw-bold required">Background Login</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <file-upload v-bind:files="files.bgAuth" :accepted-file-types="fileTypes" required
-                            v-on:updatefiles="file => files.bgAuth = file"></file-upload>
-                        <!--end::Input-->
-                    </div>
-                    <div class="fv-row mb-8">
-                        <!--begin::Label-->
-                        <label class="form-label fw-bold required">Logo Sekolah</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <file-upload v-bind:files="files.LogoSekolah" :accepted-file-types="fileTypes" required
-                            v-on:updatefiles="file => files.LogoSekolah = file"></file-upload>
-                        <!--end::Input-->
-                    </div>  
-                    <div class="fv-row mb-8">
-                        <!--begin::Label-->
-                        <label class="form-label fw-bold required">Background Landing Page</label>
-                        <!--end::Label-->
-
-                        <!--begin::Input-->
-                        <file-upload v-bind:files="files.bgLandingPage" :accepted-file-types="fileTypes" required
-                            v-on:updatefiles="file => files.bgLandingPage = file"></file-upload>
-                        <!--end::Input-->
-                    </div>  
-                </div>
+    <div class="card-body">
+      <div class="row">
+        <!-- Kolom Kiri -->
+        <div class="col-md-6">
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Nama Aplikasi</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="text"
+              name="app"
+              autocomplete="off"
+              v-model="formData.app"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="app" />
+              </div>
             </div>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Nama Sekolah</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="text"
+              name="school"
+              autocomplete="off"
+              v-model="formData.school"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="school" />
+              </div>
+            </div>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Deskripsi</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="textarea"
+              name="description"
+              autocomplete="off"
+              v-model="formData.description"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="description" />
+              </div>
+            </div>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Pemerintahan</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="text"
+              name="pemerintah"
+              autocomplete="off"
+              v-model="formData.pemerintah"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="pemerintah" />
+              </div>
+            </div>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Alamat</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="text"
+              name="alamat"
+              autocomplete="off"
+              v-model="formData.alamat"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="alamat" />
+              </div>
+            </div>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Telepon</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="text"
+              name="telepon"
+              autocomplete="off"
+              v-model="formData.telepon"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="telepon" />
+              </div>
+            </div>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold fs-6 required">Email</label>
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="text"
+              name="email"
+              autocomplete="off"
+              v-model="formData.email"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="email" />
+              </div>
+            </div>
+          </div>
+          <!--end::Input group-->
         </div>
-        <div class="card-footer d-flex">
-            <button type="submit" class="btn btn-primary btn-sm ms-auto">
-                Simpan
-            </button>
+
+        <div class="col-12 d-md-none">
+          <div class="border border-bottom border-gray mt-8 mb-12"></div>
         </div>
-    </VForm>
+
+        <!-- Kolom Kanan -->
+        <div class="col-md-6">
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold required">Logo APP</label>
+            <file-upload
+              v-bind:files="files.logo"
+              :accepted-file-types="fileTypes"
+              required
+              v-on:updatefiles="file => files.logo = file"
+            ></file-upload>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold required">Background Login</label>
+            <file-upload
+              v-bind:files="files.bgAuth"
+              :accepted-file-types="fileTypes"
+              required
+              v-on:updatefiles="file => files.bgAuth = file"
+            ></file-upload>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold required">Logo Sekolah</label>
+            <file-upload
+              v-bind:files="files.LogoSekolah"
+              :accepted-file-types="fileTypes"
+              required
+              v-on:updatefiles="file => files.LogoSekolah = file"
+            ></file-upload>
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="fv-row mb-8">
+            <label class="form-label fw-bold required">Background Landing Page</label>
+            <file-upload
+              v-bind:files="files.bgLandingPage"
+              :accepted-file-types="fileTypes"
+              required
+              v-on:updatefiles="file => files.bgLandingPage = file"
+            ></file-upload>
+          </div>
+          <!--end::Input group-->
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Footer -->
+    <div class="card-footer d-flex">
+      <button type="submit" class="btn btn-primary btn-sm ms-auto">
+        Simpan
+      </button>
+    </div>
+  </VForm>
 </template>
 
 <script lang="ts">
@@ -180,7 +226,7 @@ export default defineComponent({
             logo: setting.data?.value?.logo ? [setting.data.value.logo] : [],
             bgAuth: setting.data?.value?.bg_auth ? [setting.data.value.bg_auth] : [],
             LogoSekolah: setting.data?.value?.logo_sekolah ? [setting.data.value.logo_sekolah] : [],
-            bgLandingPage: setting.data?.value?.bg_landingpage ? [setting.data.value.bg_landingpage] : [],
+            bgLandingPage: setting.data?.value?.bg_landing_page ? [setting.data.value.bg_landing_page] : [],
         })
 
         const formSchema = Yup.object().shape({
@@ -208,7 +254,7 @@ export default defineComponent({
             data.append('logo', this.files.logo[0].file)
             data.append('bg_auth', this.files.bgAuth[0].file)
             data.append('logo_sekolah', this.files.LogoSekolah[0].file)
-            data.append('bg_landingpage', this.files.bgLandingPage[0].file)
+            data.append('bg_landing_page', this.files.bgLandingPage[0].file)
 
             block(this.$el)
             axios.post("/setting", data)
@@ -232,7 +278,7 @@ export default defineComponent({
                 this.files.logo = setting.data.value.logo ? [setting.data.value.logo] : []
                 this.files.bgAuth = setting.data.value.bg_auth ? [setting.data.value.bg_auth] : []
                 this.files.LogoSekolah = setting.data.value.logo_sekolah ? [setting.data.value.logo_sekolah] : []
-                this.files.bgLandingPage = setting.data.value.bg_landingpage ? [setting.data.value.bg_landingpage] : []
+                this.files.bgLandingPage = setting.data.value.bg_landing_page ? [setting.data.value.bg_landing_page] : []
             },
             deep: true
         }

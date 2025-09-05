@@ -14,7 +14,6 @@ class Teacher extends Model
      * Kolom yang bisa diisi mass assignment.
      */
     protected $fillable = [
-        'user_id',
         'nip',
         'nama',
         'jenis_kelamin',
@@ -28,14 +27,6 @@ class Teacher extends Model
         'status',
         'foto',
     ];
-
-    /**
-     * Relasi ke tabel users (opsional).
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     /**
      * Hapus foto lama saat guru dihapus.

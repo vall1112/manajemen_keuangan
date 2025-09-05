@@ -354,7 +354,7 @@ import { useSetting } from '@/services';
 // State
 const router = useRouter();
 const { data: setting } = useSetting();
-const { data: newSetting } = useSetting(); // Asumsikan ini sumber baru untuk bg_landingpage
+const { data: newSetting } = useSetting(); // Asumsikan ini sumber baru untuk bg_landing_page
 
 // Computed
 const taglineText = computed(() => 'Solusi manajemen keuangan sekolah yang terintegrasi, transparan, dan mudah digunakan untuk semua stakeholder pendidikan.');
@@ -364,7 +364,7 @@ const featuresBackgroundStyle = computed(() => ({
 }));
 
 const heroBackgroundStyle = computed(() => {
-  const bgImage = newSetting?.value?.bg_landingpage || '';
+  const bgImage = newSetting?.value?.bg_landing_page || '';
   return {
     backgroundImage: bgImage ? `url(${bgImage})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     backgroundSize: 'cover',
@@ -632,8 +632,8 @@ onMounted(() => {
 
 // Watch untuk memperbarui background saat newSetting berubah
 watch(() => newSetting.value, (newVal) => {
-  if (newVal?.bg_landingpage) {
-    document.querySelector('.hero-background').style.backgroundImage = `url(${newVal.bg_landingpage})`;
+  if (newVal?.bg_landing_page) {
+    document.querySelector('.hero-background').style.backgroundImage = `url(${newVal.bg_landing_page})`;
   }
 }, { immediate: true });
 </script>

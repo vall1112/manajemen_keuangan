@@ -9,7 +9,6 @@ class MajorSeeder extends Seeder
 {
     public function run(): void
     {
-        // buat isi jurusan
         Major::create([
             'kode' => 'TITL',
             'nama_jurusan' => 'Teknik Instalasi Tenaga Listrik',

@@ -180,7 +180,7 @@ export default defineComponent({
             logo: setting.data?.value?.logo ? [setting.data.value.logo] : [],
             bgAuth: setting.data?.value?.bg_auth ? [setting.data.value.bg_auth] : [],
             LogoSekolah: setting.data?.value?.logo_sekolah ? [setting.data.value.logo_sekolah] : [],
-            bgLandingPage: setting.data?.value?.bg_landingpage ? [setting.data.value.bg_landingpage] : [],
+            bgLandingPage: setting.data?.value?.bg_landing_page ? [setting.data.value.bg_landing_page] : [],
         })
 
         const formSchema = Yup.object().shape({
@@ -208,7 +208,7 @@ export default defineComponent({
             data.append('logo', this.files.logo[0].file)
             data.append('bg_auth', this.files.bgAuth[0].file)
             data.append('logo_sekolah', this.files.LogoSekolah[0].file)
-            data.append('bg_landingpage', this.files.bgLandingPage[0].file)
+            data.append('bg_landing_page', this.files.bgLandingPage[0].file)
 
             block(this.$el)
             axios.post("/setting", data)
@@ -232,7 +232,7 @@ export default defineComponent({
                 this.files.logo = setting.data.value.logo ? [setting.data.value.logo] : []
                 this.files.bgAuth = setting.data.value.bg_auth ? [setting.data.value.bg_auth] : []
                 this.files.LogoSekolah = setting.data.value.logo_sekolah ? [setting.data.value.logo_sekolah] : []
-                this.files.bgLandingPage = setting.data.value.bg_landingpage ? [setting.data.value.bg_landingpage] : []
+                this.files.bgLandingPage = setting.data.value.bg_landing_page ? [setting.data.value.bg_landing_page] : []
             },
             deep: true
         }

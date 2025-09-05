@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->string('bg_landingpage', 255)->nullable()->after('bg_auth');
+            $table->string('bg_landing_page', 255)->nullable()->after('bg_auth');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->dropColumn('bg_landingpage');
+            $table->dropColumn('bg_landing_page');
         });
     }
 };

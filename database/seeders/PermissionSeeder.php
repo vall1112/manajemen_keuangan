@@ -39,6 +39,10 @@ class PermissionSeeder extends Seeder
             'savings-pull',
             'savings-history',
             'savings',
+            'master-major',
+            'user-dashboard',
+            'user-bill',
+            'user-savings',
         ];
 
         // Insert permission kalau belum ada

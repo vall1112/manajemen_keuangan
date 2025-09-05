@@ -48,8 +48,8 @@ class SettingController extends Controller
             }
 
 
-            if ($setting->bg_landingpage != null && $setting->bg_landingpage != '') {
-                $old_photo = str_replace('/storage/', '', $setting->bg_landingpage);
+            if ($setting->bg_landing_page != null && $setting->bg_landing_page != '') {
+                $old_photo = str_replace('/storage/', '', $setting->bg_landing_page);
                 Storage::disk('public')->delete($old_photo);
             }
 
@@ -60,8 +60,8 @@ class SettingController extends Controller
             }
 
 
-            if ($request->hasFile('bg_landingpage')) {
-                $data['bg_landingpage'] = '/storage/' . $request->file('bg_landingpage')->store('setting', 'public');
+            if ($request->hasFile('bg_landing_page')) {
+                $data['bg_landing_page'] = '/storage/' . $request->file('bg_landing_page')->store('setting', 'public');
             }
 
             if ($request->hasFile('bg_auth')) {

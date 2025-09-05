@@ -17,6 +17,12 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             UserSeeder::class,
             SettingSeeder::class,
+            ClassroomSeeder::class,
+            MajorSeeder::class,
+            PaymentTypeSeeder::class,
+            SchoolYearSeeder::class,
+            StudentSeeder::class,
+            TeacherSeeder::class,
         ]);
     }
 }
