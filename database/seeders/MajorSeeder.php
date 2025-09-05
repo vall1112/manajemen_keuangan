@@ -12,27 +12,31 @@ class MajorSeeder extends Seeder
         Major::create([
             'kode' => 'TITL',
             'nama_jurusan' => 'Teknik Instalasi Tenaga Listrik',
-            'keterangan' => 'Fokus pada instalasi, perawatan, dan pengelolaan sistem kelistrikan',
+            'keterangan' => 'Jurusan ini mempelajari instalasi, perawatan, dan perbaikan sistem tenaga listrik pada bangunan dan industri.',
         ]);
+
         Major::create([
             'kode' => 'TKJ',
             'nama_jurusan' => 'Teknik Komputer dan Jaringan',
-            'keterangan' => 'Fokus pada instalasi, konfigurasi, dan pemeliharaan komputer & jaringan',
+            'keterangan' => 'Jurusan ini fokus pada perancangan, pengelolaan, dan pemeliharaan jaringan komputer serta perangkat keras dan lunak komputer.',
         ]);
+
         Major::create([
             'kode' => 'TKR',
             'nama_jurusan' => 'Teknik Kendaraan Ringan',
-            'keterangan' => 'Fokus pada perbaikan, perawatan, dan manajemen kendaraan ringan',
+            'keterangan' => 'Jurusan ini mempelajari perawatan, perbaikan, dan pemeriksaan kendaraan ringan seperti mobil dan sepeda motor.',
         ]);
+
         Major::create([
             'kode' => 'TPM',
             'nama_jurusan' => 'Teknik Pemesinan',
-            'keterangan' => 'Fokus pada pembuatan, permesinan, dan pemeliharaan alat-alat industri',
+            'keterangan' => 'Jurusan ini fokus pada proses pembuatan dan perawatan mesin, termasuk pengoperasian peralatan pemesinan dan CNC.',
         ]);
+
         Major::create([
             'kode' => 'RPL',
             'nama_jurusan' => 'Rekayasa Perangkat Lunak',
-            'keterangan' => 'Fokus pada pengembangan aplikasi, software, dan pemrograman',
+            'keterangan' => 'Jurusan ini mempelajari analisis, desain, pengembangan, dan pemeliharaan perangkat lunak serta aplikasi komputer.',
         ]);
     }
 }
