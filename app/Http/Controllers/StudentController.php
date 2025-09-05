@@ -35,6 +35,12 @@ class StudentController extends Controller
                     $q->where('nama', 'like', "%$search%")
                         ->orWhere('nis', 'like', "%$search%")
                         ->orWhere('email', 'like', "%$search%")
+                        ->orWhere('status', 'like', "%$search%")
+                        ->orWhereRaw("
+                            CASE 
+                                WHEN jenis_kelamin = 'L' THEN 'laki-laki'
+                                WHEN jenis_kelamin = 'P' THEN 'perempuan'
+                            END LIKE ?", ["%$search%"])
                         // search di relasi classroom
                         ->orWhereHas('classroom', function (Builder $q3) use ($search) {
                             $q3->where('nama_kelas', 'like', "%$search%");
