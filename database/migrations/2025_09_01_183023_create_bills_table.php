@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('payment_type_id');
             $table->unsignedBigInteger('school_year_id');
-            $table->decimal('total', 10, 2);
+            $table->decimal('total_tagihan', 10, 2);
             $table->date('tanggal_tagih');
             $table->enum('status', ['Belum Dibayar', 'Dibayar Sebagian', 'Lunas'])->default('Belum Dibayar');
             $table->decimal('dibayar', 10, 2)->default(0);

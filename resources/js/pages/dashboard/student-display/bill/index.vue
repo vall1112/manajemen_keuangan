@@ -38,8 +38,8 @@ const columns = [
     //         return `${sy.tahun_ajaran} (${sy.semester})`;
     //     },
     // }),
-    column.accessor("total", {
-        header: "Total Bayar",
+    column.accessor("total_tagihan", {
+        header: "Total Tagihan",
         cell: (info) =>
             new Intl.NumberFormat("id-ID", {
                 style: "currency",

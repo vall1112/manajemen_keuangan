@@ -2,6 +2,7 @@
 
 use AmrShawky\LaravelCurrency\Facade\Currency;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/{any}', function () {
     return view('app');
 })->where('any', '^(?!api\/)[\/\w\.-]*');
+
+// routes/web.php
+Route::get('/api/transactions/{transaction}/receipt', [TransactionController::class, 'receipt']);
+

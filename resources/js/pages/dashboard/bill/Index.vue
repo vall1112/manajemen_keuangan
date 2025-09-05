@@ -21,7 +21,7 @@ const columns = [
         header: "#",
     }),
     column.accessor("kode", {
-        header: "Kode",
+        header: "Invoice",
     }),
     column.accessor("student_id", {
         header: "Nama",
@@ -35,8 +35,8 @@ const columns = [
         header: "Tahun Ajaran",
         cell: (info) => info.row.original.school_year?.tahun_ajaran ?? "-",
     }),
-    column.accessor("total", {
-        header: "Total Bayar",
+    column.accessor("total_tagihan", {
+        header: "Total Tagihan",
         cell: (info) =>
             new Intl.NumberFormat("id-ID", {
                 style: "currency",

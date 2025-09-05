@@ -122,7 +122,7 @@
               <div class="row g-0 mb-3">
                 <div class="col bg-light-success px-6 py-8 rounded-2 me-3">
                   <span class="fs-7 text-success fw-semibold d-block mb-2">Total Tagihan</span>
-                  <span class="fs-2x fw-bold text-gray-800 dark:text-gray-100">{{ formatCurrency(totalBills) }}</span>
+                  <span class="fs-2x fw-bold text-gray-800 dark:text-gray-100">{{ formatCurrency(totalTagihanBills) }}</span>
                 </div>
                 <div class="col bg-light-danger px-6 py-8 rounded-2">
                   <span class="fs-7 text-danger fw-semibold d-block mb-2">Terlambat</span>
@@ -306,7 +306,7 @@ export default {
     };
   },
   computed: {
-    totalBills() {
+    totalTagihanBills() {
       return this.bills.reduce((sum, bill) => sum + bill.amount, 0);
     },
     overdueBills() {

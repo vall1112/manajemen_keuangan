@@ -27,7 +27,7 @@ class TeacherController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
         $data = Teacher::when($request->search, function (Builder $query, string $search) {
-            $query->where('name', 'like', "%$search%")
+            $query->where('nama', 'like', "%$search%")
                 ->orWhere('nip', 'like', "%$search%");
         })->latest()->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 

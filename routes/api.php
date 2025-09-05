@@ -139,3 +139,6 @@ Route::post('transactions', [TransactionController::class, 'index']);
 Route::post('transactions/store', [TransactionController::class, 'store']);
 Route::apiResource('transactions', TransactionController::class)
     ->except(['index', 'store']);
+
+Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
+    ->name('transactions.receipt');

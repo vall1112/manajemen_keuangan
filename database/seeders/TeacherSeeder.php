@@ -805,7 +805,7 @@ class TeacherSeeder extends Seeder
         ]);
 
         Teacher::create([
-            'nip' => '918374650192837462',
+            'nip' => '918374650192837462    ',
             'nama' => 'Ustad Rega',
             'jenis_kelamin' => 'L',
             'tempat_lahir' => 'Gresik',

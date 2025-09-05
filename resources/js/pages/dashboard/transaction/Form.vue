@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
@@ -16,20 +16,40 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "refresh"]);
 
+function formatRupiah(value: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(value);
+}
+
+const nominalDisplay = computed({
+  get() {
+    if (!transaction.value.total_tagihan) return "";
+    return formatRupiah(transaction.value.total_tagihan);
+  },
+  set(val: string) {
+    // hapus semua karakter non-digit
+    const number = parseInt(val.replace(/\D/g, "")) || 0;
+    transaction.value.total_tagihan = number;
+  },
+});
+
 const kodeTagihan = ref("");
 const transaction = ref<any>({
   bill_id: null,
   student_name: "",
   payment_type_name: "",
-  total: 0,
+  total_tagihan: 0,
   status: "Berhasil", // hanya di script
   catatan: "",
 });
 
 onMounted(() => {
-    if (route.query.kode) {
-        kodeTagihan.value = String(route.query.kode);
-    }
+  if (route.query.kode) {
+    kodeTagihan.value = String(route.query.kode);
+  }
 });
 
 const formRef = ref();
@@ -39,7 +59,6 @@ const formSchema = Yup.object().shape({
   kodeTagihan: Yup.string().required("Kode tagihan harus diisi"),
   student_name: Yup.string().required("Nama siswa harus ada"),
   payment_type_name: Yup.string().required("Jenis pembayaran harus ada"),
-  total: Yup.number().required("Total bayar harus ada"),
   catatan: Yup.string(),
 });
 
@@ -56,7 +75,7 @@ watch(kodeTagihan, async (newVal) => {
         bill_id: null,
         student_name: "",
         payment_type_name: "",
-        total: 0,
+        total_tagihan: 0,
         status: "Berhasil",
         catatan: "",
       };
@@ -66,7 +85,7 @@ watch(kodeTagihan, async (newVal) => {
     transaction.value.bill_id = data.id;
     transaction.value.student_name = data.student_name;
     transaction.value.payment_type_name = data.payment_type_name;
-    transaction.value.total = data.total;
+    transaction.value.total_tagihan = data.total_tagihan;
 
   } catch (err: any) {
     toast.error(err.response?.data?.message || "Tagihan tidak ditemukan");
@@ -74,7 +93,7 @@ watch(kodeTagihan, async (newVal) => {
       bill_id: null,
       student_name: "",
       payment_type_name: "",
-      total: 0,
+      total_tagihan: 0,
       status: "Berhasil",
       catatan: "",
     };
@@ -90,7 +109,7 @@ function submit() {
 
   const payload = {
     bill_id: transaction.value.bill_id,
-    nominal: transaction.value.total,
+    nominal: transaction.value.total_tagihan,
     status: transaction.value.status,
     catatan: transaction.value.catatan,
   };
@@ -158,10 +177,10 @@ function submit() {
         <!-- Total Bayar (Nominal) -->
         <div class="col-md-4" v-if="transaction.bill_id">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Nominal</label>
-            <Field type="number" class="form-control form-control-lg form-control-solid" name="total"
-              v-model="transaction.total" readonly />
-            <ErrorMessage name="total" class="text-danger" />
+            <label class="form-label fw-bold fs-6 required">Total Bayar</label>
+            <Field type="text" class="form-control form-control-lg form-control-solid" name="total_tagihan"
+              v-model="nominalDisplay" readonly />
+            <ErrorMessage name="total_tagihan" class="text-danger" />
           </div>
         </div>
 

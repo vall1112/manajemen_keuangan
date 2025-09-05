@@ -25,7 +25,7 @@ for (let i = currentYear; i >= currentYear - 2; i--) {
 }
 
 // Foto dinamis: student atau user
-const userFoto = computed(() => {
+const userPhoto = computed(() => {
     if (authStore.user?.student_id && authStore.user.student?.foto) {
         // User punya student_id dan foto di student
         return `/storage/${authStore.user.student.foto}`;
@@ -127,7 +127,7 @@ onUnmounted(() => {
             <!--begin::Menu wrapper-->
             <div class="cursor-pointer symbol symbol-35px" data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
                 data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-                <img :src="userFoto" class="rounded-3" alt="User Foto" />
+                <img :src="userPhoto" class="rounded-3" alt="User Foto" />
             </div>
             <KTUserMenu />
             <!--end::Menu wrapper-->

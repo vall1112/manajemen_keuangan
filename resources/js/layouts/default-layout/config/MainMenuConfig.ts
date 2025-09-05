@@ -13,9 +13,9 @@ const MainMenuConfig: Array<MenuItem> = [
     },
     // WEBSITE
     {
-        heading: "PEMBAYARAN",
-        route: "/dashboard/pembayaran",
-        name: "website",
+        heading: "KEUANGAN",
+        route: "/dashboard/keuangan",
+        name: "finance",
         pages: [
             // MASTER
             {

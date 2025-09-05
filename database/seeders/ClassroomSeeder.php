@@ -94,7 +94,7 @@ class ClassroomSeeder extends Seeder
         ]);
 
         Classroom::create([
-            'nama_kelas' => 'X TKR',
+            'nama_kelas' => 'X TKJ',
             'major_id' => 2,
             'wali_kelas_id' => 13,
             'jumlah_anak' => '20',
