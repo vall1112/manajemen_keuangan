@@ -29,17 +29,27 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "/dashboard",
                 name: "dashboard",
-                component: () => import("@/pages/dashboard/Index.vue"),
+                component: () => import("@/pages/dashboard/Admin.vue"),
                 meta: {
                     pageTitle: "Dashboard",
                     breadcrumbs: ["Dashboard"],
                 },
             },
-            // USER DASHBOARD
+            // BENDAHARA DASHBOARD
             {
-                path: "/user/Dashboard",
-                name: "user.dashboard",
-                component: () => import("@/pages/student/dashboard/Index.vue"),
+                path: "/bendahara/dashboard",
+                name: "bendahara.dashboard",
+                component: () => import("@/pages/dashboard/Bendahara.vue"),
+                meta: {
+                    pageTitle: "Dashboard",
+                    breadcrumbs: ["Dashboard"],
+                },
+            },
+            // SISWA DASHBOARD
+            {
+                path: "/student/dashboard",
+                name: "student.dashboard",
+                component: () => import("@/pages/dashboard/Siswa.vue"),
                 meta: {
                     pageTitle: "Dashboard",
                     breadcrumbs: ["Dashboard"],
@@ -47,8 +57,8 @@ const routes: Array<RouteRecordRaw> = [
             },
             // USER TAGIHAN
             {
-                path: "/user/bill",
-                name: "user.bill",
+                path: "/student/bill",
+                name: "student.bill",
                 component: () => import("@/pages/student/bill/Index.vue"),
                 meta: {
                     pageTitle: "Tagihan",
@@ -57,8 +67,8 @@ const routes: Array<RouteRecordRaw> = [
             },
             // USER TABUNGAN
             {
-                path: "/user/savings",
-                name: "user.savings",
+                path: "/student/savings",
+                name: "student.savings",
                 component: () => import("@/pages/student/savings/Index.vue"),
                 meta: {
                     pageTitle: "Tabungan",

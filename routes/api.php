@@ -13,7 +13,7 @@ use App\Http\Controllers\PaymentTypeController;
 use App\Http\Controllers\SchoolYearController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SavingController;
-use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -112,10 +112,10 @@ Route::get('/students/{id}/savings', [SavingController::class, 'detailSavings'])
 Route::post('student/savings/balances', [SavingController::class, 'getBalanceStudent']);
 Route::post('history/savings/user', [SavingController::class, 'indexUser']);
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
-    Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
-});
+// Route::middleware('auth:api')->group(function () {
+//     Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
+//     Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
+// });
 
 Route::prefix('profile')->group(function () {
     Route::get('', [AuthController::class, 'profile']);
@@ -142,3 +142,7 @@ Route::apiResource('transactions', TransactionController::class)
 
 Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
     ->name('transactions.receipt');
+
+Route::get('dashboard/admin', [DashboardController::class, 'admin']);
+Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
+

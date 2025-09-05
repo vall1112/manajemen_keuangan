@@ -1,12 +1,35 @@
 import type { MenuItem } from "@/layouts/default-layout/config/types";
 
 const MainMenuConfig: Array<MenuItem> = [
+    // DASHBOARD ADMIN
     {
         pages: [
             {
                 heading: "Dashboard",
                 name: "dashboard",
                 route: "/dashboard",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
+    // DASHBOARD BENDAHARA
+    {
+        pages: [
+            {
+                heading: "Dashboard",
+                name: "bendahara-dashboard",
+                route: "/bendahara/dashboard",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
+    // DASHBOARD SISWA
+    {
+        pages: [
+            {
+                heading: "Dashboard",
+                name: "user-dashboard",
+                route: "/student/dashboard",
                 keenthemesIcon: "element-11",
             },
         ],
@@ -122,35 +145,24 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
-    // DASHBOARD USER
-    {
-        pages: [
-            {
-                heading: "Dashboard",
-                name: "user-dashboard",
-                route: "/user/dashboard",
-                keenthemesIcon: "element-11",
-            },
-        ],
-    },
-    // TAGIHAN USER
+    // TAGIHAN SISWA
     {
         pages: [
             {
                 heading: "Tagihan",
                 name: "user-bill",
-                route: "/user/bill",
+                route: "/student/bill",
                 keenthemesIcon: "element-11",
             },
         ],
     },
-    // TABUNGAN USER
+    // TABUNGAN SISWA
     {
         pages: [
             {
                 heading: "Tabungan",
                 name: "user-savings",
-                route: "/user/savings",
+                route: "/student/savings",
                 keenthemesIcon: "element-11",
             },
         ],
