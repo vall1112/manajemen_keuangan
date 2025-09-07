@@ -13,6 +13,9 @@ import ElementPlus from "element-plus";
 import i18n from "@/core/plugins/i18n";
 import Inputmask from "inputmask";
 
+// ApexCharts
+import VueApexCharts from "vue3-apexcharts";
+
 //imports for app initialization
 import ApiService from "@/core/services/ApiService";
 import { initApexCharts } from "@/core/plugins/apexcharts";
@@ -29,6 +32,9 @@ import "vue3-toastify/dist/index.css";
 import "@/core/plugins/prismjs";
 const app = createApp(App);
 
+// **Registrasi ApexCharts**
+app.component("ApexChart", VueApexCharts);
+
 app.use(createPinia());
 app.use(router);
 app.use(ElementPlus);
@@ -37,6 +43,7 @@ app.directive("debounce", vue3Debounce({ lock: true }));
 app.directive("mask", (el, binding) => {
     Inputmask(binding.value).mask(el);
 });
+
 
 import DatePicker from "@/components/DatePicker.vue";
 import FileUpload from "@/components/FileUpload.vue";

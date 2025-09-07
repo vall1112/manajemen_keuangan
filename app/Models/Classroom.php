@@ -23,8 +23,13 @@ class Classroom extends Model
         return $this->belongsTo(Teacher::class, 'wali_kelas_id');
     }
 
-     public function major()
+    public function major()
     {
         return $this->belongsTo(Major::class, 'major_id');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
     }
 }
