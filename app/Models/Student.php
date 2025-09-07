@@ -44,8 +44,15 @@ class Student extends Model
     }
 
     // Student.php
+
     public function savings()
     {
-        return $this->hasMany(Saving::class);
+        return $this->hasOne(Saving::class);
+    }
+
+
+    public function bills()
+    {
+        return $this->hasMany(Bill::class);
     }
 }

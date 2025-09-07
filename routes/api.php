@@ -145,4 +145,4 @@ Route::get('/transactions/{transaction}/receipt', [TransactionController::class,
 
 Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
-
+Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
