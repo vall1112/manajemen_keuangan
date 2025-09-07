@@ -31,7 +31,8 @@ class TransactionController extends Controller
             'bill.student', // ambil nama siswa
         ])
             ->when($request->search, function ($query, $search) {
-                $query->where('nominal', 'like', "%$search%")
+                $query->where('kode', 'like', "%$search%")
+                    ->orWhere('nominal', 'like', "%$search%")
                     ->orWhere('status', 'like', "%$search%")
                     ->orWhereHas('bill', function ($q) use ($search) {
                         $q->where('kode', 'like', "%$search%")
@@ -47,8 +48,8 @@ class TransactionController extends Controller
             return [
                 'no' => $item->no,
                 'id' => $item->id,
+                'kode' => $item->kode, // kode transaksi
                 'bill_id' => $item->bill_id,
-                'kode_tagihan' => $item->bill->kode ?? null,
                 'student_name' => $item->bill->student->nama ?? null,
                 'nominal' => $item->nominal,
                 'status' => $item->status,
@@ -57,7 +58,7 @@ class TransactionController extends Controller
             ];
         });
 
-        return response()->json($data);
+        return $data;
     }
 
     // ========================== SIMPAN DATA TRANSACTION BARU ==========================
@@ -70,6 +71,9 @@ class TransactionController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
+        // inject user_id dari user yang sedang login
+        $validatedData['user_id'] = auth()->id();
+
         $transaction = Transaction::create($validatedData);
 
         if ($validatedData['status'] === 'Berhasil') {
@@ -78,7 +82,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'success' => true,
-            'transaction' => $transaction->load('bill')
+            'transaction' => $transaction->load('bill', 'user') // sekalian load relasi user biar kelihatan
         ]);
     }
 
@@ -129,6 +133,29 @@ class TransactionController extends Controller
 
         return response()->json([
             'success' => true
+        ]);
+    }
+
+    // ========================== MEMBUAT KUITANSI ==========================
+    public function receipt(Transaction $transaction)
+    {
+        $transaction->load([
+            'bill.student.classroom',
+            'bill.paymentType',
+            'bill.schoolYear'
+        ]);
+
+        $student = $transaction->bill->student;
+
+        // Ambil tagihan yang belum dibayar
+        $unpaidBills = \App\Models\Bill::where('student_id', $student->id)
+            ->where('status', 'Belum Dibayar')
+            ->get();
+
+        return view('transactions.receipt', [
+            'student' => $student,
+            'transaction' => $transaction,
+            'unpaidBills' => $unpaidBills
         ]);
     }
 }

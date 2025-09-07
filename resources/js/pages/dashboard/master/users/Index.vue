@@ -31,6 +31,33 @@ const columns = [
     column.accessor("email", {
         header: "Email",
     }),
+    column.accessor("photo", {
+        header: "Foto",
+        cell: (cell) => {
+            const photoUrl = cell.getValue();
+
+            // fallback jika photo null/undefined/empty
+            const src = photoUrl ? `/storage/${photoUrl}` : "/media/avatars/blank.png";
+
+            return h("div", { class: "text-wrap" }, [
+                h("img", {
+                    src,
+                    alt: "User",
+                    style: {
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                        cursor: photoUrl ? "pointer" : "default",
+                    },
+                    onClick: () => {
+                        if (photoUrl) openImageModal(src);
+                    },
+                    class: "user-image",
+                }),
+            ]);
+        },
+    }),
     column.accessor("uuid", {
         header: "Aksi",
         cell: (cell) =>

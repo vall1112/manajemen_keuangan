@@ -32,11 +32,15 @@ class UserController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with('student') // 👈 ambil relasi student
+        $data = User::with(['student:id,nama']) // hanya ambil id + nama
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
-                        ->orWhere('email', 'like', "%$search%");
+                        ->orWhere('username', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhereHas('student', function ($q2) use ($search) {
+                            $q2->where('nama', 'like', "%$search%");
+                        });
                 });
             })
             ->latest()

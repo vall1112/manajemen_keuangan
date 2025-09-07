@@ -72,12 +72,13 @@ const columns = [
         header: "Foto",
         cell: (cell) => {
             const fotoUrl = cell.getValue();
-            if (!fotoUrl)
-                return h("div", { class: "text-muted fst-italic" }, "Tidak ada foto");
+
+            // fallback jika foto null/undefined/empty
+            const src = fotoUrl ? `/storage/${fotoUrl}` : "/media/avatars/blank.png";
 
             return h("div", { class: "text-wrap" }, [
                 h("img", {
-                    src: `/storage/${fotoUrl}`,
+                    src,
                     alt: "Student",
                     style: {
                         width: "50px",
@@ -86,7 +87,7 @@ const columns = [
                         borderRadius: "4px",
                         cursor: "pointer",
                     },
-                    onClick: () => openImageModal(fotoUrl),
+                    onClick: () => openImageModal(src),
                     class: "student-image",
                 }),
             ]);

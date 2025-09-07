@@ -63,7 +63,10 @@ function submit() {
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
     formData.append("role_id", user.value.role_id);
-    formData.append("student_id", user.value.student_id);
+    // hanya kirim student_id kalau ada
+    if (user.value.student_id) {
+        formData.append("student_id", user.value.student_id);
+    }
 
     if (user.value?.password) {
         formData.append("password", user.value.password);
@@ -244,12 +247,12 @@ watch(
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6 required">
-                            Siswa
+                        <label class="form-label fw-bold fs-6">
+                            Pilih Siswa
                         </label>
                         <Field name="student_id" type="hidden" v-model="user.student_id">
-                            <select2 placeholder="Pilih siswa" class="form-select-solid" :options="students"
-                                name="student_id" v-model="user.student_id">
+                            <select2 placeholder="Pilih siswa ( jika akun untuk siswa )" class="form-select-solid"
+                                :options="students" name="student_id" v-model="user.student_id">
                             </select2>
                         </Field>
                         <div class="fv-plugins-message-container">

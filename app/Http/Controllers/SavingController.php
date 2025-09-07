@@ -57,11 +57,13 @@ class SavingController extends Controller
         $validatedData['saldo'] = $lastSaldo + $validatedData['nominal'];
         $validatedData['jenis'] = 'Setor';
 
+        $validatedData['user_id'] = auth()->id();
+
         $saving = Saving::create($validatedData);
 
         return response()->json([
             'success' => true,
-            'saving'  => $saving
+            'saving'  => $saving->load('student', 'user') // sekalian load relasi biar jelas
         ]);
     }
 
@@ -97,12 +99,13 @@ class SavingController extends Controller
                 'jenis'      => 'Tarik',
                 'saldo'      => $newSaldo,
                 'keterangan' => $request->keterangan,
+                'user_id'    => auth()->id(), // << ambil dari auth user
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Penarikan berhasil disimpan.',
-                'saving'  => $saving
+                'saving'  => $saving->load('student', 'user')
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([

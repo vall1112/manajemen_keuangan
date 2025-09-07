@@ -43,6 +43,7 @@ class PermissionSeeder extends Seeder
             'user-dashboard',
             'user-bill',
             'user-savings',
+            'finance',
         ];
 
         // Insert permission kalau belum ada

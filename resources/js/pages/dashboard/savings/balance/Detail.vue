@@ -38,6 +38,24 @@ const formatDate = (dateString: string) => {
     });
 };
 
+// Format tanggal
+const formatDateOnly = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    });
+};
+
+// Format jam
+const formatTimeOnly = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+};
+
 // Get status badge class
 const getStatusBadge = (status: string) => {
     return status === 'Aktif'
@@ -129,6 +147,7 @@ const getTransactionTypeClass = (jenis: string) => {
         <div class="flex-lg-row-fluid ms-lg-15">
             <!-- Balance Card -->
             <div class="card mb-5 mb-xl-10">
+                <!-- Header -->
                 <div class="card-header">
                     <div class="card-title">
                         <h3 class="fw-bold m-0">
@@ -142,9 +161,13 @@ const getTransactionTypeClass = (jenis: string) => {
                         </h3>
                     </div>
                 </div>
+
+                <!-- Body -->
                 <div class="card-body pt-0">
+                    <!-- Konten saldo -->
                     <div v-if="!isLoading && data" class="d-flex align-items-center">
-                        <div class="symbol symbol-50px me-5">
+                        <!-- Tambah margin-top untuk jarak dengan garis header -->
+                        <div class="symbol symbol-50px me-5 mt-7">
                             <div class="symbol-label bg-light-success">
                                 <i class="ki-duotone ki-dollar fs-2x text-success">
                                     <span class="path1"></span>
@@ -153,13 +176,18 @@ const getTransactionTypeClass = (jenis: string) => {
                                 </i>
                             </div>
                         </div>
-                        <div class="flex-grow-1">
+
+                        <div class="flex-grow-1 mt-6">
                             <div class="fs-1 fw-bold text-gray-800">
                                 {{ formatCurrency(Number(data.last_balance ?? 0)) }}
                             </div>
-                            <div class="fs-7 text-muted">Total saldo saat ini</div>
+                            <div class="fs-7 text-muted">
+                                Total saldo saat ini
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Loading state -->
                     <div v-else class="d-flex align-items-center justify-content-center py-10">
                         <div class="spinner-border spinner-border-lg text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -188,6 +216,7 @@ const getTransactionTypeClass = (jenis: string) => {
                     <!-- Data Table -->
                     <div v-if="!isLoading && data && data.savings?.length > 0" class="table-responsive">
                         <table class="table table-rounded table-striped border gy-7 gs-7">
+                            <!-- Header -->
                             <thead>
                                 <tr class="fw-semibold fs-6 text-gray-800 border-bottom-2 border-gray-200">
                                     <th class="min-w-200px">
@@ -235,8 +264,11 @@ const getTransactionTypeClass = (jenis: string) => {
                                     </th>
                                 </tr>
                             </thead>
+
+                            <!-- Body -->
                             <tbody>
                                 <tr v-for="(item, index) in data.savings" :key="item.id">
+                                    <!-- Tanggal -->
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="symbol symbol-40px me-3">
@@ -249,14 +281,16 @@ const getTransactionTypeClass = (jenis: string) => {
                                             </div>
                                             <div class="d-flex flex-column">
                                                 <span class="text-gray-800 fw-semibold">
-                                                    {{ formatDate(item.created_at).split(',')[0] }}
+                                                    {{ formatDateOnly(item.created_at) }}
                                                 </span>
                                                 <span class="text-muted fs-7">
-                                                    {{ formatDate(item.created_at).split(',')[1] }}
+                                                    {{ formatTimeOnly(item.created_at) }}
                                                 </span>
                                             </div>
                                         </div>
                                     </td>
+
+                                    <!-- Jenis -->
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="symbol symbol-30px me-2">
@@ -274,28 +308,33 @@ const getTransactionTypeClass = (jenis: string) => {
                                             </span>
                                         </div>
                                     </td>
+
+                                    <!-- Nominal -->
                                     <td>
                                         <span
                                             :class="item.jenis === 'Setor' ? 'fw-bold text-success' : 'fw-bold text-danger'">
-                                            {{ item.jenis === 'Setor' ? '+' : '-' }}{{
-                                            formatCurrency(Number(item.nominal)) }}
+                                            {{ item.jenis === 'Setor' ? '+' : '-' }} {{
+                                                formatCurrency(Number(item.nominal)) }}
                                         </span>
                                     </td>
+
+                                    <!-- Saldo -->
                                     <td>
                                         <span class="fw-semibold text-gray-800">
                                             {{ formatCurrency(Number(item.saldo)) }}
                                         </span>
                                     </td>
+
+                                    <!-- Keterangan -->
                                     <td>
                                         <span class="text-gray-600">
-                                            {{ item.keterangan || "-" }}
+                                            {{ item.keterangan || '-' }}
                                         </span>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
                     <!-- Empty State -->
                     <div v-else-if="!isLoading && data && (!data.savings || data.savings.length === 0)"
                         class="d-flex flex-column flex-center py-20">

@@ -26,11 +26,15 @@ class ClassroomController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = Classroom::with(['teacher', 'major']) // ambil teacher & major
+        $data = Classroom::with([
+            'teacher',
+            'major:id,nama_jurusan,kode'
+        ])
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where('nama_kelas', 'like', "%$search%")
                     ->orWhereHas('major', function (Builder $q) use ($search) {
-                        $q->where('nama', 'like', "%$search%");
+                        $q->where('nama_jurusan', 'like', "%$search%")
+                            ->orWhere('kode', 'like', "%$search%");
                     });
             })
             ->latest()

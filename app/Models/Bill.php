@@ -14,7 +14,7 @@ class Bill extends Model
         'student_id',
         'payment_type_id',
         'school_year_id',
-        'total',
+        'total_tagihan',
         'tanggal_tagih',
         'keterangan',
     ];

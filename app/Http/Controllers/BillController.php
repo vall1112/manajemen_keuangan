@@ -63,7 +63,7 @@ class BillController extends Controller
                 },
             ],
             'school_year_id' => 'required|exists:school_years,id',
-            'total' => 'required|numeric|min:0',
+            'total_tagihan' => 'required|numeric|min:0',
             'tanggal_tagih' => 'required|date',
             'keterangan' => 'nullable|string|max:255',
         ]);
@@ -86,7 +86,7 @@ class BillController extends Controller
             'student_name' => $bill->student ? $bill->student->nama : '',
             'payment_type_name' => $bill->paymentType ? $bill->paymentType->nama_jenis : '',
             'school_year' => $bill->schoolYear ? $bill->schoolYear->tahun_ajaran : '',
-            'total' => $bill->total,
+            'total_tagihan' => $bill->total_tagihan,
             'status' => $bill->status,
         ]);
     }
@@ -98,7 +98,7 @@ class BillController extends Controller
             'student_id'            => 'required|exists:students,id',
             'payment_type_id' => 'required|exists:payment_types,id',
             'school_year_id'     => 'required|exists:school_years,id',
-            'total'               => 'required|numeric|min:0',
+            'total_tagihan'               => 'required|numeric|min:0',
             'tanggal_tagih'       => 'required|date',
             'keterangan'          => 'nullable|string|max:255',
         ]);

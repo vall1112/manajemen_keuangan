@@ -58,12 +58,17 @@ const setLang = (lang: string) => {
 const currentLanguage = computed(() => i18n.locale.value);
 const currentLanguageLocale = computed(() => countries[i18n.locale.value as keyof typeof countries] || countries.en);
 
-// Student photo handling
-const studentFoto = computed(() => {
-    if (authStore.user?.student?.foto) {
-        return `/storage/${authStore.user.student.foto}`;
-    }
-    return "/media/avatars/blank.png";
+// Student or User photo handling
+const userPhoto = computed(() => {
+  if (authStore.user?.student_id && authStore.user?.student?.foto) {
+    // Foto dari student jika user punya student_id
+    return `/storage/${authStore.user.student.foto}`;
+  } else if (authStore.user?.photo) {
+    // Foto dari user jika tidak punya student_id
+    return `/storage/${authStore.user.photo}`;
+  }
+  // Default
+  return "/media/avatars/blank.png";
 });
 </script>
 
@@ -73,7 +78,7 @@ const studentFoto = computed(() => {
         <div class="menu-item px-3">
             <div class="menu-content d-flex align-items-center px-3">
                 <div class="symbol symbol-50px me-5">
-                    <img :src="studentFoto" alt="Student Photo" />
+                    <img :src="userPhoto" alt="Student Photo" />
                 </div>
                 <div class="d-flex flex-column">
                     <div class="fw-bold d-flex align-items-center fs-5">

@@ -12,12 +12,18 @@ class Saving extends Model
     protected $table = 'savings'; // tabel yang dipakai
 
     protected $fillable = [
+        'user_id',
         'student_id',
         'nominal',
         'jenis',
         'saldo',
         'keterangan',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function student()
     {
