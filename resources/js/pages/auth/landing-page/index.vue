@@ -7,7 +7,7 @@
           <div class="d-flex align-items-center">
             <img alt="Logo" :src="setting?.logo" class="h-50px me-4" />
             <a class="navbar-brand fw-bold fs-4" href="#">
-              {{ setting?.app || 'EduFinance' }}
+              {{ setting?.app || 'NamaAplikasi' }}
             </a>
           </div>
           <div class="navbar-nav ms-auto">
@@ -279,7 +279,7 @@
                     <span class="path2"></span>
                     <span class="path3"></span>
                   </i>
-                  {{ setting?.app || 'EduFinance' }}
+                  {{ setting?.app || 'NamaAplikasi' }}
                 </a>
                 <p class="text-muted fs-6 mb-6">
                   Platform terdepan untuk manajemen keuangan sekolah yang modern, transparan, dan efisien.
@@ -338,7 +338,7 @@
           </div>
           <hr class="border-secondary my-8">
           <div class="text-center">
-            <p class="text-muted mb-0">&copy; 2025 {{ setting?.app || 'EduFinance' }}. Semua hak cipta dilindungi.</p>
+            <p class="text-muted mb-0">&copy; 2025 {{ setting?.app || 'NamaAplikasi' }}. Semua hak cipta dilindungi.</p>
           </div>
         </div>
       </footer>
