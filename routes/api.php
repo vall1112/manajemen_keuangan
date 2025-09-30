@@ -29,8 +29,8 @@ use Illuminate\Support\Facades\Route;
 
 // Authentication Route
 Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {
-    Route::post('login/email', [AuthController::class, 'loginEmail'])->withoutMiddleware('auth');
-    Route::post('login/username', [AuthController::class, 'loginUsername'])->withoutMiddleware('auth');
+    // Route::post('login/email', [AuthController::class, 'loginEmail'])->withoutMiddleware('auth');
+    Route::post('login', [AuthController::class, 'login'])->withoutMiddleware('auth');
     Route::post('register', [AuthController::class, 'register'])->withoutMiddleware('auth');
     Route::delete('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);

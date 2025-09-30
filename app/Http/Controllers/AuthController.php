@@ -26,58 +26,58 @@ class AuthController extends Controller
     }
 
     // ========================== LOGIN DENGAN EMAIL ==========================
-    public function loginEmail(Request $request)
+    // public function loginEmail(Request $request)
+    // {
+    //     $validator = Validator::make($request->post(), [
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => $validator->errors()->first()
+    //         ]);
+    //     }
+
+    //     if (!$token = auth()->attempt($validator->validated())) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Email / Password salah!'
+    //         ], 401);
+    //     }
+
+    //     $user = auth()->user();
+
+    //     if ($user->status === 'Pending') {
+    //         auth()->logout();
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Akun Anda masih menunggu persetujuan admin.'
+    //         ], 403);
+    //     }
+
+    //     if ($user->status === 'Tidak Aktif') {
+    //         auth()->logout();
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Akun Anda tidak aktif, silakan hubungi admin.'
+    //         ], 403);
+    //     }
+
+    //     // kalau status "Aktif" boleh login
+    //     return response()->json([
+    //         'status' => true,
+    //         'user' => $user,
+    //         'token' => $token
+    //     ]);
+    // }
+
+    // ========================== LOGIN ==========================
+    public function login(Request $request)
     {
         $validator = Validator::make($request->post(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => $validator->errors()->first()
-            ]);
-        }
-
-        if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Email / Password salah!'
-            ], 401);
-        }
-
-        $user = auth()->user();
-
-            if ($user->status === 'Pending') {
-            auth()->logout();
-            return response()->json([
-                'status' => false,
-                'message' => 'Akun Anda masih menunggu persetujuan admin.'
-            ], 403);
-        }
-
-        if ($user->status === 'Tidak Aktif') {
-            auth()->logout();
-            return response()->json([
-                'status' => false,
-                'message' => 'Akun Anda tidak aktif, silakan hubungi admin.'
-            ], 403);
-        }
-
-        // kalau status "Aktif" boleh login
-        return response()->json([
-            'status' => true,
-            'user' => $user,
-            'token' => $token
-        ]);
-    }
-
-    // ========================== LOGIN DENGAN USERNAME ==========================
-    public function loginUsername(Request $request)
-    {
-        $validator = Validator::make($request->post(), [
-            'username' => 'required|string',
+            'login' => 'required|string',
             'password' => 'required|string',
         ]);
 
@@ -88,12 +88,17 @@ class AuthController extends Controller
             ]);
         }
 
-        $credentials = $validator->validated();
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        $credentials = [
+            $loginField => $request->login,
+            'password' => $request->password,
+        ];
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Username / Password salah!'
+                'message' => 'Username / Email atau Password salah!'
             ], 401);
         }
 

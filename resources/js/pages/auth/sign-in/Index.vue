@@ -14,24 +14,10 @@
         </div>
         <!--end::Heading-->
 
-        <!--begin::Tabs-->
-        <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#with-username">Username</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#with-email">Email</a>
-            </li>
-        </ul>
-        <!--end::Tabs-->
-
         <!--begin::Tab Content-->
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="with-username" role="tabpanel">
-                <WithUsername />
-            </div>
-            <div class="tab-pane fade" id="with-email" role="tabpanel">
-                <WithEmail />
+            <div class="tab-pane fade show active" id="with-username-and-email" role="tabpanel">
+                <WithUsernameAndEmail />
             </div>
         </div>
         <!--end::Tab Content-->
@@ -61,14 +47,14 @@ import { toast } from "vue3-toastify";
 import { blockBtn, unblockBtn } from "@/libs/utils";
 
 import WithEmail from "./tabs/WithEmail.vue";
-import WithUsername from "./tabs/WithUsername.vue"; // tab baru
+import WithUsernameAndEmail from "./tabs/WithUsernameAndEmail.vue";
 import { useSetting } from "@/services";
 
 export default defineComponent({
     name: "sign-in",
     components: {
         WithEmail,
-        WithUsername,
+        WithUsernameAndEmail,
     },
     setup() {
         const store = useAuthStore();
@@ -117,7 +103,20 @@ export default defineComponent({
                 .post("/auth/login", { ...this.data, type: this.check.type })
                 .then((res) => {
                     this.store.setAuth(res.data.user, res.data.token);
-                    this.router.push("/dashboard");
+
+                    const roleName = (res.data.user.role?.name || res.data.user.roles?.[0]?.name || "")
+                        .toLowerCase()
+                        .trim();
+
+                    if (roleName === "admin") {
+                        this.router.push("/admin/dashboard");
+                    } else if (roleName === "bendahara") {
+                        this.router.push("/bendahara/dashboard");
+                    } else if (roleName === "siswa") {
+                        this.router.push("/student/dashboard");
+                    } else {
+                        this.router.push("/cobadashboard");
+                    }
                 })
                 .catch((error) => {
                     toast.error(error.response?.data?.message || "Terjadi kesalahan");

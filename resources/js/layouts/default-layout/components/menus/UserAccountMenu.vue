@@ -45,7 +45,7 @@ const signOut = async () => {
             icon: "success",
             text: "Berhasil keluar",
         });
-        router.push({ name: "sikaz" });
+        router.push({ name: "sign-in" });
     }
 };
 

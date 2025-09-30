@@ -3,23 +3,16 @@
         <!--begin::Input group-->
         <div class="fv-row mb-10">
             <!--begin::Label-->
-            <label class="form-label fs-6 fw-bold">Username</label>
+            <label class="form-label fs-6 fw-bold">Username / Email</label>
             <!--end::Label-->
 
             <!--begin::Input-->
-            <Field 
-                tabindex="1" 
-                class="form-control form-control-lg form-control-solid" 
-                type="text" 
-                name="username"
-                autocomplete="off" 
-                v-model="data.username" 
-                placeholder="" 
-            />
+            <Field tabindex="1" class="form-control form-control-lg form-control-solid" type="text" name="login"
+                autocomplete="off" v-model="data.login" placeholder="Masukkan Username atau Email" />
             <!--end::Input-->
             <div class="fv-plugins-message-container">
                 <div class="fv-help-block">
-                    <ErrorMessage name="username" />
+                    <ErrorMessage name="login" />
                 </div>
             </div>
         </div>
@@ -31,14 +24,8 @@
                 <label class="form-label fw-bold fs-6 mb-0">Password</label>
             </div>
             <div class="position-relative mb-3">
-                <Field 
-                    tabindex="2" 
-                    class="form-control form-control-lg form-control-solid" 
-                    type="password" 
-                    name="password"
-                    v-model="data.password" 
-                    autocomplete="off" 
-                />
+                <Field tabindex="2" class="form-control form-control-lg form-control-solid" type="password"
+                    name="password" v-model="data.password" autocomplete="off" placeholder="Masukkan Password" />
                 <span class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2">
                     <i class="bi bi-eye-slash fs-2" @click="togglePassword"></i>
                 </span>
@@ -53,12 +40,7 @@
 
         <!--begin::Actions-->
         <div class="text-center">
-            <button 
-                tabindex="3" 
-                type="submit" 
-                ref="submitButton" 
-                class="btn btn-lg btn-primary w-100 mb-5"
-            >
+            <button tabindex="3" type="submit" ref="submitButton" class="btn btn-lg btn-primary w-100 mb-5">
                 <span class="indicator-label">Login</span>
                 <span class="indicator-progress">
                     <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -86,16 +68,13 @@ export default defineComponent({
 
         // Form validation
         const login = Yup.object().shape({
-            username: Yup.string()
-                .required("Harap masukkan Username")
-                .min(3, "Username minimal 3 karakter")
-                .max(50, "Username maksimal 50 karakter")
-                .matches(/^[a-zA-Z0-9_-]+$/, "Username hanya boleh huruf, angka, _ atau -")
-                .label("Username"),
+            login: Yup.string()
+                .required("Harap masukkan Username atau Email")
+                .min(3, "Minimal 3 karakter")
+                .max(100, "Maksimal 100 karakter"),
             password: Yup.string()
-                .min(8, 'Password minimal terdiri dari 8 karakter')
-                .required('Harap masukkan password')
-                .label("Password"),
+                .min(8, "Password minimal terdiri dari 8 karakter")
+                .required("Harap masukkan password"),
         });
 
         return {
@@ -117,7 +96,10 @@ export default defineComponent({
         submit() {
             blockBtn(this.submitButton);
 
-            axios.post("/auth/login/username", { ...this.data, type: "username" })
+            axios.post("/auth/login", {
+                login: this.data.login,
+                password: this.data.password
+            })
                 .then(res => {
                     this.store.setAuth(res.data.user, res.data.token);
                     this.router.push("/dashboard");
