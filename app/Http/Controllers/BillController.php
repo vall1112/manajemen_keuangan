@@ -65,6 +65,7 @@ class BillController extends Controller
             'school_year_id' => 'required|exists:school_years,id',
             'total_tagihan' => 'required|numeric|min:0',
             'tanggal_tagih' => 'required|date',
+            'jatuh_tempo' => 'required|date',
             'keterangan' => 'nullable|string|max:255',
         ]);
 

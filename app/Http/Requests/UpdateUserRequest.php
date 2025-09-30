@@ -35,6 +35,7 @@ class UpdateUserRequest extends FormRequest
             'photo'    => 'nullable|image',
             'role_id'  => 'required|numeric',
             'student_id' => 'nullable|exists:students,id',
+            'status'      => 'required|in:Pending,Aktif,Tidak Aktif',
         ];
     }
 }

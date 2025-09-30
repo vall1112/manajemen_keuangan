@@ -15,10 +15,32 @@
     });
 
     // Buka halaman Blade struk di tab baru
-    const printReceipt = (transactionId: number) => {
+    // Cetak struk langsung popup print
+const printReceipt = async (transactionId: number) => {
+    try {
         const url = `/api/transactions/${transactionId}/receipt`;
-        window.open(url, "_blank");
-    };
+
+        // Ambil HTML struk dari backend
+        const response = await fetch(url);
+        const receiptHtml = await response.text();
+
+        // Buat popup window sementara
+        const printWindow = window.open("", "PRINT", "width=900,height=650");
+
+        if (printWindow) {
+            printWindow.document.write(receiptHtml);
+            printWindow.document.close();
+
+            // Tunggu render, lalu panggil print
+            printWindow.focus();
+            printWindow.print();
+            // opsional: auto-close setelah print
+            printWindow.onafterprint = () => printWindow.close();
+        }
+    } catch (error) {
+        console.error("Gagal cetak struk:", error);
+    }
+};
 
     const columns = [
         column.accessor("no", { header: "#" }),

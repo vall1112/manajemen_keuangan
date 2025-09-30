@@ -208,6 +208,17 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users"],
                 },
             },
+            // PERSETUJUAN USER BARU
+            {
+                path: "/dashboard/user-agreement",
+                name: "dashboard.user-agreement",
+                component: () =>
+                    import("@/pages/dashboard/user_agreement/Index.vue"),
+                meta: {
+                    pageTitle: "Persetujuan Users",
+                    breadcrumbs: ["Persetujuan Users"],
+                },
+            },
             // GURU
             {
                 path: "/dashboard/master/teachers",

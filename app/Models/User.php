@@ -25,6 +25,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'status',
         'photo',
     ];
 
@@ -53,8 +54,9 @@ class User extends Authenticatable implements JWTSubject
     {
         // Tambahkan peran default 'user' saat pengguna dibuat
         static::created(function ($user) {
-            if (!$user->hasRole('student')) {
-                $user->assignRole('student');
+            $role = Role::find(3); // id role siswa
+            if ($role && !$user->hasRole($role->name)) {
+                $user->assignRole($role->name);
             }
         });
 

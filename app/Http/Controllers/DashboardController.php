@@ -99,6 +99,48 @@ class DashboardController extends Controller
                 ];
             });
 
+        // ==============================
+        // Notifikasi
+        // ==============================
+        $today = Carbon::today();
+
+        // 1. Tagihan jatuh tempo hari ini
+        $dueToday = Bill::whereIn('status', ['Belum Dibayar', 'Dibayar Sebagian'])
+            ->whereDate('jatuh_tempo', $today)
+            ->get(['kode', 'jatuh_tempo'])
+            ->map(function ($bill) {
+                return [
+                    'kode'        => $bill->kode,
+                    'jatuh_tempo' => Carbon::parse($bill->jatuh_tempo)->format('Y-m-d'),
+                ];
+            });
+
+        // 2. Tagihan yang melewati jatuh tempo
+        $overdueBills = Bill::whereIn('status', ['Belum Dibayar', 'Dibayar Sebagian'])
+            ->whereDate('jatuh_tempo', '<', $today)
+            ->get(['kode', 'jatuh_tempo'])
+            ->map(function ($bill) {
+                return [
+                    'kode'        => $bill->kode,
+                    'jatuh_tempo' => Carbon::parse($bill->jatuh_tempo)->format('Y-m-d'),
+                ];
+            });
+
+        // 3. Jumlah tagihan/tunggakan
+        $totalUnpaid = Bill::where('status', 'Belum Dibayar')->count();
+
+        // 4. User baru dalam 24 jam terakhir
+        $newUsers = User::where('created_at', '>=', Carbon::now()->subDay())
+            ->get(['id', 'username', 'email', 'created_at'])
+            ->map(function ($user) {
+                return [
+                    'id'    => $user->id,
+                    'username'  => $user->username,
+                    'email' => $user->email,
+                    'joined_at' => $user->created_at->format('Y-m-d H:i'),
+                ];
+            });
+
         // 10 aktivitas tabungan terbaru
         $savings = Saving::with(['student.classroom'])
             ->latest()
@@ -140,6 +182,12 @@ class DashboardController extends Controller
                 'transactions' => $transactions,
                 'savings'      => $savings,
             ],
+            'notifications' => [
+                'due_today'      => $dueToday,
+                'overdue'        => $overdueBills,
+                'total_unpaid'   => $totalUnpaid,
+                'new_users'      => $newUsers,
+            ],
         ]);
     }
 
@@ -147,7 +195,7 @@ class DashboardController extends Controller
     // ========================== DASHBOARD SISWA ==========================
     public function siswa()
     {
-        $student = auth()->user()->student; // relasi User -> Student
+        $student = auth()->user()->student;
 
         // Profil siswa
         $profile = [
@@ -166,7 +214,7 @@ class DashboardController extends Controller
             ->map(function ($bill) {
                 return [
                     'id' => $bill->id,
-                    'title' => $bill->kode, // bisa diganti pakai 'keterangan' jika ingin
+                    'title' => $bill->kode,
                     'amount' => $bill->total_tagihan,
                     'due_date' => $bill->tanggal_tagih,
                     'status' => $bill->status,

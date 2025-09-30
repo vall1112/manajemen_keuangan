@@ -55,6 +55,17 @@ const columns = [
                 })
                 : "-",
     }),
+    column.accessor("jatuh_tempo", {
+        header: "Jatuh Tempo",
+        cell: (info) =>
+            info.getValue()
+                ? new Date(info.getValue()).toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                })
+                : "-",
+    }),
     column.accessor("status", {
         header: "Status",
         cell: (info) => {

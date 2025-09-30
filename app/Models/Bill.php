@@ -17,6 +17,7 @@ class Bill extends Model
         'total_tagihan',
         'status',
         'tanggal_tagih',
+        'jatuh_tempo',
         'keterangan',
     ];
 

@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         Route::middleware('can:master-user')->group(function () {
             Route::get('users', [UserController::class, 'get']);
             Route::post('users', [UserController::class, 'index']);
+            Route::post('users/pending', [UserController::class, 'userPending']);
             Route::post('users/store', [UserController::class, 'store']);
             Route::apiResource('users', UserController::class)
                 ->except(['index', 'store'])->scoped(['user' => 'uuid']);
@@ -143,6 +144,7 @@ Route::apiResource('transactions', TransactionController::class)
 Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
     ->name('transactions.receipt');
 
+Route::get('setting/logo', [SettingController::class, 'index']);
 Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);

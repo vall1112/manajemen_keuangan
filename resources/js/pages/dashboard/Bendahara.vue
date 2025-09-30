@@ -39,10 +39,18 @@ interface DashboardResponse {
             tanggal: string
         }[]
     }
+    notifications: {
+        due_today: { kode: string; jatuh_tempo: string }[]
+        overdue: { kode: string; jatuh_tempo: string }[]
+        total_unpaid: number
+        new_users: { id: number; username: string; email: string; joined_at: string }[]
+    }
 }
 
 const dashboardData = ref<DashboardResponse | null>(null)
 const isLoading = ref(true)
+
+const notifications = computed(() => dashboardData.value?.notifications || null)
 
 // --- Pagination Config ---
 const itemsPerPage = 5
@@ -271,6 +279,89 @@ onMounted(async () => {
     <!-- Content -->
     <div v-else-if="dashboardData" class="p-4">
 
+        <!-- Notifikasi -->
+        <div class="card mb-5 shadow-sm">
+            <div class="card-header border-0 pt-5 d-flex align-items-center justify-content-between">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bold text-dark">Notifikasi</span>
+                    <span class="text-muted mt-1 fw-semibold fs-7">
+                        Informasi penting untuk bendahara
+                    </span>
+                </h3>
+                <span class="badge badge-light-danger fs-7">
+                    <i class="bi bi-bell-fill me-1"></i> Alert
+                </span>
+            </div>
+
+            <div class="card-body pt-0">
+                <div v-if="notifications" class="timeline-label">
+
+                    <!-- Tagihan jatuh tempo hari ini -->
+                    <div v-for="bill in notifications.due_today" :key="bill.kode" class="timeline-item">
+                        <div class="timeline-label fw-bold text-warning fs-7">
+                            {{ new Date(bill.jatuh_tempo).toLocaleDateString("id-ID", {
+                                day: "2-digit", month: "short",
+                            year:"numeric" }) }}
+                        </div>
+                        <div class="timeline-badge">
+                            <i class="fa fa-clock text-warning fs-6"></i>
+                        </div>
+                        <div class="timeline-content fw-semibold text-gray-700 ps-3">
+                            Tagihan <span class="fw-bold text-dark">{{ bill.kode }}</span> batas waktu hari ini
+                        </div>
+                    </div>
+
+                    <!-- Tagihan sudah lewat jatuh tempo -->
+                    <div v-for="bill in notifications.overdue" :key="bill.kode" class="timeline-item">
+                        <div class="timeline-label fw-bold text-danger fs-7">
+                            {{ new Date(bill.jatuh_tempo).toLocaleDateString("id-ID", {
+                                day: "2-digit", month: "short",
+                            year:"numeric" }) }}
+                        </div>
+                        <div class="timeline-badge">
+                            <i class="fa fa-exclamation-circle text-danger fs-6"></i>
+                        </div>
+                        <div class="timeline-content fw-semibold text-gray-700 ps-3">
+                            Tagihan <span class="fw-bold text-dark">{{ bill.kode }}</span> sudah melewati batas waktu
+                        </div>
+                    </div>
+
+                    <!-- Jumlah tagihan/tunggakan -->
+                    <div class="timeline-item" v-if="notifications.total_unpaid > 0">
+                        <div class="timeline-label fw-bold text-primary fs-7">Info</div>
+                        <div class="timeline-badge">
+                            <i class="fa fa-receipt text-primary fs-6"></i>
+                        </div>
+                        <div class="timeline-content fw-semibold text-gray-700 ps-3">
+                            Ada <span class="fw-bold text-dark">{{ notifications.total_unpaid }}</span> tagihan belum
+                            dibayar
+                        </div>
+                    </div>
+
+                    <!-- User baru 24 jam terakhir -->
+                    <div v-for="user in notifications.new_users" :key="user.id" class="timeline-item">
+                        <div class="timeline-label fw-bold text-success fs-7">
+                            {{ new Date(user.joined_at).toLocaleDateString("id-ID", {
+                                day: "2-digit", month: "short",
+                            year:"numeric" }) }}
+                        </div>
+                        <div class="timeline-badge">
+                            <i class="fa fa-user-plus text-success fs-6"></i>
+                        </div>
+                        <div class="timeline-content fw-semibold text-gray-700 ps-3">
+                            User baru <span class="fw-bold text-dark">{{ user.name }}</span> ({{ user.email }})
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div v-else class="text-center py-10">
+                    <i class="bi bi-check-circle-fill text-success fs-1 mb-2"></i>
+                    <div class="fw-semibold text-muted">Tidak ada notifikasi</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Ringkasan Keuangan (Atas) -->
         <div class="row mb-5">
             <div v-for="card in financeCards" :key="card.title" class="col-md-6 col-xl-3 mb-4">
@@ -360,7 +451,7 @@ onMounted(async () => {
                                     <li class="page-item" v-for="page in totalTransaksiPages" :key="page"
                                         :class="{ active: transaksiPage === page }">
                                         <button class="page-link" @click="transaksiPage = page">{{ page
-                                            }}</button>
+                                        }}</button>
                                     </li>
                                     <li class="page-item" :class="{ disabled: transaksiPage === totalTransaksiPages }">
                                         <button class="page-link" @click="transaksiPage++"
@@ -436,7 +527,7 @@ onMounted(async () => {
                                     <li class="page-item" v-for="page in totalTabunganPages" :key="page"
                                         :class="{ active: tabunganPage === page }">
                                         <button class="page-link" @click="tabunganPage = page">{{ page
-                                            }}</button>
+                                        }}</button>
                                     </li>
                                     <li class="page-item" :class="{ disabled: tabunganPage === totalTabunganPages }">
                                         <button class="page-link" @click="tabunganPage++"

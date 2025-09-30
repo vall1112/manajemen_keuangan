@@ -50,8 +50,11 @@ const formSchema = Yup.object().shape({
   student_id: Yup.string().required("Siswa harus dipilih"),
   payment_type_id: Yup.string().required("Jenis pembayaran harus dipilih"),
   school_year_id: Yup.string().required("Tahun ajaran harus dipilih"),
-  total_tagihan: Yup.number().required("total_tagihan harus diisi").min(1, "Minimal 1"),
+  total_tagihan: Yup.number().required("Total tagihan harus diisi").min(1, "Minimal 1"),
   tanggal_tagih: Yup.date().required("Tanggal tagih harus diisi"),
+  jatuh_tempo: Yup.date()
+    .required("Jatuh tempo harus diisi")
+    .min(Yup.ref("tanggal_tagih"), "Jatuh tempo tidak boleh sebelum tanggal tagih"),
   keterangan: Yup.string().nullable(),
 });
 
@@ -76,6 +79,7 @@ function submit() {
   formData.append("school_year_id", bill.value.school_year_id);
   formData.append("total_tagihan", bill.value.total_tagihan);
   formData.append("tanggal_tagih", bill.value.tanggal_tagih);
+  formData.append("jatuh_tempo", bill.value.jatuh_tempo);
   formData.append("keterangan", bill.value.keterangan ?? "");
 
   if (props.selected) {
@@ -189,6 +193,16 @@ watch(
             <Field class="form-control form-control-lg form-control-solid" type="date" name="tanggal_tagih"
               v-model="bill.tanggal_tagih" />
             <ErrorMessage name="tanggal_tagih" class="text-danger small" />
+          </div>
+        </div>
+
+        <!-- Jatuh Tempo -->
+        <div class="col-md-4">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6 required">Jatuh Tempo</label>
+            <Field class="form-control form-control-lg form-control-solid" type="date" name="jatuh_tempo"
+              v-model="bill.jatuh_tempo" />
+            <ErrorMessage name="jatuh_tempo" class="text-danger small" />
           </div>
         </div>
 

@@ -47,9 +47,28 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $user = auth()->user();
+
+            if ($user->status === 'Pending') {
+            auth()->logout();
+            return response()->json([
+                'status' => false,
+                'message' => 'Akun Anda masih menunggu persetujuan admin.'
+            ], 403);
+        }
+
+        if ($user->status === 'Tidak Aktif') {
+            auth()->logout();
+            return response()->json([
+                'status' => false,
+                'message' => 'Akun Anda tidak aktif, silakan hubungi admin.'
+            ], 403);
+        }
+
+        // kalau status "Aktif" boleh login
         return response()->json([
             'status' => true,
-            'user' => auth()->user(),
+            'user' => $user,
             'token' => $token
         ]);
     }
@@ -78,9 +97,27 @@ class AuthController extends Controller
             ], 401);
         }
 
+        $user = auth()->user();
+
+        if ($user->status === 'Pending') {
+            auth()->logout();
+            return response()->json([
+                'status' => false,
+                'message' => 'Akun Anda masih menunggu persetujuan dari admin'
+            ], 403);
+        }
+
+        if ($user->status === 'Tidak Aktif') {
+            auth()->logout();
+            return response()->json([
+                'status' => false,
+                'message' => 'Akun Anda tidak aktif, silakan hubungi admin'
+            ], 403);
+        }
+
         return response()->json([
             'status' => true,
-            'user' => auth()->user(),
+            'user' => $user,
             'token' => $token
         ]);
     }

@@ -83,6 +83,10 @@ class UserController extends Controller
     {
         $validatedData = $request->validated();
 
+        if (!isset($validatedData['status']) || $validatedData['status'] === null) {
+            $validatedData['status'] = 'Aktif';
+        }
+
         if ($request->hasFile('photo')) {
             if ($user->photo) {
                 Storage::disk('public')->delete($user->photo);
@@ -118,5 +122,31 @@ class UserController extends Controller
         return response()->json([
             'success' => true
         ]);
+    }
+
+    // ========================== USER STATUS PENDING ==========================
+    public function userPending(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        $data = User::with(['student:id,nama']) // hanya ambil id + nama
+            ->where('status', 'Pending') // hanya ambil user status Pending
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")
+                        ->orWhere('username', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhereHas('student', function ($q2) use ($search) {
+                            $q2->where('nama', 'like', "%$search%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        return response()->json($data);
     }
 }
