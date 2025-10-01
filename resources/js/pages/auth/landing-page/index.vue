@@ -2,7 +2,8 @@
   <main>
     <div class="d-flex flex-column min-vh-100">
       <!-- Navigation Bar -->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-transparent position-fixed w-100" style="z-index: 1030;">
+      <nav class="navbar navbar-expand-lg navbar-dark position-fixed w-100"
+        style="z-index: 1030; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
         <div class="container-fluid px-6">
           <div class="d-flex align-items-center">
             <img alt="Logo" :src="setting?.logo" class="h-50px me-4" />
@@ -243,7 +244,8 @@
           <div class="text-center text-white fade-in-up">
             <h2 class="display-5 fw-bold mb-4">Siap Memulai Transformasi Digital?</h2>
             <p class="fs-4 opacity-85 mb-8 mx-auto" style="max-width: 600px;">
-              Bergabunglah dengan ribuan sekolah yang telah merasakan kemudahan pengelolaan keuangan dengan platform kami
+              Bergabunglah dengan ribuan sekolah yang telah merasakan kemudahan pengelolaan keuangan dengan platform
+              kami
             </p>
             <div class="d-flex flex-wrap justify-content-center gap-4">
               <router-link to="/sign-up" class="btn btn-light btn-lg px-8 hover-scale">
@@ -648,6 +650,7 @@ watch(() => newSetting.value, (newVal) => {
     opacity: 0;
     transform: translateY(50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -655,30 +658,43 @@ watch(() => newSetting.value, (newVal) => {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
+
   40% {
     transform: translateY(-10px);
   }
+
   60% {
     transform: translateY(-5px);
   }
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-20px);
   }
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -923,6 +939,7 @@ watch(() => newSetting.value, (newVal) => {
   .display-3 {
     font-size: 3rem;
   }
+
   .display-5 {
     font-size: 2.5rem;
   }
@@ -932,16 +949,20 @@ watch(() => newSetting.value, (newVal) => {
   .hero-section {
     padding-top: 8rem;
   }
+
   .display-3 {
     font-size: 2.5rem;
   }
+
   .display-5 {
     font-size: 2rem;
   }
+
   .py-20 {
     padding-top: 4rem !important;
     padding-bottom: 4rem !important;
   }
+
   .py-15 {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
@@ -952,27 +973,34 @@ watch(() => newSetting.value, (newVal) => {
   .hero-section {
     padding-top: 6rem;
   }
+
   .display-3 {
     font-size: 2rem;
   }
+
   .display-5 {
     font-size: 1.75rem;
   }
+
   .fs-4 {
     font-size: 1.1rem !important;
   }
+
   .btn-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
   }
+
   .py-20 {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
   }
+
   .py-15 {
     padding-top: 2rem !important;
     padding-bottom: 2rem !important;
   }
+
   .px-6 {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -983,12 +1011,15 @@ watch(() => newSetting.value, (newVal) => {
   .hero-section {
     padding-top: 5rem;
   }
+
   .display-3 {
     font-size: 1.75rem;
   }
+
   .display-5 {
     font-size: 1.5rem;
   }
+
   .btn-lg {
     padding: 0.625rem 1.25rem;
     font-size: 0.9rem;
@@ -1041,9 +1072,11 @@ watch(() => newSetting.value, (newVal) => {
   .bg-light {
     background: #1a1a1a !important;
   }
+
   .text-gray-900 {
     color: #ffffff !important;
   }
+
   .text-muted {
     color: #8a8a8a !important;
   }

@@ -18,7 +18,7 @@
         }
 
         .receipt {
-            max-width: 400px;
+            max-width: 300px;
             margin: 0 auto;
             background: white;
             padding: 20px;
