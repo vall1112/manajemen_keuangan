@@ -2,252 +2,265 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Kwitansi Pembayaran Keuangan Siswa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struk Pembayaran</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        * {
             margin: 0;
-            padding: 20px;
-            line-height: 1.5;
-            color: #212529;
-            background: #fff;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .receipt-container {
-            max-width: 750px;
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .receipt {
+            max-width: 400px;
             margin: 0 auto;
             background: white;
-            border: 1px solid #dee2e6;
-            padding: 25px 35px;
-            border-radius: 8px;
+            padding: 20px;
+            border: 2px dashed #333;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #dee2e6;
+            text-align: center;
+            border-bottom: 1px dashed #333;
             padding-bottom: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .header h1 {
-            font-size: 1.6em;
-            margin: 0;
-            font-weight: 600;
-            color: #212529;
+            font-size: 18px;
+            margin-bottom: 5px;
         }
 
-        .header img {
-            height: 60px;
+        .header p {
+            font-size: 12px;
+            color: #666;
         }
 
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+            font-size: 13px;
         }
 
-        .section h2 {
-            font-size: 1.2em;
-            font-weight: 600;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 6px;
-            color: #495057;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-        }
-
-        .info-item {
+        .row {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 5px;
         }
 
-        .info-label {
-            font-size: 0.85em;
-            color: #6c757d;
-            margin-bottom: 3px;
-        }
-
-        .info-value {
-            font-size: 1em;
-            font-weight: 600;
-        }
-
-        .amount-highlight {
-            font-size: 1.4em;
+        .label {
             font-weight: bold;
-            margin-top: 10px;
+        }
+
+        .divider {
+            border-top: 1px dashed #333;
+            margin: 15px 0;
+        }
+
+        .amount {
             text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
             padding: 10px;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            background: #f8f9fa;
+            background: #f0f0f0;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95em;
+        .status {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 4px;
         }
 
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            text-align: left;
+        .status.lunas {
+            background: #d4edda;
+            color: #155724;
         }
 
-        th {
-            background: #f1f3f5;
-            font-weight: 600;
+        .status.sebagian {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.belum {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .footer {
-            margin-top: 35px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .signature {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #666;
         }
 
-        .signature-line {
-            border-top: 1px solid #495057;
-            margin-top: 50px;
-            padding-top: 5px;
-            font-weight: 600;
+        .print-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+
+        .print-btn:hover {
+            background: #0056b3;
         }
 
         @media print {
             body {
                 background: white;
+                padding: 0;
             }
-            .receipt-container {
+            .receipt {
                 border: none;
-                box-shadow: none;
+                max-width: 100%;
+            }
+            .print-btn {
+                display: none;
             }
         }
     </style>
 </head>
-<body onload="window.print()">
-    <div class="receipt-container">
+<body>
+    <div class="receipt">
         <!-- HEADER -->
         <div class="header">
-            <img alt="Logo" :src="setting?.logo_sekolah" />
-            <h1>Kwitansi Pembayaran</h1>
+            <h1>SMK AL-AZHAR</h1>
+            <p>Sistem Keuangan Siswa</p>
+            <p>STRUK PEMBAYARAN</p>
         </div>
 
-        <!-- INFORMASI SISWA -->
+        <!-- DATA TRANSAKSI -->
         <div class="section">
-            <h2>Informasi Siswa</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Nama</span>
-                    <span class="info-value">{{ $student->nama }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">NIS</span>
-                    <span class="info-value">{{ $student->nis }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Kelas</span>
-                    <span class="info-value">{{ $student->classroom->nama_kelas ?? '-' }}</span>
-                </div>
+            <div class="row">
+                <span class="label">No. Invoice:</span>
+                <span>SPP2500788</span>
+            </div>
+            <div class="row">
+                <span class="label">Tanggal:</span>
+                <span>04 September 2025</span>
             </div>
         </div>
 
-        <!-- INFORMASI PEMBAYARAN -->
+        <div class="divider"></div>
+
+        <!-- DATA SISWA -->
         <div class="section">
-            <h2>Detail Pembayaran</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Kode Transaksi</span>
-                    <span class="info-value">{{ $transaction->bill->kode }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Jenis Pembayaran</span>
-                    <span class="info-value">{{ $transaction->bill->paymentType->nama_jenis ?? '-' }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Tahun Ajaran</span>
-                    <span class="info-value">{{ $transaction->bill->schoolYear->tahun_ajaran ?? '-' }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Tanggal Pembayaran</span>
-                    <span class="info-value">{{ $transaction->created_at->format('d F Y') }}</span>
-                </div>
+            <div class="row">
+                <span class="label">Nama:</span>
+                <span>Achmad Aziz Aldiansyah</span>
             </div>
-
-            <div class="amount-highlight">
-                Rp {{ number_format($transaction->nominal, 0, ',', '.') }}
+            <div class="row">
+                <span class="label">NIS:</span>
+                <span>1105/045.016</span>
             </div>
-
-            <div class="info-grid" style="margin-top:15px;">
-                <div class="info-item">
-                    <span class="info-label">Total Tagihan</span>
-                    <span class="info-value">Rp {{ number_format($transaction->bill->total, 0, ',', '.') }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Sudah Dibayar</span>
-                    <span class="info-value">Rp {{ number_format($transaction->bill->dibayar, 0, ',', '.') }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Sisa Tagihan</span>
-                    <span class="info-value">Rp {{ number_format($transaction->bill->sisa, 0, ',', '.') }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Status</span>
-                    <span class="info-value">{{ strtoupper($transaction->bill->status) }}</span>
-                </div>
+            <div class="row">
+                <span class="label">Kelas:</span>
+                <span>XII TKR</span>
             </div>
         </div>
 
-        <!-- TAGIHAN BELUM DIBAYAR -->
+        <div class="divider"></div>
+
+        <!-- DETAIL PEMBAYARAN -->
         <div class="section">
-            <h2>Tagihan Belum Dibayar</h2>
-            @if($unpaidBills->count() > 0)
-            <table>
-                <thead>
-                    <tr>
-                        <th>Kode</th>
-                        <th>Jenis Pembayaran</th>
-                        <th>Jumlah</th>
-                        <th>Tahun Ajaran</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($unpaidBills as $bill)
-                    <tr>
-                        <td>{{ $bill->kode }}</td>
-                        <td>{{ $bill->paymentType->nama_jenis ?? '-' }}</td>
-                        <td>Rp {{ number_format($bill->total_tagihan, 0, ',', '.') }}</td>
-                        <td>{{ $bill->schoolYear->tahun_ajaran ?? '-' }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            @else
-            <p style="text-align:center; font-style:italic; color:#6c757d;">
-                ✅ Semua tagihan telah lunas.
-            </p>
-            @endif
+            <div class="row">
+                <span class="label">Jenis:</span>
+                <span>SPP Januari</span>
+            </div>
+            <div class="row">
+                <span class="label">Tahun Ajaran:</span>
+                <span>2025/2026 Ganjil</span>
+            </div>
         </div>
+
+        <!-- NOMINAL -->
+        <div class="amount">
+            Rp 200.000
+        </div>
+
+        <!-- STATUS -->
+        <div class="status lunas">
+            ✓ LUNAS
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- RINGKASAN -->
+        <div class="section">
+            <div class="row">
+                <span>Total Tagihan:</span>
+                <span>Rp 200.000</span>
+            </div>
+            <div class="row">
+                <span>Dibayar:</span>
+                <span>Rp 200.000</span>
+            </div>
+            <div class="row">
+                <span class="label">Sisa:</span>
+                <span class="label">Rp 0</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
 
         <!-- FOOTER -->
         <div class="footer">
-            <div>
-                <p><strong>Tanggal Cetak:</strong> {{ \Carbon\Carbon::now()->format('d F Y') }}</p>
-            </div>
-            <div class="signature">
-                <p>Petugas Keuangan</p>
-                <div class="signature-line">{{ auth()->user()->name ?? '---' }}</div>
-            </div>
+            <p>Terima kasih atas pembayaran Anda</p>
+            <p>Simpan struk ini sebagai bukti pembayaran</p>
+            <p style="margin-top: 10px;">Admin: Admin</p>
         </div>
+
+        <!-- TOMBOL CETAK -->
+        <button class="print-btn" onclick="window.print()">🖨️ Cetak Struk</button>
     </div>
+
+    <script>
+        // Auto format rupiah
+        document.addEventListener('DOMContentLoaded', function() {
+            // Contoh data dinamis - sesuaikan dengan data dari backend
+            const data = {
+                invoice: 'SPP2500788',
+                tanggal: '04 September 2025',
+                nama: 'Achmad Aziz Aldiansyah',
+                nis: '1105/045.016',
+                kelas: 'XII TKR',
+                jenis: 'SPP Januari',
+                tahunAjaran: '2025/2026 Ganjil',
+                nominal: 200000,
+                status: 'Lunas', // Lunas, Dibayar Sebagian, Belum Dibayar
+                totalTagihan: 200000,
+                dibayar: 200000,
+                sisa: 0,
+                admin: 'Admin'
+            };
+
+            // Update status class
+            const statusEl = document.querySelector('.status');
+            if (data.status === 'Lunas') {
+                statusEl.className = 'status lunas';
+                statusEl.textContent = '✓ LUNAS';
+            } else if (data.status === 'Dibayar Sebagian') {
+                statusEl.className = 'status sebagian';
+                statusEl.textContent = '⚠ DIBAYAR SEBAGIAN';
+            } else {
+                statusEl.className = 'status belum';
+                statusEl.textContent = '✗ BELUM DIBAYAR';
+            }
+        });
+    </script>
 </body>
 </html>
