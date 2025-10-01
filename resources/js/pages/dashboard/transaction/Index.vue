@@ -101,10 +101,7 @@ const printReceipt = async (transactionId: number) => {
 
         <div class="card">
             <div class="card-header align-items-center">
-                <h2 class="mb-0">Daftar Transaksi</h2>
-                <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
-                    Tambah <i class="la la-plus"></i>
-                </button>
+                <h2 class="mb-0">Daftar Transaksi Tagihan</h2>
             </div>
             <div class="card-body">
                 <paginate ref="paginateRef" id="table-transactions" url="/transactions" :columns="columns"></paginate>

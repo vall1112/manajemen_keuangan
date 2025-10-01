@@ -34,7 +34,7 @@ function submit() {
   const formData = new FormData();
   formData.append("student_id", saving.value.student_id);
   formData.append("nominal", saving.value.nominal);
-  formData.append("jenis", "Setor"); // otomatis setor
+  formData.append("jenis", "Tarik"); // otomatis setor
   formData.append("keterangan", saving.value.keterangan ?? "");
 
   block(document.getElementById("form-saving"));

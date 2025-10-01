@@ -34,25 +34,92 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
-    // WEBSITE
+    // WEBISTE
+    {
+        heading: "Master",
+        route: "/master",
+        name: "master",
+        pages: [
+            // MASTER
+            {
+                sectionTitle: "Master",
+                route: "/master",
+                keenthemesIcon: "cube-3",
+                name: "master",
+                sub: [
+                    // USER
+                    {
+                        heading: "User",
+                        route: "/dashboard/master/users",
+                        name: "master-user",
+                    },
+                    // ROLE
+                    {
+                        heading: "Role",
+                        route: "/dashboard/master/users/roles",
+                        name: "master-role",
+                    },
+                    // GURU
+                    {
+                        heading: "Guru",
+                        route: "/dashboard/master/teachers",
+                        name: "master-teacher",
+                    },
+                    // SISWA
+                    {
+                        heading: "Siswa",
+                        route: "/dashboard/master/students",
+                        name: "master-student",
+                    },
+                    // KELAS
+                    {
+                        heading: "Kelas",
+                        route: "/dashboard/master/classrooms",
+                        name: "master-classroom",
+                    },
+                    // JURUSAN
+                    {
+                        heading: "Jurusan",
+                        route: "/dashboard/master/majors",
+                        name: "master-major",
+                    },
+                    // TAHUN AJARAN
+                    {
+                        heading: "Tahun Ajaran",
+                        route: "/dashboard/master/school_years",
+                        name: "master-school-year",
+                    },
+                    // JENIS PEMBAYARAN
+                    {
+                        heading: "Jenis Pembayaran",
+                        route: "/dashboard/master/payment_types",
+                        name: "master-payment",
+                    },
+                ],
+            },
+        ],
+    },
+    // KEUANGAN
     {
         heading: "KEUANGAN",
         route: "/dashboard/keuangan",
         name: "finance",
         pages: [
-            // MASTER
+            // TAGIHAN
             {
                 heading: "Tagihan",
                 route: "/bill",
                 name: "bill",
                 keenthemesIcon: "dollar",
             },
+            // TRANSAKSI TAGIHAN
             {
-                heading: "Transaksi",
+                heading: "Transaksi Tagihan",
                 name: "transaction",
                 route: "/transaction",
                 keenthemesIcon: "wallet",
             },
+            // TABUNGAN
             {
                 sectionTitle: "Tabungan",
                 route: "savings",
@@ -89,63 +156,16 @@ const MainMenuConfig: Array<MenuItem> = [
         route: "/dashboard/website",
         name: "website",
         pages: [
-            // MASTER
-            {
-                sectionTitle: "Master",
-                route: "/master",
-                keenthemesIcon: "cube-3",
-                name: "master",
-                sub: [
-                    {
-                        heading: "User",
-                        route: "/dashboard/master/users",
-                        name: "master-user",
-                    },
-                    {
-                        heading: "Role",
-                        route: "/dashboard/master/users/roles",
-                        name: "master-role",
-                    },
-                    {
-                        heading: "Guru",
-                        route: "/dashboard/master/teachers",
-                        name: "master-teacher",
-                    },
-                    {
-                        heading: "Siswa",
-                        route: "/dashboard/master/students",
-                        name: "master-student",
-                    },
-                    {
-                        heading: "Kelas",
-                        route: "/dashboard/master/classrooms",
-                        name: "master-classroom",
-                    },
-                    {
-                        heading: "Jurusan",
-                        route: "/dashboard/master/majors",
-                        name: "master-major",
-                    },
-                    {
-                        heading: "Tahun Ajaran",
-                        route: "/dashboard/master/school_years",
-                        name: "master-school-year",
-                    },
-                    {
-                        heading: "Jenis Pembayaran",
-                        route: "/dashboard/master/payment_types",
-                        name: "master-payment",
-                    },
-                ],
-            },
+            // PERSETUJUAN USER
             {
                 heading: "Persetujuan User",
                 route: "/dashboard/user-agreement",
                 name: "master-user",
                 keenthemesIcon: "check-square",
             },
+            // PENGATURAN
             {
-                heading: "Setting",
+                heading: "Pengaturan",
                 route: "/dashboard/setting",
                 name: "setting",
                 keenthemesIcon: "setting-2",

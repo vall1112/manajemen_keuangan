@@ -48,6 +48,7 @@ class SavingController extends Controller
             'keterangan' => 'nullable|string|max:255',
         ]);
 
+        // ambil saldo terakhir dari tabel savings (riwayat transaksi)
         $lastSaving = Saving::where('student_id', $validatedData['student_id'])
             ->latest('created_at')
             ->first();
@@ -56,14 +57,20 @@ class SavingController extends Controller
 
         $validatedData['saldo'] = $lastSaldo + $validatedData['nominal'];
         $validatedData['jenis'] = 'Setor';
-
         $validatedData['user_id'] = auth()->id();
 
+        // simpan transaksi baru di tabel savings
         $saving = Saving::create($validatedData);
+
+        // update/insert saldo di saving_balances
+        \App\Models\SavingBalance::updateOrCreate(
+            ['student_id' => $validatedData['student_id']], // cari berdasarkan student_id
+            ['saldo' => $validatedData['saldo']] // update saldo terbaru
+        );
 
         return response()->json([
             'success' => true,
-            'saving'  => $saving->load('student', 'user') // sekalian load relasi biar jelas
+            'saving'  => $saving->load('student', 'user'),
         ]);
     }
 
@@ -77,34 +84,47 @@ class SavingController extends Controller
                 'keterangan' => 'nullable|string|max:255',
             ]);
 
-            $lastSaldo = Saving::where('student_id', $request->student_id)
-                ->orderBy('id', 'desc')
-                ->value('saldo') ?? 0;
+            // ambil saldo dari tabel saving_balances
+            $savingBalance = \App\Models\SavingBalance::where('student_id', $request->student_id)->first();
+
+            $lastSaldo = $savingBalance ? $savingBalance->saldo : 0;
 
             if ($lastSaldo < $request->nominal) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Saldo tidak mencukupi untuk penarikan.',
+                    'message' => 'Saldo anda tersisa ' . number_format($lastSaldo, 0, ',', '.'),
                     'errors'  => [
-                        'nominal' => ['Saldo tidak mencukupi untuk penarikan.']
+                        'nominal' => ['Saldo anda tersisa ' . number_format($lastSaldo, 0, ',', '.')]
                     ]
                 ], 422);
             }
 
             $newSaldo = $lastSaldo - $request->nominal;
 
-            $saving = Saving::create([
+            // simpan transaksi riwayat di tabel savings
+            $saving = \App\Models\Saving::create([
                 'student_id' => $request->student_id,
                 'nominal'    => $request->nominal,
                 'jenis'      => 'Tarik',
                 'saldo'      => $newSaldo,
                 'keterangan' => $request->keterangan,
-                'user_id'    => auth()->id(), // << ambil dari auth user
+                'user_id'    => auth()->id(),
             ]);
+
+            // update saldo di tabel saving_balances
+            if ($savingBalance) {
+                $savingBalance->update(['saldo' => $newSaldo]);
+            } else {
+                // kalau belum ada, buat baru
+                \App\Models\SavingBalance::create([
+                    'student_id' => $request->student_id,
+                    'saldo' => $newSaldo,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Penarikan berhasil disimpan.',
+                'message' => 'Penarikan berhasil. Sisa saldo anda: ' . number_format($newSaldo, 0, ',', '.'),
                 'saving'  => $saving->load('student', 'user')
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -209,8 +229,9 @@ class SavingController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // hitung saldo terakhir (ambil dari saving terakhir)
-        $lastBalance = $savings->first()?->saldo ?? 0;
+        // ambil saldo terakhir dari tabel saving_balances
+        $lastBalance = \App\Models\SavingBalance::where('student_id', $id)
+            ->value('saldo') ?? 0;
 
         return response()->json([
             'success'      => true,

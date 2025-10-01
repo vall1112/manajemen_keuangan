@@ -66,7 +66,7 @@ const refresh = () => paginateRef.value.refetch();
       <h2 class="mb-0">Saldo Tabungan</h2>
     </div>
     <div class="card-body">
-      <paginate ref="paginateRef" id="table-savings" url="/savings/balances" :columns="columns"></paginate>
+      <paginate ref="paginateRef" id="table-savings" url="/saving/balances" :columns="columns"></paginate>
     </div>
   </div>
 </template>

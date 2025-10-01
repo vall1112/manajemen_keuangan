@@ -5,6 +5,7 @@ import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import type { Bill } from "@/types";
 import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const router = useRouter();
 const column = createColumnHelper<Bill>();
@@ -86,10 +87,18 @@ const columns = [
                 h(
                     "button",
                     {
-                        class: "btn btn-sm btn-light-success d-flex align-items-center ",
+                        class:
+                            "btn btn-sm btn-light-success d-flex align-items-center ",
                         title: "Bayar Tagihan",
                         onClick: () => {
-                            const kodeTagihan = cell.row.original.kode; // sesuaikan field kode
+                            const row = cell.row.original;
+
+                            if (row.status === "Lunas") {
+                                toast.info("Tagihan sudah dibayar"); // tampilkan info
+                                return;
+                            }
+
+                            const kodeTagihan = row.kode; // field kode
                             router.push({
                                 name: "form.transaction",
                                 query: { kode: kodeTagihan },
@@ -97,8 +106,8 @@ const columns = [
                         },
                     },
                     [
-                        h("i", { class: "la la-credit-card fs-2" }), // icon bayar
-                        h("span", "Bayar") // teks tombol
+                        h("i", { class: "la la-credit-card fs-2" }),
+                        h("span", "Bayar"),
                     ]
                 ),
             ]),

@@ -122,6 +122,10 @@ function submit() {
       emit("refresh");
       emit("close");
       formRef.value.resetForm();
+
+      setTimeout(() => {
+        router.push({ name: "transaction" });
+      }, 2000); // delay 2 detik
     })
     .catch((err: any) => {
       toast.error(err.response?.data?.message || "Terjadi kesalahan");
@@ -199,7 +203,7 @@ function submit() {
 
     <div class="card-footer d-flex">
       <button type="submit" class="btn btn-primary btn-sm ms-auto">
-        Simpan
+        Bayar
       </button>
     </div>
   </VForm>
