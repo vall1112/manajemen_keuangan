@@ -5,7 +5,6 @@ import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import type { Bill } from "@/types";
 import { useRouter } from "vue-router";
-import { toast } from "vue3-toastify";
 
 const router = useRouter();
 const column = createColumnHelper<Bill>();
@@ -82,23 +81,26 @@ const columns = [
     }),
     column.accessor("id", {
         header: "Aksi",
-        cell: (cell) =>
-            h("div", { class: "d-flex gap-2" }, [
+        cell: (cell) => {
+            const row = cell.row.original;
+            const status = row.status;
+            
+            // Hanya tampilkan tombol bayar jika status bukan "Lunas"
+            if (status === "Lunas") {
+                return h("div", { class: "d-flex gap-2" }, [
+                    h("span", { class: "text-muted fst-italic" }, "-")
+                ]);
+            }
+            
+            return h("div", { class: "d-flex gap-2" }, [
                 h(
                     "button",
                     {
                         class:
-                            "btn btn-sm btn-light-success d-flex align-items-center ",
+                            "btn btn-sm btn-light-success d-flex align-items-center",
                         title: "Bayar Tagihan",
                         onClick: () => {
-                            const row = cell.row.original;
-
-                            if (row.status === "Lunas") {
-                                toast.info("Tagihan sudah dibayar"); // tampilkan info
-                                return;
-                            }
-
-                            const kodeTagihan = row.kode; // field kode
+                            const kodeTagihan = row.kode;
                             router.push({
                                 name: "form.transaction",
                                 query: { kode: kodeTagihan },
@@ -110,7 +112,8 @@ const columns = [
                         h("span", "Bayar"),
                     ]
                 ),
-            ]),
+            ]);
+        },
     }),
 ];
 
