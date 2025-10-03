@@ -7,19 +7,21 @@
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             margin: 0;
-            padding: 20px;
-            line-height: 1.5;
+            padding: 0;
+            line-height: 1.4;
             color: #212529;
             background: #fff;
         }
 
         .receipt-container {
-            max-width: 750px;
+            width: 105mm;   /* A6 width */
+            height: 148mm;  /* A6 height */
             margin: 0 auto;
             background: white;
             border: 1px solid #dee2e6;
-            padding: 25px 35px;
-            border-radius: 8px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-sizing: border-box;
         }
 
         .header {
@@ -27,38 +29,38 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #dee2e6;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .header h1 {
-            font-size: 1.6em;
+            font-size: 1.2em;
             margin: 0;
             font-weight: 600;
             color: #212529;
         }
 
         .header img {
-            height: 60px;
+            height: 40px;
         }
 
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .section h2 {
-            font-size: 1.2em;
+            font-size: 1em;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             border-bottom: 1px solid #dee2e6;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
             color: #495057;
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
         }
 
         .info-item {
@@ -67,22 +69,22 @@
         }
 
         .info-label {
-            font-size: 0.85em;
+            font-size: 0.75em;
             color: #6c757d;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .info-value {
-            font-size: 1em;
+            font-size: 0.85em;
             font-weight: 600;
         }
 
         .amount-highlight {
-            font-size: 1.4em;
+            font-size: 1.1em;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 8px;
             text-align: center;
-            padding: 10px;
+            padding: 6px;
             border: 1px solid #dee2e6;
             border-radius: 6px;
             background: #f8f9fa;
@@ -91,12 +93,12 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.95em;
+            font-size: 0.8em;
         }
 
         th, td {
             border: 1px solid #dee2e6;
-            padding: 10px;
+            padding: 6px;
             text-align: left;
         }
 
@@ -106,30 +108,35 @@
         }
 
         .footer {
-            margin-top: 35px;
+            margin-top: 20px;
             display: flex;
             justify-content: space-between;
+            font-size: 0.8em;
         }
 
         .signature {
             text-align: center;
-            margin-top: 40px;
         }
 
         .signature-line {
             border-top: 1px solid #495057;
-            margin-top: 50px;
-            padding-top: 5px;
+            margin-top: 30px;
+            padding-top: 3px;
             font-weight: 600;
         }
 
         @media print {
             body {
                 background: white;
+                margin: 0;
             }
             .receipt-container {
                 border: none;
+                border-radius: 0;
                 box-shadow: none;
+                width: 105mm;
+                height: 148mm;
+                page-break-after: always;
             }
         }
     </style>
@@ -187,7 +194,7 @@
                 Rp {{ number_format($transaction->nominal, 0, ',', '.') }}
             </div>
 
-            <div class="info-grid" style="margin-top:15px;">
+            <div class="info-grid" style="margin-top:10px;">
                 <div class="info-item">
                     <span class="info-label">Total Tagihan</span>
                     <span class="info-value">Rp {{ number_format($transaction->bill->total, 0, ',', '.') }}</span>
@@ -217,7 +224,7 @@
                         <th>Kode</th>
                         <th>Jenis Pembayaran</th>
                         <th>Jumlah</th>
-                        <th>Tahun Ajaran</th>
+                        <th>Tahun</th>
                     </tr>
                 </thead>
                 <tbody>
