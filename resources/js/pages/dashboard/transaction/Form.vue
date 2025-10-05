@@ -168,13 +168,34 @@ function submit() {
           </div>
         </div>
 
-        <!-- Jenis Pembayaran -->
+        <!-- Jenis Pembayaran (dari data bill, readonly) -->
         <div class="col-md-4" v-if="transaction.bill_id">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Jenis Pembayaran</label>
             <Field type="text" class="form-control form-control-lg form-control-solid" name="payment_type_name"
               v-model="transaction.payment_type_name" readonly />
             <ErrorMessage name="payment_type_name" class="text-danger" />
+          </div>
+        </div>
+
+        <!-- Metode Pembayaran (pilihan Tabungan / TU) -->
+        <div class="col-md-4" v-if="transaction.bill_id">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6 required">Metode Pembayaran</label>
+            <div class="d-flex align-items-center gap-5">
+              <label class="form-check form-check-custom form-check-solid">
+                <Field type="radio" class="form-check-input" name="payment_method" value="Tabungan"
+                  v-model="transaction.payment_method" />
+                <span class="form-check-label">Tabungan</span>
+              </label>
+
+              <label class="form-check form-check-custom form-check-solid">
+                <Field type="radio" class="form-check-input" name="payment_method" value="TU"
+                  v-model="transaction.payment_method" />
+                <span class="form-check-label">TU</span>
+              </label>
+            </div>
+            <ErrorMessage name="payment_method" class="text-danger" />
           </div>
         </div>
 
