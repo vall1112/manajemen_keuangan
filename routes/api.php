@@ -115,6 +115,7 @@ Route::post('student/savings/balances', [SavingController::class, 'getBalanceStu
 Route::post('history/savings/user', [SavingController::class, 'indexUser']);
 
 Route::post('saving/balances', [SavingBalanceController::class, 'index']);
+Route::get('/saving-balances/{student_id}', [SavingBalanceController::class, 'get']);
 
 
 // Route::middleware('auth:api')->group(function () {

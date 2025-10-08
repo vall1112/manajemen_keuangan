@@ -37,7 +37,7 @@ const routes: Array<RouteRecordRaw> = [
             },
             // BENDAHARA DASHBOARD
             {
-                path: "Sign",
+                path: "/bendahara/dashboard/",
                 name: "bendahara.dashboard",
                 component: () => import("@/pages/dashboard/Bendahara.vue"),
                 meta: {

@@ -3,10 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\SavingBalance;
 use Illuminate\Support\Facades\DB;
 
 class SavingBalanceController extends Controller
 {
+    public function get($student_id)
+    {
+        if (!$student_id || $student_id === 'undefined') {
+            return response()->json([
+                'success' => false,
+                'message' => 'student_id tidak valid',
+            ], 400);
+        }
+
+        $saving = SavingBalance::where('student_id', $student_id)->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'student_id' => (int) $student_id,
+                'balance' => (int) ($saving->saldo ?? 0),
+            ],
+        ]);
+    }
+
     public function index(Request $request)
     {
         $per = $request->per ?? 10;

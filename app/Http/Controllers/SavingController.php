@@ -48,94 +48,76 @@ class SavingController extends Controller
             'keterangan' => 'nullable|string|max:255',
         ]);
 
-        // ambil saldo terakhir dari tabel savings (riwayat transaksi)
-        $lastSaving = Saving::where('student_id', $validatedData['student_id'])
-            ->latest('created_at')
-            ->first();
+        // ambil saldo terakhir dari tabel saving_balances
+        $savingBalance = \App\Models\SavingBalance::firstOrNew([
+            'student_id' => $validatedData['student_id']
+        ]);
 
-        $lastSaldo = $lastSaving ? $lastSaving->saldo : 0;
+        $savingBalance->saldo = ($savingBalance->saldo ?? 0) + $validatedData['nominal'];
+        $savingBalance->save();
 
-        $validatedData['saldo'] = $lastSaldo + $validatedData['nominal'];
-        $validatedData['jenis'] = 'Setor';
-        $validatedData['user_id'] = auth()->id();
-
-        // simpan transaksi baru di tabel savings
-        $saving = Saving::create($validatedData);
-
-        // update/insert saldo di saving_balances
-        \App\Models\SavingBalance::updateOrCreate(
-            ['student_id' => $validatedData['student_id']], // cari berdasarkan student_id
-            ['saldo' => $validatedData['saldo']] // update saldo terbaru
-        );
+        // simpan riwayat transaksi tanpa kolom saldo
+        $saving = Saving::create([
+            'student_id' => $validatedData['student_id'],
+            'nominal'    => $validatedData['nominal'],
+            'jenis'      => 'Setor',
+            'keterangan' => $validatedData['keterangan'],
+            'user_id'    => auth()->id(),
+        ]);
 
         return response()->json([
             'success' => true,
             'saving'  => $saving->load('student', 'user'),
+            'saldo_terbaru' => $savingBalance->saldo,
         ]);
     }
 
     // ========================== SIMPAN DATA TARIK TABUNGAN ==========================
     public function storePull(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'student_id' => 'required|exists:students,id',
-                'nominal'    => 'required|numeric|min:1',
-                'keterangan' => 'nullable|string|max:255',
-            ]);
+        $validatedData = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'nominal'    => 'required|numeric|min:1',
+            'keterangan' => 'nullable|string|max:255',
+        ]);
 
-            // ambil saldo dari tabel saving_balances
-            $savingBalance = \App\Models\SavingBalance::where('student_id', $request->student_id)->first();
+        // ambil saldo dari tabel saving_balances
+        $savingBalance = \App\Models\SavingBalance::firstOrNew([
+            'student_id' => $validatedData['student_id']
+        ]);
 
-            $lastSaldo = $savingBalance ? $savingBalance->saldo : 0;
+        $lastSaldo = $savingBalance->saldo ?? 0;
 
-            if ($lastSaldo < $request->nominal) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Saldo anda tersisa ' . number_format($lastSaldo, 0, ',', '.'),
-                    'errors'  => [
-                        'nominal' => ['Saldo anda tersisa ' . number_format($lastSaldo, 0, ',', '.')]
-                    ]
-                ], 422);
-            }
-
-            $newSaldo = $lastSaldo - $request->nominal;
-
-            // simpan transaksi riwayat di tabel savings
-            $saving = \App\Models\Saving::create([
-                'student_id' => $request->student_id,
-                'nominal'    => $request->nominal,
-                'jenis'      => 'Tarik',
-                'saldo'      => $newSaldo,
-                'keterangan' => $request->keterangan,
-                'user_id'    => auth()->id(),
-            ]);
-
-            // update saldo di tabel saving_balances
-            if ($savingBalance) {
-                $savingBalance->update(['saldo' => $newSaldo]);
-            } else {
-                // kalau belum ada, buat baru
-                \App\Models\SavingBalance::create([
-                    'student_id' => $request->student_id,
-                    'saldo' => $newSaldo,
-                ]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Penarikan berhasil. Sisa saldo anda: ' . number_format($newSaldo, 0, ',', '.'),
-                'saving'  => $saving->load('student', 'user')
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        if ($lastSaldo < $validatedData['nominal']) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi gagal.',
-                'errors'  => $e->errors()
+                'message' => 'Saldo anda tersisa ' . number_format($lastSaldo, 0, ',', '.'),
+                'errors'  => [
+                    'nominal' => ['Saldo anda tersisa ' . number_format($lastSaldo, 0, ',', '.')]
+                ]
             ], 422);
         }
-    }
 
+        $savingBalance->saldo = $lastSaldo - $validatedData['nominal'];
+        $savingBalance->save();
+
+        // simpan riwayat transaksi tanpa kolom saldo
+        $saving = Saving::create([
+            'student_id' => $validatedData['student_id'],
+            'nominal'    => $validatedData['nominal'],
+            'jenis'      => 'Tarik',
+            'keterangan' => $validatedData['keterangan'],
+            'user_id'    => auth()->id(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Penarikan berhasil. Sisa saldo anda: ' . number_format($savingBalance->saldo, 0, ',', '.'),
+            'saving'  => $saving->load('student', 'user'),
+            'saldo_terbaru' => $savingBalance->saldo,
+        ]);
+    }
+    
     // ========================== MENGAMBIL DATA SALDO PER SISWA ==========================
     public function getBalance(Request $request)
     {

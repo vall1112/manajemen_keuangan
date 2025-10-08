@@ -49,6 +49,10 @@ class Student extends Model
         return $this->hasOne(Saving::class);
     }
 
+    public function savingBalance()
+    {
+        return $this->hasOne(SavingBalance::class);
+    }
 
     public function bills()
     {

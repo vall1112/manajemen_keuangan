@@ -4,8 +4,7 @@ import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import { block, unblock } from "@/libs/utils";
-import { useRouter } from 'vue-router';
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
@@ -30,7 +29,6 @@ const nominalDisplay = computed({
     return formatRupiah(transaction.value.total_tagihan);
   },
   set(val: string) {
-    // hapus semua karakter non-digit
     const number = parseInt(val.replace(/\D/g, "")) || 0;
     transaction.value.total_tagihan = number;
   },
@@ -39,12 +37,17 @@ const nominalDisplay = computed({
 const kodeTagihan = ref("");
 const transaction = ref<any>({
   bill_id: null,
+  student_id: null, // ✅ tambahkan ini
   student_name: "",
   payment_type_name: "",
+  metode_pembayaran: "",
   total_tagihan: 0,
-  status: "Berhasil", // hanya di script
+  status: "Berhasil",
   catatan: "",
 });
+
+
+const saldoTabungan = ref<number | null>(null);
 
 onMounted(() => {
   if (route.query.kode) {
@@ -59,6 +62,7 @@ const formSchema = Yup.object().shape({
   kodeTagihan: Yup.string().required("Kode tagihan harus diisi"),
   student_name: Yup.string().required("Nama siswa harus ada"),
   payment_type_name: Yup.string().required("Jenis pembayaran harus ada"),
+  metode_pembayaran: Yup.string().required("Metode pembayaran harus dipilih"), // ✅ validasi baru
   catatan: Yup.string(),
 });
 
@@ -69,12 +73,13 @@ watch(kodeTagihan, async (newVal) => {
   try {
     const { data } = await axios.get(`/bills/code/${newVal}`);
 
-    if (data.status === 'Lunas') {
-      toast.info('Tagihan sudah dibayar / lunas');
+    if (data.status === "Lunas") {
+      toast.info("Tagihan sudah dibayar / lunas");
       transaction.value = {
         bill_id: null,
         student_name: "",
         payment_type_name: "",
+        metode_pembayaran: "",
         total_tagihan: 0,
         status: "Berhasil",
         catatan: "",
@@ -83,16 +88,17 @@ watch(kodeTagihan, async (newVal) => {
     }
 
     transaction.value.bill_id = data.id;
+    transaction.value.student_id = data.student_id; // ✅ simpan student_id
     transaction.value.student_name = data.student_name;
     transaction.value.payment_type_name = data.payment_type_name;
     transaction.value.total_tagihan = data.total_tagihan;
-
   } catch (err: any) {
     toast.error(err.response?.data?.message || "Tagihan tidak ditemukan");
     transaction.value = {
       bill_id: null,
       student_name: "",
       payment_type_name: "",
+      metode_pembayaran: "",
       total_tagihan: 0,
       status: "Berhasil",
       catatan: "",
@@ -112,6 +118,7 @@ function submit() {
     nominal: transaction.value.total_tagihan,
     status: transaction.value.status,
     catatan: transaction.value.catatan,
+    metode_pembayaran: transaction.value.metode_pembayaran, // ✅ kirim ke API
   };
 
   block(document.getElementById("form-transaction"));
@@ -125,7 +132,7 @@ function submit() {
 
       setTimeout(() => {
         router.push({ name: "transaction" });
-      }, 2000); // delay 2 detik
+      }, 2000);
     })
     .catch((err: any) => {
       toast.error(err.response?.data?.message || "Terjadi kesalahan");
@@ -134,6 +141,26 @@ function submit() {
       unblock(document.getElementById("form-transaction"));
     });
 }
+
+// Watcher untuk metode pembayaran
+watch(() => transaction.value.metode_pembayaran, async (newVal) => {
+  console.log("Metode pembayaran:", newVal);
+  console.log("Student ID:", transaction.value.student_id);
+
+  if (newVal === "Pembayaran melalui tabungan") {
+    if (!transaction.value.student_id) {
+      toast.error("Student ID belum tersedia, silakan pilih tagihan terlebih dahulu");
+      return;
+    }
+
+    try {
+      const { data } = await axios.get(`/saving-balances/${transaction.value.student_id}`);
+      saldoTabungan.value = data.data.balance; // ✅ simpan di variabel saldoTabungan
+    } catch (err: any) {
+      toast.error("Gagal mengambil saldo tabungan");
+    }
+  }
+});
 </script>
 
 <template>
@@ -145,15 +172,15 @@ function submit() {
         <i class="la la-times-circle p-0"></i>
       </button>
     </div>
+
     <div class="card-body">
       <div class="row">
-
         <!-- Kode Tagihan -->
         <div class="col-md-4">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Kode Tagihan</label>
             <Field type="text" class="form-control form-control-lg form-control-solid" name="kodeTagihan"
-              v-model="kodeTagihan" placeholder="Masukkan kode tagihan" />
+              v-model="kodeTagihan" readonly />
             <ErrorMessage name="kodeTagihan" class="text-danger" />
           </div>
         </div>
@@ -168,7 +195,7 @@ function submit() {
           </div>
         </div>
 
-        <!-- Jenis Pembayaran (dari data bill, readonly) -->
+        <!-- Jenis Pembayaran -->
         <div class="col-md-4" v-if="transaction.bill_id">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Jenis Pembayaran</label>
@@ -178,28 +205,33 @@ function submit() {
           </div>
         </div>
 
-        <!-- Metode Pembayaran (pilihan Tabungan / TU) -->
+        <!-- Metode Pembayaran -->
         <div class="col-md-4" v-if="transaction.bill_id">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Metode Pembayaran</label>
-            <div class="d-flex align-items-center gap-5">
-              <label class="form-check form-check-custom form-check-solid">
-                <Field type="radio" class="form-check-input" name="payment_method" value="Tabungan"
-                  v-model="transaction.payment_method" />
-                <span class="form-check-label">Tabungan</span>
-              </label>
 
-              <label class="form-check form-check-custom form-check-solid">
-                <Field type="radio" class="form-check-input" name="payment_method" value="TU"
-                  v-model="transaction.payment_method" />
-                <span class="form-check-label">TU</span>
-              </label>
-            </div>
-            <ErrorMessage name="payment_method" class="text-danger" />
+            <Field as="select" name="metode_pembayaran" class="form-select form-select-solid" data-control="select2"
+              data-placeholder="Pilih Metode Pembayaran" v-model="transaction.metode_pembayaran">
+              <option value="">Pilih Metode Pembayaran</option>
+              <option value="Pembayaran melalui tabungan">Pembayaran melalui Tabungan</option>
+              <option value="Pembayaran melalui uang cash">Pembayaran melalui Uang Cash</option>
+            </Field>
+
+            <ErrorMessage name="metode_pembayaran" class="text-danger mt-2" />
           </div>
         </div>
 
-        <!-- Total Bayar (Nominal) -->
+        <!-- Saldo Tabungan Anda -->
+        <div class="col-md-4" v-if="transaction.bill_id && transaction.metode_pembayaran === 'Pembayaran melalui tabungan'">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6">Saldo Tabungan Anda</label>
+            <input type="text" class="form-control form-control-lg form-control-solid"
+              :value="saldoTabungan !== null ? formatRupiah(saldoTabungan) : '-'" readonly />
+          </div>
+        </div>
+
+
+        <!-- Total Bayar -->
         <div class="col-md-4" v-if="transaction.bill_id">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Total Bayar</label>
@@ -218,14 +250,11 @@ function submit() {
             <ErrorMessage name="catatan" class="text-danger" />
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="card-footer d-flex">
-      <button type="submit" class="btn btn-primary btn-sm ms-auto">
-        Bayar
-      </button>
+      <button type="submit" class="btn btn-primary btn-sm ms-auto">Bayar</button>
     </div>
   </VForm>
 </template>

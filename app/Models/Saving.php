@@ -16,7 +16,6 @@ class Saving extends Model
         'student_id',
         'nominal',
         'jenis',
-        'saldo',
         'keterangan',
     ];
 

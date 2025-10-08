@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\SavingBalance;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,25 +66,75 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'bill_id' => 'required|exists:bills,id',
-            'nominal' => 'required|numeric|min:0',
-            'status' => 'in:Pending,Berhasil,Gagal',
-            'catatan' => 'nullable|string',
+            'bill_id'            => 'required|exists:bills,id',
+            'nominal'            => 'required|numeric|min:0',
+            'status'             => 'in:Pending,Berhasil,Gagal',
+            'metode_pembayaran'  => 'in:Pembayaran melalui tabungan,Pembayaran melalui uang cash',
+            'catatan'            => 'nullable|string',
         ]);
 
-        // inject user_id dari user yang sedang login
-        $validatedData['user_id'] = auth()->id();
+        DB::beginTransaction();
 
-        $transaction = Transaction::create($validatedData);
+        try {
+            $validatedData['user_id'] = auth()->id();
 
-        if ($validatedData['status'] === 'Berhasil') {
-            $transaction->bill()->update(['status' => 'Lunas']);
+            $bill = \App\Models\Bill::with('student', 'paymentType')->findOrFail($validatedData['bill_id']);
+            $student = $bill->student;
+
+            // === Validasi tambahan: nominal tidak boleh melebihi saldo tabungan ===
+            if ($validatedData['metode_pembayaran'] === 'Pembayaran melalui tabungan') {
+                $savingBalance = \App\Models\SavingBalance::firstOrNew([
+                    'student_id' => $student->id
+                ]);
+
+                $lastSaldo = $savingBalance->saldo ?? 0;
+
+                if ($validatedData['nominal'] > $lastSaldo) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nominal pembayaran tidak boleh melebihi saldo tabungan.',
+                    ], 422);
+                }
+            }
+
+            // Simpan transaksi
+            $transaction = \App\Models\Transaction::create($validatedData);
+
+            // Jika pembayaran berhasil, ubah status tagihan
+            if ($validatedData['status'] === 'Berhasil') {
+                $bill->update(['status' => 'Lunas']);
+            }
+
+            // === Proses potong saldo tabungan ===
+            if ($validatedData['metode_pembayaran'] === 'Pembayaran melalui tabungan') {
+                $savingBalance->saldo = $lastSaldo - $validatedData['nominal'];
+                $savingBalance->save();
+
+                // Simpan riwayat ke tabel savings
+                \App\Models\Saving::create([
+                    'user_id'    => auth()->id(),
+                    'student_id' => $student->id,
+                    'nominal'    => $validatedData['nominal'],
+                    'jenis'      => 'Tarik',
+                    'keterangan' => 'Pembayaran ' . ($bill->paymentType->nama_jenis ?? ''),
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success'      => true,
+                'message'      => 'Transaksi berhasil disimpan',
+                'transaction'  => $transaction->load('bill', 'user'),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-            'transaction' => $transaction->load('bill', 'user') // sekalian load relasi user biar kelihatan
-        ]);
     }
 
     // ========================== TAMPILKAN DETAIL TRANSACTION ==========================
@@ -104,6 +155,7 @@ class TransactionController extends Controller
             'metode' => 'required|string|max:50',
             'bukti' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'status' => 'in:Pending,Berhasil,Gagal',
+            'metode_pembayaran' => 'in:Pembayaran melalui tabungan,Pembayaran melalui uang cash',
             'catatan' => 'nullable|string',
         ]);
 
@@ -156,6 +208,23 @@ class TransactionController extends Controller
             'student' => $student,
             'transaction' => $transaction,
             'unpaidBills' => $unpaidBills
+        ]);
+    }
+
+    public function getSavingBalance($student_id)
+    {
+        $balance = SavingBalance::where('student_id', $student_id)->first();
+
+        if (!$balance) {
+            return response()->json([
+                'message' => 'Saldo tabungan tidak ditemukan',
+                'balance' => 0,
+            ], 404);
+        }
+
+        return response()->json([
+            'student_id' => $student_id,
+            'balance' => (int) $balance->balance, // misal kolomnya 'balance'
         ]);
     }
 }
