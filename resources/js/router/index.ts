@@ -55,7 +55,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Dashboard"],
                 },
             },
-            // USER TAGIHAN
+            // TAGIHAN SISWA
             {
                 path: "/student/bill",
                 name: "student.bill",
@@ -65,7 +65,17 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Tagihan"],
                 },
             },
-            // USER TABUNGAN
+            // FORM TRANSAKSI TAGIHAN SISWA
+            {
+                path: "/form/student/transaction",
+                name: "form.student.transaction",
+                component: () => import("@/pages/student/transaction/Form.vue"),
+                meta: {
+                    pageTitle: "Transaksi",
+                    breadcrumbs: ["Transaksi"],
+                },
+            },
+            // TABUNGAN SISWA
             {
                 path: "/student/savings",
                 name: "student.savings",
@@ -83,6 +93,16 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     pageTitle: "Tagihan",
                     breadcrumbs: ["Tagihan"],
+                },
+            },
+            // KONFIRMASI PEMBAYARAN
+            {
+                path: "/payment/confirmation",
+                name: "payment.confirmation",
+                component: () => import("@/pages/dashboard/payment-confirmation/Index.vue"),
+                meta: {
+                    pageTitle: "Konfirmasi Pembayaran",
+                    breadcrumbs: ["Konfirmasi Pembayaran"],
                 },
             },
             // SETOR TABUNGAN

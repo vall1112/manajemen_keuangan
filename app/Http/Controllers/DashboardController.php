@@ -178,15 +178,29 @@ class DashboardController extends Controller
     // ========================== DASHBOARD SISWA ==========================
     public function siswa()
     {
-        $student = auth()->user()->student;
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User belum login.'
+            ], 401);
+        }
+
+        $student = $user->student;
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Data siswa tidak ditemukan untuk user ini.'
+            ], 404);
+        }
 
         $profile = [
             'nama'    => $student->nama,
             'nis'     => $student->nis,
-            'kelas'   => $student->classroom->nama_kelas,
-            'jurusan' => $student->classroom->major->nama_jurusan,
-            'email'   => $student->user->email,
-            'foto'    => $student->foto,
+            'kelas'   => $student->classroom->nama_kelas ?? '-',
+            'jurusan' => $student->classroom->major->nama_jurusan ?? '-',
+            'email'   => $student->user->email ?? '-',
+            'foto' => $student->foto ? asset('storage/' . $student->foto) : null,
         ];
 
         $bills = $student->bills()
@@ -202,10 +216,8 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Ambil saldo dari tabel saving_balances
-        $saldo = SavingBalance::where('student_id', $student->id)->value('saldo') ?? 0;
+        $saldo = \App\Models\SavingBalance::where('student_id', $student->id)->value('saldo') ?? 0;
 
-        // Ambil transaksi tabungan terakhir (riwayat saja, bukan saldo)
         $latestSaving = $student->savings()->latest('id')->first();
 
         $transactions = $latestSaving

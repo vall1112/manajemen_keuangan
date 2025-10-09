@@ -47,39 +47,57 @@ const columns = [
         header: "Status",
         cell: (info) => {
             const status = info.getValue();
-            return h(
-                "span",
-                {
-                    class: status === "Lunas" ? "text-success" : "text-danger",
-                },
-                status
-            );
+            let statusClass = "";
+
+            if (status === "Lunas") {
+                statusClass = "text-success"; // Hijau
+            } else if (status === "Pending") {
+                statusClass = "text-warning"; // Kuning
+            } else if (status === "Belum Dibayar") {
+                statusClass = "text-danger"; // Merah
+            } else {
+                statusClass = "text-muted"; // Default (abu-abu)
+            }
+
+            return h("span", { class: `fw-semibold ${statusClass}` }, status);
         },
     }),
-    // column.accessor("id", {
-    //     header: "Aksi",
-    //     cell: (cell) =>
-    //         h("div", { class: "d-flex gap-2" }, [
-    //             h(
-    //                 "button",
-    //                 {
-    //                     class: "btn btn-sm btn-light-success d-flex align-items-center",
-    //                     title: "Bayar Tagihan",
-    //                     onClick: () => {
-    //                         const kodeTagihan = cell.row.original.kode;
-    //                         router.push({
-    //                             name: "form.transaction",
-    //                             query: { kode: kodeTagihan },
-    //                         });
-    //                     },
-    //                 },
-    //                 [
-    //                     h("i", { class: "la la-credit-card fs-2" }),
-    //                     h("span", "Bayar"),
-    //                 ]
-    //             ),
-    //         ]),
-    // }),
+    column.accessor("id", {
+        header: "Aksi",
+        cell: (cell) => {
+            const row = cell.row.original;
+            const status = row.status;
+
+            // Hanya tampilkan tombol bayar jika status adalah "Belum dibayar"
+            if (status !== "Belum Dibayar") {
+                return h("div", { class: "d-flex gap-2" }, [
+                    h("span", { class: "text-muted fst-italic" }, "-")
+                ]);
+            }
+
+            return h("div", { class: "d-flex gap-2" }, [
+                h(
+                    "button",
+                    {
+                        class:
+                            "btn btn-sm btn-light-success d-flex align-items-center",
+                        title: "Bayar Tagihan",
+                        onClick: () => {
+                            const kodeTagihan = row.kode;
+                            router.push({
+                                name: "form.student.transaction",
+                                query: { kode: kodeTagihan },
+                            });
+                        },
+                    },
+                    [
+                        h("i", { class: "la la-credit-card fs-2" }),
+                        h("span", "Bayar"),
+                    ]
+                ),
+            ]);
+        },
+    }),
 ];
 
 const refresh = () => paginateRef.value.refetch();

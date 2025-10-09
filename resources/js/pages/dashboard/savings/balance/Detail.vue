@@ -243,15 +243,6 @@ const getTransactionTypeClass = (jenis: string) => {
                                         </i>
                                         Nominal
                                     </th>
-                                    <th class="min-w-125px">
-                                        <i class="ki-duotone ki-wallet fs-6 me-2">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                            <span class="path3"></span>
-                                            <span class="path4"></span>
-                                        </i>
-                                        Saldo
-                                    </th>
                                     <th class="min-w-200px">
                                         <i class="ki-duotone ki-notepad fs-6 me-2">
                                             <span class="path1"></span>
@@ -315,13 +306,6 @@ const getTransactionTypeClass = (jenis: string) => {
                                             :class="item.jenis === 'Setor' ? 'fw-bold text-success' : 'fw-bold text-danger'">
                                             {{ item.jenis === 'Setor' ? '+' : '-' }} {{
                                                 formatCurrency(Number(item.nominal)) }}
-                                        </span>
-                                    </td>
-
-                                    <!-- Saldo -->
-                                    <td>
-                                        <span class="fw-semibold text-gray-800">
-                                            {{ formatCurrency(Number(item.saldo)) }}
                                         </span>
                                     </td>
 

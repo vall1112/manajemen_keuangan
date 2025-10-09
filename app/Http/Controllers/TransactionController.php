@@ -93,7 +93,7 @@ class TransactionController extends Controller
                     DB::rollBack();
                     return response()->json([
                         'success' => false,
-                        'message' => 'Nominal pembayaran tidak boleh melebihi saldo tabungan.',
+                        'message' => 'Saldo tabungan anda tidak cukup untuk melakukan pembayaran.',
                     ], 422);
                 }
             }
@@ -150,28 +150,64 @@ class TransactionController extends Controller
     public function update(Request $request, Transaction $transaction)
     {
         $validatedData = $request->validate([
-            'bill_id' => 'required|exists:bills,id',
-            'nominal' => 'required|numeric|min:0',
-            'metode' => 'required|string|max:50',
-            'bukti' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'status' => 'in:Pending,Berhasil,Gagal',
-            'metode_pembayaran' => 'in:Pembayaran melalui tabungan,Pembayaran melalui uang cash',
-            'catatan' => 'nullable|string',
+            'bill_id'            => 'required|exists:bills,id',
+            'nominal'            => 'required|numeric|min:0',
+            'metode'             => 'required|string|max:50',
+            'status'             => 'in:Pending,Berhasil,Gagal',
+            'metode_pembayaran'  => 'in:Pembayaran melalui tabungan',
+            'catatan'            => 'nullable|string',
         ]);
 
-        if ($request->hasFile('bukti')) {
-            if ($transaction->bukti) {
-                Storage::disk('public')->delete($transaction->bukti);
+        DB::beginTransaction();
+
+        try {
+            // Update transaksi
+            $transaction->update($validatedData);
+
+            // Ambil data tagihan + relasi siswa dan jenis pembayaran
+            $bill = \App\Models\Bill::with(['student', 'paymentType'])->findOrFail($transaction->bill_id);
+            $student = $bill->student;
+
+            // Jika status transaksi Berhasil, ubah status tagihan dan proses tabungan
+            if ($validatedData['status'] === 'Berhasil') {
+                // Ubah status tagihan menjadi Lunas
+                $bill->update(['status' => 'Lunas']);
+
+                // Ambil saldo tabungan siswa
+                $savingBalance = \App\Models\SavingBalance::firstOrNew([
+                    'student_id' => $student->id
+                ]);
+
+                $lastSaldo = $savingBalance->saldo ?? 0;
+
+                // Kurangi saldo
+                $savingBalance->saldo = $lastSaldo - $validatedData['nominal'];
+                $savingBalance->save();
+
+                // Tambahkan riwayat ke tabel savings
+                \App\Models\Saving::create([
+                    'user_id'    => auth()->id(),
+                    'student_id' => $student->id,
+                    'nominal'    => $validatedData['nominal'],
+                    'jenis'      => 'Tarik',
+                    'keterangan' => 'Pembayaran ' . ($bill->paymentType->nama_jenis ?? ''),
+                ]);
             }
-            $validatedData['bukti'] = $request->file('bukti')->store('transactions', 'public');
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transaksi berhasil diperbarui',
+                'transaction' => $transaction->load('bill')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
         }
-
-        $transaction->update($validatedData);
-
-        return response()->json([
-            'success' => true,
-            'transaction' => $transaction->load('bill')
-        ]);
     }
 
     // ========================== HAPUS DATA TRANSACTION ==========================
@@ -211,6 +247,7 @@ class TransactionController extends Controller
         ]);
     }
 
+    // ========================== MENGAMBIL SALDO TABUNGAN PER SISWA ==========================
     public function getSavingBalance($student_id)
     {
         $balance = SavingBalance::where('student_id', $student_id)->first();
@@ -226,5 +263,117 @@ class TransactionController extends Controller
             'student_id' => $student_id,
             'balance' => (int) $balance->balance, // misal kolomnya 'balance'
         ]);
+    }
+
+    // ========================== SIMPAN DATA TRANSACTION BARU YANG DIBUAT OLEH SISWA ==========================
+    public function storeByStudent(Request $request)
+    {
+        $validatedData = $request->validate([
+            'bill_id'   => 'required|exists:bills,id',
+            'nominal'   => 'required|numeric|min:0',
+            'catatan'   => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $validatedData['user_id'] = auth()->id();
+            $validatedData['status'] = 'Pending';
+            $validatedData['metode_pembayaran'] = 'Pembayaran melalui tabungan'; // ✅ selalu tabungan
+
+            $bill = \App\Models\Bill::with('student', 'paymentType')->findOrFail($validatedData['bill_id']);
+            $student = $bill->student;
+
+            // ❌ Cegah siswa membayar tagihan yang sudah lunas
+            if ($bill->status === 'Lunas') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tagihan ini sudah lunas.',
+                ], 422);
+            }
+
+            // ✅ Validasi saldo tabungan
+            $savingBalance = \App\Models\SavingBalance::firstOrNew([
+                'student_id' => $student->id
+            ]);
+
+            $lastSaldo = $savingBalance->saldo ?? 0;
+
+            if ($validatedData['nominal'] > $lastSaldo) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Saldo tabungan anda tidak cukup untuk melakukan pembayaran.',
+                ], 422);
+            }
+
+            // ✅ Simpan transaksi (status pending)
+            $transaction = \App\Models\Transaction::create($validatedData);
+
+            // ✅ Tandai tagihan juga sebagai pending
+            $bill->update(['status' => 'Pending']);
+
+            DB::commit();
+
+            return response()->json([
+                'success'      => true,
+                'message'      => 'Transaksi berhasil dibuat dan menunggu konfirmasi bendahara.',
+                'transaction'  => $transaction->load('bill', 'user'),
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // ========================== AMBIL DATA TRANSACTION STATUS PENDING DENGAN PAGINASI ==========================
+    public function indexPending(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        $data = Transaction::with([
+            'bill.student',        // ambil nama siswa
+            'bill.paymentType',    // ambil jenis pembayaran
+        ])
+            ->where('status', 'Pending') // ✅ hanya transaksi pending
+            ->when($request->search, function ($query, $search) {
+                $query->where('kode', 'like', "%$search%")
+                    ->orWhere('nominal', 'like', "%$search%")
+                    ->orWhere('status', 'like', "%$search%")
+                    ->orWhereHas('bill', function ($q) use ($search) {
+                        $q->where('kode', 'like', "%$search%")
+                            ->orWhereHas('student', function ($q2) use ($search) {
+                                $q2->where('nama', 'like', "%$search%");
+                            })
+                            ->orWhereHas('paymentType', function ($q3) use ($search) {
+                                $q3->where('nama_jenis', 'like', "%$search%");
+                            });
+                    });
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        $data->getCollection()->transform(function ($item) {
+            return [
+                'no'                => $item->no,
+                'id'                => $item->id,
+                'kode'              => $item->kode,
+                'bill_id'           => $item->bill_id,
+                'student_name'      => $item->bill->student->nama ?? null,
+                'payment_type_name' => $item->bill->paymentType->nama_jenis ?? null, // ✅ jenis pembayaran
+                'nominal'           => $item->nominal,
+                'status'            => $item->status,
+                'catatan'           => $item->catatan,
+                'created_at'        => $item->created_at,
+            ];
+        });
+
+        return $data;
     }
 }
