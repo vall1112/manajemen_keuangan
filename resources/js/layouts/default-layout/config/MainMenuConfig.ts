@@ -121,7 +121,7 @@ const MainMenuConfig: Array<MenuItem> = [
             },
             // KONFIRMASI PEMBAYARAN
             {
-                heading: "Konfirmasi Pembayaran",
+                heading: "Verifikasi Pembayaran",
                 name: "transaction",
                 route: "/payment/confirmation",
                 keenthemesIcon: "arrows-circle",
