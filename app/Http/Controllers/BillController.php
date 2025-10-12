@@ -84,6 +84,7 @@ class BillController extends Controller
     {
         return response()->json([
             'id' => $bill->id,
+            'student_id' => $bill->student_id,
             'student_name' => $bill->student ? $bill->student->nama : '',
             'payment_type_name' => $bill->paymentType ? $bill->paymentType->nama_jenis : '',
             'school_year' => $bill->schoolYear ? $bill->schoolYear->tahun_ajaran : '',

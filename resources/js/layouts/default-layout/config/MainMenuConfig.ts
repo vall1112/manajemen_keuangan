@@ -119,6 +119,13 @@ const MainMenuConfig: Array<MenuItem> = [
                 route: "/transaction",
                 keenthemesIcon: "wallet",
             },
+            // KONFIRMASI PEMBAYARAN
+            {
+                heading: "Konfirmasi Pembayaran",
+                name: "transaction",
+                route: "/payment/confirmation",
+                keenthemesIcon: "arrows-circle",
+            },
             // TABUNGAN
             {
                 sectionTitle: "Tabungan",

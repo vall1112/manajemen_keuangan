@@ -34,6 +34,10 @@ const columns = [
             })}`;
         },
     }),
+    column.accessor("keterangan", {
+        header: "Keterangan",
+        cell: ({ row }) => row.original.keterangan || "-",
+    }), 
     column.accessor("created_at", {
         header: "Tanggal",
         cell: (info) => {

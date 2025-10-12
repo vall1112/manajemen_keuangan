@@ -62,7 +62,6 @@ const formSchema = Yup.object().shape({
   kodeTagihan: Yup.string().required("Kode tagihan harus diisi"),
   student_name: Yup.string().required("Nama siswa harus ada"),
   payment_type_name: Yup.string().required("Jenis pembayaran harus ada"),
-  metode_pembayaran: Yup.string().required("Metode pembayaran harus dipilih"), // ✅ validasi baru
   catatan: Yup.string(),
 });
 
@@ -88,10 +87,12 @@ watch(kodeTagihan, async (newVal) => {
     }
 
     transaction.value.bill_id = data.id;
-    transaction.value.student_id = data.student_id; // ✅ simpan student_id
+    transaction.value.student_id = data.student_id;
     transaction.value.student_name = data.student_name;
     transaction.value.payment_type_name = data.payment_type_name;
     transaction.value.total_tagihan = data.total_tagihan;
+    transaction.value.metode_pembayaran = "Pembayaran melalui tabungan";
+
   } catch (err: any) {
     toast.error(err.response?.data?.message || "Tagihan tidak ditemukan");
     transaction.value = {
@@ -123,7 +124,7 @@ function submit() {
 
   block(document.getElementById("form-transaction"));
   axios
-    .post("/transactions/store", payload)
+    .post("/transactions/student/store", payload)
     .then(() => {
       toast.success("Transaksi berhasil disimpan");
       emit("refresh");
@@ -131,7 +132,7 @@ function submit() {
       formRef.value.resetForm();
 
       setTimeout(() => {
-        router.push({ name: "transaction" });
+        router.push({ name: "student.bill" });
       }, 2000);
     })
     .catch((err: any) => {
@@ -210,19 +211,16 @@ watch(() => transaction.value.metode_pembayaran, async (newVal) => {
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6 required">Metode Pembayaran</label>
 
-            <Field as="select" name="metode_pembayaran" class="form-select form-select-solid" data-control="select2"
-              data-placeholder="Pilih Metode Pembayaran" v-model="transaction.metode_pembayaran">
-              <option value="">Pilih Metode Pembayaran</option>
-              <option value="Pembayaran melalui tabungan">Pembayaran melalui Tabungan</option>
-              <option value="Pembayaran melalui uang cash">Pembayaran melalui Uang Cash</option>
-            </Field>
+            <input type="text" class="form-control form-control-lg form-control-solid"
+              v-model="transaction.metode_pembayaran" readonly />
 
             <ErrorMessage name="metode_pembayaran" class="text-danger mt-2" />
           </div>
         </div>
 
         <!-- Saldo Tabungan Anda -->
-        <div class="col-md-4" v-if="transaction.bill_id && transaction.metode_pembayaran === 'Pembayaran melalui tabungan'">
+        <div class="col-md-4"
+          v-if="transaction.bill_id && transaction.metode_pembayaran === 'Pembayaran melalui tabungan'">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6">Saldo Tabungan Anda</label>
             <input type="text" class="form-control form-control-lg form-control-solid"

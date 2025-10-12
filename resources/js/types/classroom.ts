@@ -7,7 +7,6 @@ export interface Bill {
     tanggal_tagih: string;         // format date (YYYY-MM-DD)
     status: "Belum Dibayar" | "Dibayar Sebagian" | "Lunas";
     dibayar: number;
-    sisa: number;
     keterangan?: string;
     created_at?: string;
     updated_at?: string;
