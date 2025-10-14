@@ -13,6 +13,7 @@ use App\Models\SchoolYear;
 use App\Models\PaymentType;
 use App\Models\Transaction;
 use App\Models\Saving;
+use App\Models\SavingBalance;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,6 @@ class DashboardController extends Controller
     // ========================== DASHBOARD ADMIN ==========================
     public function admin()
     {
-        // Statistik master data
         $statistics = [
             'students'      => Student::count(),
             'users'         => User::count(),
@@ -32,7 +32,6 @@ class DashboardController extends Controller
             'payment_type'  => PaymentType::count(),
         ];
 
-        // Distribusi siswa per jurusan
         $studentsPerMajor = Student::select('majors.kode as jurusan', DB::raw('COUNT(students.id) as jumlah'))
             ->join('classrooms', 'students.classroom_id', '=', 'classrooms.id')
             ->join('majors', 'classrooms.major_id', '=', 'majors.id')
@@ -43,7 +42,6 @@ class DashboardController extends Controller
                 'jumlah'  => (int) $s->jumlah,
             ]);
 
-        // Distribusi siswa per kelas, termasuk kelas tanpa siswa
         $studentsPerClass = Classroom::leftJoin('students', 'classrooms.id', '=', 'students.classroom_id')
             ->select('classrooms.nama_kelas as kelas', DB::raw('COUNT(students.id) as jumlah'))
             ->groupBy('classrooms.id', 'classrooms.nama_kelas')
@@ -53,37 +51,33 @@ class DashboardController extends Controller
                 'jumlah' => (int) $c->jumlah,
             ]);
 
-        // Gabungkan students_per_major dan students_per_class ke statistics
         $statistics['students_per_major'] = $studentsPerMajor;
         $statistics['students_per_class'] = $studentsPerClass;
 
-        // Return JSON
         return response()->json([
             'statistics' => $statistics
         ]);
     }
 
-
-    // ========================== DASHBOARD BEBDAHARA ==========================
+    // ========================== DASHBOARD BENDAHARA ==========================
     public function bendahara()
     {
         // Statistik Keuangan
         $statistics = [
-            'saldo_kas' => Transaction::where('status', 'Berhasil')->sum('nominal'),
+            'saldo_kas'          => Transaction::where('status', 'Berhasil')->sum('nominal'),
             'pemasukan_hari_ini' => Transaction::where('status', 'Berhasil')
                 ->whereDate('created_at', Carbon::today())
                 ->sum('nominal'),
             'tagihan_belum_bayar' => Bill::where('status', 'Belum Dibayar')->sum('total_tagihan'),
-            'saldo_tabungan' => Saving::orderBy('id', 'desc')->value('saldo') ?? 0,
+            // Ambil total saldo tabungan dari tabel saving_balances
+            'saldo_tabungan'      => SavingBalance::sum('saldo'),
         ];
 
-        // Distribusi tagihan per jenis pembayaran
         $paymentTypes = Bill::select('payment_types.nama_jenis as jenis', DB::raw('COUNT(bills.id) as jumlah'))
             ->join('payment_types', 'bills.payment_type_id', '=', 'payment_types.id')
             ->groupBy('payment_types.id', 'payment_types.nama_jenis')
             ->get();
 
-        // 10 transaksi terakhir
         $transactions = Transaction::with(['bill.student.classroom'])
             ->where('status', 'Berhasil')
             ->latest()
@@ -99,12 +93,8 @@ class DashboardController extends Controller
                 ];
             });
 
-        // ==============================
-        // Notifikasi
-        // ==============================
         $today = Carbon::today();
 
-        // 1. Tagihan jatuh tempo hari ini
         $dueToday = Bill::whereIn('status', ['Belum Dibayar', 'Dibayar Sebagian'])
             ->whereDate('jatuh_tempo', $today)
             ->get(['kode', 'jatuh_tempo'])
@@ -115,7 +105,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // 2. Tagihan yang melewati jatuh tempo
         $overdueBills = Bill::whereIn('status', ['Belum Dibayar', 'Dibayar Sebagian'])
             ->whereDate('jatuh_tempo', '<', $today)
             ->get(['kode', 'jatuh_tempo'])
@@ -126,22 +115,19 @@ class DashboardController extends Controller
                 ];
             });
 
-        // 3. Jumlah tagihan/tunggakan
         $totalUnpaid = Bill::where('status', 'Belum Dibayar')->count();
 
-        // 4. User baru dalam 24 jam terakhir
         $newUsers = User::where('created_at', '>=', Carbon::now()->subDay())
             ->get(['id', 'username', 'email', 'created_at'])
             ->map(function ($user) {
                 return [
-                    'id'    => $user->id,
+                    'id'        => $user->id,
                     'username'  => $user->username,
-                    'email' => $user->email,
+                    'email'     => $user->email,
                     'joined_at' => $user->created_at->format('Y-m-d H:i'),
                 ];
             });
 
-        // 10 aktivitas tabungan terbaru
         $savings = Saving::with(['student.classroom'])
             ->latest()
             ->take(10)
@@ -157,7 +143,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Trend pendapatan per bulan (12 bulan terakhir)
         $monthlyIncome = Transaction::select(
             DB::raw('MONTH(created_at) as bulan'),
             DB::raw('SUM(nominal) as total')
@@ -166,7 +151,6 @@ class DashboardController extends Controller
             ->groupBy(DB::raw('MONTH(created_at)'))
             ->pluck('total', 'bulan');
 
-        // Jumlah siswa dengan tunggakan
         $studentsWithUnpaid = Bill::where('status', 'Belum Dibayar')
             ->select('student_id')
             ->distinct()
@@ -191,59 +175,66 @@ class DashboardController extends Controller
         ]);
     }
 
-
     // ========================== DASHBOARD SISWA ==========================
     public function siswa()
     {
-        $student = auth()->user()->student;
+        $user = auth()->user();
 
-        // Profil siswa
+        if (!$user) {
+            return response()->json([
+                'message' => 'User belum login.'
+            ], 401);
+        }
+
+        $student = $user->student;
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Data siswa tidak ditemukan untuk user ini.'
+            ], 404);
+        }
+
         $profile = [
             'nama'    => $student->nama,
             'nis'     => $student->nis,
-            'kelas'   => $student->classroom->nama_kelas,
-            'jurusan' => $student->classroom->major->nama_jurusan,
-            'email'   => $student->user->email,
-            'foto'    => $student->foto,
+            'kelas'   => $student->classroom->nama_kelas ?? '-',
+            'jurusan' => $student->classroom->major->nama_jurusan ?? '-',
+            'email'   => $student->user->email ?? '-',
+            'foto' => $student->foto ? asset('storage/' . $student->foto) : null,
         ];
 
-        // Tagihan siswa (Belum Dibayar)
         $bills = $student->bills()
             ->where('status', 'Belum Dibayar')
             ->get(['id', 'kode', 'total_tagihan', 'tanggal_tagih', 'status', 'keterangan'])
             ->map(function ($bill) {
                 return [
-                    'id' => $bill->id,
-                    'title' => $bill->kode,
-                    'amount' => $bill->total_tagihan,
-                    'due_date' => $bill->tanggal_tagih,
-                    'status' => $bill->status,
+                    'id'        => $bill->id,
+                    'title'     => $bill->kode,
+                    'amount'    => $bill->total_tagihan,
+                    'due_date'  => $bill->tanggal_tagih,
+                    'status'    => $bill->status,
                 ];
             });
 
-        // Ambil tabungan terbaru
+        $saldo = \App\Models\SavingBalance::where('student_id', $student->id)->value('saldo') ?? 0;
+
         $latestSaving = $student->savings()->latest('id')->first();
 
-        $saldo = $latestSaving->saldo ?? 0;
-
         $transactions = $latestSaving
-            ? [
-                [
-                    'id' => $latestSaving->id,
-                    'type' => $latestSaving->jenis,
-                    'amount' => $latestSaving->nominal,
-                    'saldo' => $latestSaving->saldo,
-                    'note' => $latestSaving->keterangan,
-                ]
-            ]
+            ? [[
+                'id'      => $latestSaving->id,
+                'type'    => $latestSaving->jenis,
+                'amount'  => $latestSaving->nominal,
+                'note'    => $latestSaving->keterangan,
+            ]]
             : [];
 
         return response()->json([
             'profile' => $profile,
-            'bills' => $bills,
+            'bills'   => $bills,
             'savings' => [
-                'saldo' => $saldo,
-                'transactions' => $transactions,
+                'saldo'         => $saldo,
+                'transactions'  => $transactions,
             ],
         ]);
     }

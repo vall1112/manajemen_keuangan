@@ -70,13 +70,19 @@ const columns = [
         header: "Status",
         cell: (info) => {
             const status = info.getValue();
-            return h(
-                "span",
-                {
-                    class: status === "Lunas" ? "text-success" : "text-danger",
-                },
-                status
-            );
+            let statusClass = "";
+
+            if (status === "Lunas") {
+                statusClass = "text-success"; // Hijau
+            } else if (status === "Pending") {
+                statusClass = "text-warning"; // Kuning
+            } else if (status === "Belum Dibayar") {
+                statusClass = "text-danger"; // Merah
+            } else {
+                statusClass = "text-muted"; // Default (abu-abu)
+            }
+
+            return h("span", { class: `fw-semibold ${statusClass}` }, status);
         },
     }),
     column.accessor("id", {
@@ -84,14 +90,14 @@ const columns = [
         cell: (cell) => {
             const row = cell.row.original;
             const status = row.status;
-            
-            // Hanya tampilkan tombol bayar jika status bukan "Lunas"
-            if (status === "Lunas") {
+
+            // Hanya tampilkan tombol bayar jika status adalah "Belum dibayar"
+            if (status !== "Belum Dibayar") {
                 return h("div", { class: "d-flex gap-2" }, [
                     h("span", { class: "text-muted fst-italic" }, "-")
                 ]);
             }
-            
+
             return h("div", { class: "d-flex gap-2" }, [
                 h(
                     "button",

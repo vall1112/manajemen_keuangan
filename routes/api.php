@@ -115,6 +115,7 @@ Route::post('student/savings/balances', [SavingController::class, 'getBalanceStu
 Route::post('history/savings/user', [SavingController::class, 'indexUser']);
 
 Route::post('saving/balances', [SavingBalanceController::class, 'index']);
+Route::get('/saving-balances/{student_id}', [SavingBalanceController::class, 'get']);
 
 
 // Route::middleware('auth:api')->group(function () {
@@ -141,7 +142,9 @@ Route::put('school-years/{id}/status', [SchoolYearController::class, 'updateStat
 
 Route::get('transactions', [TransactionController::class, 'get']);
 Route::post('transactions', [TransactionController::class, 'index']);
+Route::post('transactions/pending', [TransactionController::class, 'indexPending']);
 Route::post('transactions/store', [TransactionController::class, 'store']);
+Route::post('transactions/student/store', [TransactionController::class, 'storeByStudent']);
 Route::apiResource('transactions', TransactionController::class)
     ->except(['index', 'store']);
 

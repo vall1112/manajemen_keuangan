@@ -119,6 +119,13 @@ const MainMenuConfig: Array<MenuItem> = [
                 route: "/transaction",
                 keenthemesIcon: "wallet",
             },
+            // KONFIRMASI PEMBAYARAN
+            {
+                heading: "Verifikasi Pembayaran",
+                name: "transaction",
+                route: "/payment/confirmation",
+                keenthemesIcon: "arrows-circle",
+            },
             // TABUNGAN
             {
                 sectionTitle: "Tabungan",
@@ -179,6 +186,16 @@ const MainMenuConfig: Array<MenuItem> = [
                 heading: "Tagihan",
                 name: "user-bill",
                 route: "/student/bill",
+                keenthemesIcon: "dollar",
+            },
+        ],
+    },
+    {
+        pages: [
+            {
+                heading: "Pengajuan Pembayaran",
+                name: "user-bill",
+                route: "/student/payment",
                 keenthemesIcon: "dollar",
             },
         ],
