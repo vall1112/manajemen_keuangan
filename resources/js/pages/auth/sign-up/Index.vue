@@ -12,8 +12,11 @@
             </div>
 
             <!-- Stepper -->
-            <div class="stepper stepper-links d-flex flex-column" id="kt_create_account_stepper"
-                ref="horizontalWizardRef">
+            <div
+                class="stepper stepper-links d-flex flex-column"
+                id="kt_create_account_stepper"
+                ref="horizontalWizardRef"
+            >
                 <div class="stepper-nav py-5 mt-5 d-none">
                     <div class="stepper-item current" data-kt-stepper-element="nav">
                         <h3 class="stepper-title">Akun</h3>
@@ -27,8 +30,12 @@
                 </div>
 
                 <!-- Form -->
-                <form class="mx-auto mw-600px w-100 pt-15 pb-10" novalidate id="kt_create_account_form"
-                    @submit="handleStep">
+                <form
+                    class="mx-auto mw-600px w-100 pt-15 pb-10"
+                    novalidate
+                    id="kt_create_account_form"
+                    @submit="handleStep"
+                >
                     <!-- Step 1: Credential -->
                     <div class="current" data-kt-stepper-element="content">
                         <Credential :formData="formData" />
@@ -36,7 +43,11 @@
 
                     <!-- Step 2: Email OTP -->
                     <div data-kt-stepper-element="content">
-                        <VerifyEmail :formData="formData" @on-complete="handleOtpEmail" @send-otp="sendOtpEmail" />
+                        <VerifyEmail
+                            :formData="formData"
+                            @on-complete="handleOtpEmail"
+                            @send-otp="sendOtpEmail"
+                        />
                     </div>
 
                     <!-- Step 3: Password -->
@@ -47,29 +58,47 @@
                     <!-- Actions -->
                     <div class="d-flex flex-stack pt-15">
                         <div class="mr-2">
-                            <button type="button" class="btn btn-lg btn-light-primary me-3" @click="previousStep">
+                            <button
+                                type="button"
+                                class="btn btn-lg btn-light-primary me-3"
+                                @click="previousStep"
+                            >
                                 <KTIcon icon-name="arrow-left" icon-class="fs-4 me-1" /> Kembali
                             </button>
                         </div>
                         <div>
-                            <button type="submit" id="submit-form" class="btn btn-lg btn-primary me-3"
-                                v-if="currentStepIndex === totalSteps - 1">
+                            <button
+                                type="submit"
+                                id="submit-form"
+                                class="btn btn-lg btn-primary me-3"
+                                v-if="currentStepIndex === totalSteps - 1"
+                            >
                                 <span class="indicator-label">
                                     Daftar
                                     <KTIcon icon-name="arrow-right" icon-class="fs-3 ms-2 me-0" />
                                 </span>
                                 <span class="indicator-progress">
-                                    Memproses... <span
-                                        class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                    Memproses...
+                                    <span
+                                        class="spinner-border spinner-border-sm align-middle ms-2"
+                                    ></span>
                                 </span>
                             </button>
-                            <button v-else type="submit" id="next-form" class="btn btn-lg btn-primary">
+
+                            <button
+                                v-else
+                                type="submit"
+                                id="next-form"
+                                class="btn btn-lg btn-primary"
+                            >
                                 <span class="indicator-label">
                                     Selanjutnya
                                     <KTIcon icon-name="arrow-right" icon-class="fs-4 ms-2 me-0" />
                                 </span>
                                 <span class="indicator-progress">
-                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                    <span
+                                        class="spinner-border spinner-border-sm align-middle ms-2"
+                                    ></span>
                                 </span>
                             </button>
                         </div>
@@ -111,7 +140,6 @@ interface ICredential {
 }
 interface IVerifyEmail { otp_email?: string; }
 interface IPassword { password?: string; password_confirmation?: string; }
-
 interface CreateAccount extends ICredential, IVerifyEmail, IPassword { }
 
 interface IOtpInterval {
@@ -152,26 +180,26 @@ export default defineComponent({
                     .required("Username tidak boleh kosong")
                     .min(3, "Username minimal 3 karakter")
                     .max(50, "Username maksimal 50 karakter")
-                    .matches(/^[a-zA-Z0-9_]+$/, "Username hanya boleh terdiri dari huruf, angka, dan underscore")
-                    .label("Username"),
-                nama: Yup.string().required("Nama tidak boleh kosong").label("Nama"),
-                email: Yup.string().email().required("Email tidak boleh kosong").label("Email"),
+                    .matches(/^[a-zA-Z0-9_]+$/, "Username hanya boleh huruf, angka, dan underscore"),
+                nama: Yup.string().required("Nama tidak boleh kosong"),
+                email: Yup.string().email().required("Email tidak boleh kosong"),
             }),
-            Yup.object({}), // step verifikasi email
+            Yup.object({}),
             Yup.object({
                 password: Yup.string()
-                    .min(8, "Password minimal terdiri dari 8 karakter")
-                    .required("Password tidak boleh kosong")
-                    .label("Password"),
+                    .min(8, "Password minimal 8 karakter")
+                    .required("Password tidak boleh kosong"),
                 password_confirmation: Yup.string()
                     .oneOf([Yup.ref("password")], "Konfirmasi Password tidak sesuai")
-                    .required("Konfirmasi Password tidak boleh kosong")
-                    .label("Konfirmasi Password"),
+                    .required("Konfirmasi Password tidak boleh kosong"),
             }),
         ];
 
         const currentSchema = computed(() => createAccountSchema[currentStepIndex.value]);
-        const { resetForm, handleSubmit } = useForm<ICredential | IVerifyEmail | IPassword>({ validationSchema: currentSchema });
+        const { resetForm, handleSubmit } = useForm<ICredential | IVerifyEmail | IPassword>({
+            validationSchema: currentSchema,
+        });
+
         const totalSteps = computed(() => _stepperObj.value ? _stepperObj.value.totalStepsNumber : 1);
         const { otpInterval, setOtpInterval } = useOtpIntervalStore();
         const timeIntv = ref<any>(null);
@@ -194,24 +222,60 @@ export default defineComponent({
                     setOtpInterval.value(30);
                     handleOtpInterval();
                 })
-                .catch(err => { toast.error(err.response.data.message); unblockBtn("#next-form"); });
+                .catch(err => {
+                    toast.error(err.response?.data?.message || "Gagal mengirim OTP");
+                    unblockBtn("#next-form");
+                });
         };
 
         const checkOtpEmail = (callback: any) => {
             blockBtn("#next-form");
             axios.post("/auth/register/check/email/otp", { email: formData.value.email, otp: formData.value.otp_email })
-                .then(() => { toast.success("Email berhasil diverifikasi"); unblockBtn("#next-form"); callback && callback(); })
-                .catch(err => { toast.error(err.response.data.message); unblockBtn("#next-form"); });
+                .then(() => {
+                    toast.success("Email berhasil diverifikasi");
+                    unblockBtn("#next-form");
+                    callback && callback();
+                })
+                .catch(err => {
+                    toast.error(err.response?.data?.message || "Kode OTP salah");
+                    unblockBtn("#next-form");
+                });
         };
 
+        // ✅ Step handling diperbaiki
         const handleStep = handleSubmit((values) => {
             resetForm({ values: { ...formData.value } });
+
             if (currentStepIndex.value === 0) {
-                sendOtpEmail(() => { formData.value = { ...values }; currentStepIndex.value++; _stepperObj.value?.goNext(); });
+                // 🔍 Cek email dulu sebelum kirim OTP
+                blockBtn("#next-form");
+                axios.post("/auth/register/check/email", { email: formData.value.email })
+                    .then(() => {
+                        // Email belum terdaftar → lanjut kirim OTP
+                        sendOtpEmail(() => {
+                            formData.value = { ...values };
+                            currentStepIndex.value++;
+                            _stepperObj.value?.goNext();
+                        });
+                    })
+                    .catch(err => {
+                        if (err.response?.status === 409) {
+                            toast.error("Email sudah digunakan");
+                        } else {
+                            toast.error(err.response?.data?.message || "Terjadi kesalahan saat memeriksa email");
+                        }
+                        unblockBtn("#next-form");
+                    });
+
             } else if (currentStepIndex.value === 1) {
-                checkOtpEmail(() => { formData.value = { ...values }; currentStepIndex.value++; _stepperObj.value?.goNext(); });
+                checkOtpEmail(() => {
+                    formData.value = { ...values };
+                    currentStepIndex.value++;
+                    _stepperObj.value?.goNext();
+                });
             } else if (currentStepIndex.value === 2) {
-                formData.value = { ...values }; formSubmit(values);
+                formData.value = { ...values };
+                formSubmit(values);
             }
         });
 
@@ -227,13 +291,27 @@ export default defineComponent({
         const formSubmit = (values: CreateAccount) => {
             blockBtn("#submit-form");
             axios.post("/auth/register", values)
-                .then(() => { toast.success("Akun berhasil dibuat"); router.push({ name: "sign-in" }); })
-                .catch(err => { toast.error(err.response.data.message); unblockBtn("#submit-form"); });
+                .then(() => {
+                    toast.success("Akun berhasil dibuat");
+                    router.push({ name: "sign-in" });
+                })
+                .catch(err => {
+                    toast.error(err.response?.data?.message || "Gagal membuat akun");
+                    unblockBtn("#submit-form");
+                });
         };
 
         return {
-            horizontalWizardRef, previousStep, handleStep, formSubmit, totalSteps, currentStepIndex,
-            formData, sendOtpEmail, resetForm, setting,
+            horizontalWizardRef,
+            previousStep,
+            handleStep,
+            formSubmit,
+            totalSteps,
+            currentStepIndex,
+            formData,
+            sendOtpEmail,
+            resetForm,
+            setting,
         };
     },
     methods: {

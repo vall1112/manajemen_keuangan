@@ -25,54 +25,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // ========================== LOGIN DENGAN EMAIL ==========================
-    // public function loginEmail(Request $request)
-    // {
-    //     $validator = Validator::make($request->post(), [
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => $validator->errors()->first()
-    //         ]);
-    //     }
-
-    //     if (!$token = auth()->attempt($validator->validated())) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Email / Password salah!'
-    //         ], 401);
-    //     }
-
-    //     $user = auth()->user();
-
-    //     if ($user->status === 'Pending') {
-    //         auth()->logout();
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Akun Anda masih menunggu persetujuan admin.'
-    //         ], 403);
-    //     }
-
-    //     if ($user->status === 'Tidak Aktif') {
-    //         auth()->logout();
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Akun Anda tidak aktif, silakan hubungi admin.'
-    //         ], 403);
-    //     }
-
-    //     // kalau status "Aktif" boleh login
-    //     return response()->json([
-    //         'status' => true,
-    //         'user' => $user,
-    //         'token' => $token
-    //     ]);
-    // }
-
     // ========================== LOGIN ==========================
     public function login(Request $request)
     {
@@ -175,7 +127,25 @@ class AuthController extends Controller
         ], 201);
     }
 
+<<<<<<< HEAD
   // ========================== KIRIM KODE OTP KE EMAIL ==========================
+=======
+    // ========================== CEK EMAIL SAAT REGISTRASI ==========================
+    public function checkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $exists = User::where('email', $request->email)->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'Email sudah digunakan'], 409);
+        }
+
+        return response()->json(['message' => 'Email tersedia'], 200);
+    }
+
+    // ========================== KIRIM KODE OTP KE EMAIL ==========================
+>>>>>>> 142b0bb (Validasi register)
     public function sendEmailOtp(Request $request)
     {
         $request->validate([
