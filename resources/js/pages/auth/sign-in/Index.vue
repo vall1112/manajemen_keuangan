@@ -6,38 +6,49 @@
             <router-link to="/">
                 <img :src="setting?.logo" :alt="setting?.app" class="w-200px mb-8" />
             </router-link>
-            <!--begin::Title-->
+
             <h1 class="mb-3">
                 Masuk ke <span class="text-primary">{{ setting?.app }}</span>
             </h1>
-            <!--end::Title-->
         </div>
         <!--end::Heading-->
+
+        <!--begin::Tabs-->
+        <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#with-username-and-email">Username/Email</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#with-student">{{ $t('Siswa') }}</a>
+            </li>
+        </ul>
+        <!--end::Tabs-->
 
         <!--begin::Tab Content-->
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="with-username-and-email" role="tabpanel">
                 <WithUsernameAndEmail />
             </div>
+
+            <div class="tab-pane fade" id="with-student" role="tabpanel">
+                <WithStudent />
+            </div>
         </div>
         <!--end::Tab Content-->
 
         <div class="border-bottom border-gray-300 w-100 mt-5 mb-10"></div>
 
-        <!--begin::Link-->
         <div class="text-gray-400 fw-semobold fs-4 text-center">
             {{ $t('Belum punya akun?') }}
             <router-link to="/sign-up" class="link-primary fw-bold">
                 {{ $t('Daftar') }}
             </router-link>
         </div>
-        <!--end::Link-->
     </div>
     <!--end::Form-->
 </template>
 
 <script lang="ts">
-import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
@@ -45,25 +56,28 @@ import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import { blockBtn, unblockBtn } from "@/libs/utils";
+import { getAssetPath } from "@/core/helpers/assets";
+import { useSetting } from "@/services";
 
+// ✅ pastikan semua tab diimpor dan diregistrasi
 import WithEmail from "./tabs/WithEmail.vue";
 import WithUsernameAndEmail from "./tabs/WithUsernameAndEmail.vue";
-import { useSetting } from "@/services";
+import WithStudent from "./tabs/WithStudent.vue";
 
 export default defineComponent({
     name: "sign-in",
     components: {
         WithEmail,
         WithUsernameAndEmail,
+        WithStudent, // ✅ tambahkan ini
     },
     setup() {
         const store = useAuthStore();
         const router = useRouter();
         const { data: setting = {} } = useSetting();
 
-        const submitButton = ref(null);
+        const submitButton = ref<HTMLElement | null>(null);
 
-        // Validation schema (bisa dipakai kedua form)
         const login = Yup.object().shape({
             identifier: Yup.string()
                 .required("Harap masukkan Username / Email")
@@ -131,9 +145,6 @@ export default defineComponent({
                 this.check.type = "email";
             } else {
                 this.check.type = "username";
-                if (/\D/.test(value)) {
-                    this.check.type = "username"; // bisa disesuaikan format username
-                }
             }
         },
     },

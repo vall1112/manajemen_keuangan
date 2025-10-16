@@ -143,4 +143,14 @@ class StudentController extends Controller
             'success' => true
         ]);
     }
+
+    public function getStudentAndClassroom(Request $request)
+    {
+        $students = Student::with('classroom')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $students
+        ]);
+    }
 }
