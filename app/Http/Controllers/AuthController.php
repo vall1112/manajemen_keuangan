@@ -127,9 +127,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-<<<<<<< HEAD
-  // ========================== KIRIM KODE OTP KE EMAIL ==========================
-=======
     // ========================== CEK EMAIL SAAT REGISTRASI ==========================
     public function checkEmail(Request $request)
     {
@@ -145,7 +142,6 @@ class AuthController extends Controller
     }
 
     // ========================== KIRIM KODE OTP KE EMAIL ==========================
->>>>>>> 142b0bb (Validasi register)
     public function sendEmailOtp(Request $request)
     {
         $request->validate([
