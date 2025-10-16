@@ -5,21 +5,61 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Setting;
 
 class OtpMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $otp;
+    public $userName;
+    public $userEmail;
+    public $schoolName;
+    public $supportEmail;
+    public $supportUrl;
+    public $logo;
 
-    public function __construct($otp)
+    /**
+     * Buat instance baru dari email OTP.
+     *
+     * @param string $otp
+     * @param string|null $userName
+     * @param string|null $userEmail
+     */
+    public function __construct($otp, $userName = null, $userEmail = null)
     {
         $this->otp = $otp;
+        $this->userName = $userName;
+        $this->userEmail = $userEmail;
+
+        // Ambil data setting pertama (logo, nama aplikasi, dst)
+        $setting = Setting::first();
+
+        $this->schoolName = $setting->app ?? 'Manajemen Keuangan Sekolah';
+        $this->logo = $setting && $setting->logo
+            ? asset($setting->logo)
+            : asset('images/logo.png');
+
+        // Info support (bisa diambil dari setting juga)
+        $this->supportEmail = $setting->support_email ?? 'support@manajemenkeuangan.com';
+        $this->supportUrl = $setting->support_url ?? 'https://manajemenkeuangan.com/support';
     }
 
+    /**
+     * Build the message.
+     */
     public function build()
     {
         return $this->subject('Kode OTP Pendaftaran')
-                    ->view('emails.otp');
+                    ->view('emails.otp')
+                    ->with([
+                        'otp' => $this->otp,
+                        'userName' => $this->userName,
+                        'userEmail' => $this->userEmail,
+                        'schoolName' => $this->schoolName,
+                        'supportEmail' => $this->supportEmail,
+                        'supportUrl' => $this->supportUrl,
+                        'logo' => $this->logo,
+                    ]);
     }
 }

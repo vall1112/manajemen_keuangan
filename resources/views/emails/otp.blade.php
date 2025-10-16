@@ -1,71 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kode OTP Anda</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            padding: 40px;
+            color: #333;
         }
         .container {
-            width: 100%;
-            max-width: 500px;
-            margin: 20px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .logo {
-            width: 100px;
-            margin-bottom: 20px;
-        }
-        .otp-code {
-            font-size: 24px;
+        .text-center { text-align: center; }
+        .mb-10 { margin-bottom: 40px; }
+        .mb-8 { margin-bottom: 32px; }
+        .mb-3 { margin-bottom: 12px; }
+        .w-200px { width: 200px; }
+        .text-primary { color: #0d6efd; }
+        .otp {
+            font-size: 28px;
             font-weight: bold;
-            color: #007bff;
-            background: #e9ecef;
-            padding: 10px;
-            display: inline-block;
-            border-radius: 5px;
+            letter-spacing: 5px;
+            color: #0d6efd;
+            margin: 20px 0;
         }
         .footer {
-            font-size: 12px;
+            margin-top: 30px;
+            font-size: 14px;
             color: #777;
-            margin-top: 20px;
+            text-align: center;
         }
-        .button {
-            display: inline-block;
-            background: #007bff;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .button:hover {
-            background: #0056b3;
-        }
+        a { color: #0d6efd; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <img
-            :src="setting?.logo"
-            :alt="setting?.app"
-            class="w-200px mb-8"
-        />
-        <h2>Kode OTP Anda</h2>
-        <p>Gunakan kode berikut untuk verifikasi akun Anda:</p>
-        <div class="otp-code">{{ $otp }}</div>
-        <p>Kode ini berlaku selama <strong>5 menit</strong>. Jangan berikan kepada siapa pun.</p>
-        <p class="footer">Jika Anda tidak meminta kode ini, abaikan email ini.</p>
+        <div class="text-center mb-10">
+            <a href="{{ url('/') }}">
+                <img src="{{ $logo }}" alt="{{ $schoolName }}" class="w-200px mb-8" />
+            </a>
+            <h1 class="mb-3">
+                Masuk ke <span class="text-primary">{{ $schoolName }}</span>
+            </h1>
+        </div>
+
+        <p>Halo <strong>{{ $userName }}</strong>,</p>
+        <p>Kami menerima permintaan untuk login ke akun Anda. Berikut adalah kode OTP Anda:</p>
+
+        <div class="text-center">
+            <div class="otp">{{ $otp }}</div>
+        </div>
+
+        <p>Jangan bagikan kode ini kepada siapa pun. Kode ini berlaku selama 5 menit.</p>
+
+        <div class="footer">
+            <p>Jika Anda mengalami kendala, silakan hubungi kami di
+                <a href="{{ $supportUrl }}">{{ $supportEmail }}</a>.
+            </p>
+            <p>&copy; {{ date('Y') }} {{ $schoolName }}. Semua hak dilindungi.</p>
+        </div>
     </div>
 </body>
 </html>
