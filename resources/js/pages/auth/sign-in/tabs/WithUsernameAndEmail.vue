@@ -103,20 +103,6 @@ export default defineComponent({
                 .then((res) => {
                     this.store.setAuth(res.data.user, res.data.token);
 
-<<<<<<< HEAD
-                    const role = res.data.user.role;
-                    let redirectPath = "/dashboard"; // default
-
-                    if (role === "admin") {
-                        redirectPath = "/dashboard";
-                    } else if (role === "bendahara") {
-                        redirectPath = "/bendahara/dashboard";
-                    } else if (role === "siswa") {
-                        redirectPath = "/student/dashboard";
-                    }
-
-                    this.router.push(redirectPath);
-=======
                     const roleName = res.data.user.role.name.toLowerCase();
 
                     if (roleName === "admin") {
@@ -128,7 +114,6 @@ export default defineComponent({
                     } else {
                         this.router.push("/student/dashboard");
                     }
->>>>>>> 8f3ab13e3417976c2d9dbe2db1bfedd2c5aafcda
                 })
                 .catch(error => {
                     toast.error(error.response?.data?.message || "Terjadi kesalahan");
