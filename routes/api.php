@@ -155,3 +155,7 @@ Route::get('setting/logo', [SettingController::class, 'index']);
 Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
+
+    Route::get('coba/get/email/otp', [AuthController::class, 'cobaEmail']); // Kirim otp email saat register
+
+

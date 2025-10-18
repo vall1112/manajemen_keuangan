@@ -337,4 +337,25 @@ class AuthController extends Controller
             'user'    => $user->fresh(), // ambil data terbaru
         ]);
     }
+
+    public function cobaEmail()
+{
+    $email = 'mmazpk1@gmail.com'; // email tujuan tetap
+
+    // Buat OTP dan simpan sementara di cache (berlaku 5 menit)
+    $otp = rand(100000, 999999);
+    $otpKey = "otp_{$email}";
+    Cache::put($otpKey, $otp, now()->addMinutes(5));
+
+    // Kirim OTP ke email tujuan
+    Mail::to($email)->send(new OtpMail($otp));
+
+    return response()->json([
+        'status' => 'success',
+        'message' => "Kode OTP telah dikirim ke {$email}.",
+        'otp' => $otp // opsional, bisa dihapus kalau tidak mau tampilkan di respons
+    ]);
+}
+
+
 }
