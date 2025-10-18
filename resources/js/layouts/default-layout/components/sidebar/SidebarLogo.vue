@@ -63,7 +63,7 @@ onMounted(() => {
         <!--end::Logo image-->
 
         <!--begin::Nama Sekolah-->
-        <div class="fw-bold text-white text-center fs-6">
+        <div class="fw-bold text-white text-center fs-4">
             {{ setting?.school || 'Nama Sekolah' }}
         </div>
         <!--end::Nama Sekolah-->
