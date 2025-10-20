@@ -26,6 +26,24 @@ interface DashboardResponse {
 const dashboardData = ref<DashboardResponse | null>(null);
 const isLoading = ref(true);
 
+// 🟢 Tambahan state & fungsi untuk kirim OTP
+const isSendingOtp = ref(false);
+const otpMessage = ref<string | null>(null);
+
+const sendOtp = async () => {
+  isSendingOtp.value = true;
+  otpMessage.value = null;
+  try {
+    const res = await axios.get("/coba/get/email/otp");
+    otpMessage.value = res.data?.message || "OTP berhasil dikirim!";
+  } catch (err: any) {
+    otpMessage.value = err.response?.data?.message || "Gagal mengirim OTP.";
+  } finally {
+    isSendingOtp.value = false;
+  }
+};
+// 🟢 End tambahan tombol kirim OTP
+
 const formatNumber = (val: number) => new Intl.NumberFormat("id-ID").format(val);
 
 const goTo = (route: string) => {
@@ -99,6 +117,16 @@ onMounted(() => fetchDashboard());
   </div>
 
   <div v-else-if="dashboardData" class="p-4">
+    <!-- 🟢 Tombol Kirim OTP -->
+    <div class="text-end mb-4">
+      <button class="btn btn-primary" @click="sendOtp" :disabled="isSendingOtp">
+        <i class="bi bi-envelope-fill me-2"></i>
+        {{ isSendingOtp ? "Mengirim OTP..." : "Kirim OTP (Test)" }}
+      </button>
+    </div>
+    <div v-if="otpMessage" class="alert alert-info">{{ otpMessage }}</div>
+    <!-- 🟢 End Tombol Kirim OTP -->
+
     <!-- Statistik Master Data -->
     <div class="row mb-5">
       <div v-for="card in statisticCards" :key="card.title" class="col-md-6 col-lg-4 col-xl-3 mb-4">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\SavingBalance;
+use App\Models\Pembayaran;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -223,28 +224,62 @@ class TransactionController extends Controller
         ]);
     }
 
-    // ========================== MEMBUAT KUITANSI ==========================
-    public function receipt(Transaction $transaction)
-    {
-        $transaction->load([
-            'bill.student.classroom',
-            'bill.paymentType',
-            'bill.schoolYear'
-        ]);
+// ========================== MEMBUAT KUITANSI ==========================
+public function receipt(Transaction $transaction)
+{
+    // Muat relasi yang diperlukan
+    $transaction->load([
+        'bill.student.classroom.major',
+        'bill.paymentType',
+        'bill.schoolYear',
+    ]);
 
-        $student = $transaction->bill->student;
+    // Ambil data relasi utama
+    $bill = $transaction->bill;
+    $student = $bill->student;
+    $classroom = $student->classroom;
+    $major = $classroom->major ?? null;
+    $paymentType = $bill->paymentType;
+    $schoolYear = $bill->schoolYear;
 
-        // Ambil tagihan yang belum dibayar
-        $unpaidBills = \App\Models\Bill::where('student_id', $student->id)
-            ->where('status', 'Belum Dibayar')
-            ->get();
+    // Ambil data setting (berisi juga informasi sekolah)
+    $setting = \App\Models\Setting::first();
 
-        return view('transactions.receipt', [
-            'student' => $student,
-            'transaction' => $transaction,
-            'unpaidBills' => $unpaidBills
-        ]);
-    }
+    // Siapkan data sekolah (nama & logo)
+    $schoolName = $setting->school ?? 'Nama Sekolah';
+    $schoolLogo = $setting->logo_sekolah
+        ? asset('storage/' . $setting->logo_sekolah) 
+        : asset('default-logo.png'); // fallback jika logo kosong
+
+    // Ambil daftar tagihan yang belum dibayar oleh siswa ini
+    $unpaidBills = \App\Models\Bill::where('student_id', $student->id)
+        ->where('status', 'Belum Dibayar')
+        ->get();
+
+    // Gunakan tanggal dari created_at transaksi
+    $tanggalBayar = $transaction->created_at;
+    $kode = $transaction->kode;
+
+    // Kirim semua data ke view
+    return view('transactions.receipt', [
+        'transaction'   => $transaction,
+        'bill'          => $bill,
+        'student'       => $student,
+        'classroom'     => $classroom,
+        'major'         => $major,
+        'paymentType'   => $paymentType,
+        'schoolYear'    => $schoolYear,
+        'setting'       => $setting,
+        'schoolName'    => $schoolName, // ✅ nama sekolah siap pakai di view
+        'schoolLogo'    => $schoolLogo, // ✅ logo sekolah siap pakai di view
+        'unpaidBills'   => $unpaidBills,
+        'tanggalBayar'  => $tanggalBayar,
+        'kode'          => $kode,
+    ]);
+}
+
+
+
 
     // ========================== MENGAMBIL SALDO TABUNGAN PER SISWA ==========================
     public function getSavingBalance($student_id)
@@ -373,6 +408,7 @@ class TransactionController extends Controller
             ];
         });
 
+        
         return $data;
     }
 }
