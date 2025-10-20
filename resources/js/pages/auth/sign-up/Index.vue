@@ -12,11 +12,8 @@
             </div>
 
             <!-- Stepper -->
-            <div
-                class="stepper stepper-links d-flex flex-column"
-                id="kt_create_account_stepper"
-                ref="horizontalWizardRef"
-            >
+            <div class="stepper stepper-links d-flex flex-column" id="kt_create_account_stepper"
+                ref="horizontalWizardRef">
                 <div class="stepper-nav py-5 mt-5 d-none">
                     <div class="stepper-item current" data-kt-stepper-element="nav">
                         <h3 class="stepper-title">Akun</h3>
@@ -30,12 +27,8 @@
                 </div>
 
                 <!-- Form -->
-                <form
-                    class="mx-auto mw-600px w-100 pt-15 pb-10"
-                    novalidate
-                    id="kt_create_account_form"
-                    @submit="handleStep"
-                >
+                <form class="mx-auto mw-600px w-100 pt-15 pb-10" novalidate id="kt_create_account_form"
+                    @submit="handleStep">
                     <!-- Step 1: Credential -->
                     <div class="current" data-kt-stepper-element="content">
                         <Credential :formData="formData" />
@@ -43,11 +36,7 @@
 
                     <!-- Step 2: Email OTP -->
                     <div data-kt-stepper-element="content">
-                        <VerifyEmail
-                            :formData="formData"
-                            @on-complete="handleOtpEmail"
-                            @send-otp="sendOtpEmail"
-                        />
+                        <VerifyEmail :formData="formData" @on-complete="handleOtpEmail" @send-otp="sendOtpEmail" />
                     </div>
 
                     <!-- Step 3: Password -->
@@ -58,47 +47,30 @@
                     <!-- Actions -->
                     <div class="d-flex flex-stack pt-15">
                         <div class="mr-2">
-                            <button
-                                type="button"
-                                class="btn btn-lg btn-light-primary me-3"
-                                @click="previousStep"
-                            >
+                            <button type="button" class="btn btn-lg btn-light-primary me-3" @click="previousStep">
                                 <KTIcon icon-name="arrow-left" icon-class="fs-4 me-1" /> Kembali
                             </button>
                         </div>
                         <div>
-                            <button
-                                type="submit"
-                                id="submit-form"
-                                class="btn btn-lg btn-primary me-3"
-                                v-if="currentStepIndex === totalSteps - 1"
-                            >
+                            <button type="submit" id="submit-form" class="btn btn-lg btn-primary me-3"
+                                v-if="currentStepIndex === totalSteps - 1">
                                 <span class="indicator-label">
                                     Daftar
                                     <KTIcon icon-name="arrow-right" icon-class="fs-3 ms-2 me-0" />
                                 </span>
                                 <span class="indicator-progress">
                                     Memproses...
-                                    <span
-                                        class="spinner-border spinner-border-sm align-middle ms-2"
-                                    ></span>
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                 </span>
                             </button>
 
-                            <button
-                                v-else
-                                type="submit"
-                                id="next-form"
-                                class="btn btn-lg btn-primary"
-                            >
+                            <button v-else type="submit" id="next-form" class="btn btn-lg btn-primary">
                                 <span class="indicator-label">
                                     Selanjutnya
                                     <KTIcon icon-name="arrow-right" icon-class="fs-4 ms-2 me-0" />
                                 </span>
                                 <span class="indicator-progress">
-                                    <span
-                                        class="spinner-border spinner-border-sm align-middle ms-2"
-                                    ></span>
+                                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
                                 </span>
                             </button>
                         </div>
@@ -242,16 +214,16 @@ export default defineComponent({
                 });
         };
 
-        // ✅ Step handling diperbaiki
         const handleStep = handleSubmit((values) => {
             resetForm({ values: { ...formData.value } });
 
             if (currentStepIndex.value === 0) {
-                // 🔍 Cek email dulu sebelum kirim OTP
                 blockBtn("#next-form");
-                axios.post("/auth/register/check/email", { email: formData.value.email })
+                axios.post("/auth/register/check/email", {
+                    email: formData.value.email,
+                    username: formData.value.username,
+                })
                     .then(() => {
-                        // Email belum terdaftar → lanjut kirim OTP
                         sendOtpEmail(() => {
                             formData.value = { ...values };
                             currentStepIndex.value++;
@@ -260,9 +232,9 @@ export default defineComponent({
                     })
                     .catch(err => {
                         if (err.response?.status === 409) {
-                            toast.error("Email sudah digunakan");
+                            toast.error(err.response?.data?.message || "Email atau Username sudah digunakan");
                         } else {
-                            toast.error(err.response?.data?.message || "Terjadi kesalahan saat memeriksa email");
+                            toast.error(err.response?.data?.message || "Terjadi kesalahan saat memeriksa data");
                         }
                         unblockBtn("#next-form");
                     });

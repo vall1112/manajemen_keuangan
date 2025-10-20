@@ -190,16 +190,16 @@ const MainMenuConfig: Array<MenuItem> = [
             },
         ],
     },
-    {
-        pages: [
-            {
-                heading: "Pengajuan Pembayaran",
-                name: "user-bill",
-                route: "/student/payment",
-                keenthemesIcon: "dollar",
-            },
-        ],
-    },
+    // {
+    //     pages: [
+    //         {
+    //             heading: "Pengajuan Pembayaran",
+    //             name: "user-bill",
+    //             route: "/student/payment",
+    //             keenthemesIcon: "dollar",
+    //         },
+    //     ],
+    // },
     // TABUNGAN SISWA
     {
         pages: [

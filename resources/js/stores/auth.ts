@@ -41,11 +41,14 @@ export const useAuthStore = defineStore("auth", () => {
 
     async function login(credentials: User) {
         return ApiService.post("auth/login", credentials)
-            .then(({ data }) => {
+            .then(async ({ data }) => {
                 setAuth(data.user, data.token);
+                ApiService.setHeader();
+                const meResponse = await ApiService.get("auth/me");
+                setAuth(meResponse.data.user);
             })
             .catch(({ response }) => {
-                error.value = response.data.message;
+                error.value = response?.data?.message || "Login gagal";
             });
     }
 

@@ -13,25 +13,20 @@
         </div>
         <!--end::Heading-->
 
-        <!--begin::Tabs-->
-        <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
+        <!--begin::Tabs (hapus tab siswa) -->
+        <!-- <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
             <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#with-username-and-email">Username/Email</a>
+                <a class="nav-link active" data-bs-toggle="tab" href="#with-username-and-email">
+                    Username/Email
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#with-student">{{ $t('Siswa') }}</a>
-            </li>
-        </ul>
+        </ul> -->
         <!--end::Tabs-->
 
         <!--begin::Tab Content-->
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="with-username-and-email" role="tabpanel">
                 <WithUsernameAndEmail />
-            </div>
-
-            <div class="tab-pane fade" id="with-student" role="tabpanel">
-                <WithStudent />
             </div>
         </div>
         <!--end::Tab Content-->
@@ -59,17 +54,13 @@ import { blockBtn, unblockBtn } from "@/libs/utils";
 import { getAssetPath } from "@/core/helpers/assets";
 import { useSetting } from "@/services";
 
-// ✅ pastikan semua tab diimpor dan diregistrasi
-import WithEmail from "./tabs/WithEmail.vue";
+// ✅ hanya impor yang diperlukan
 import WithUsernameAndEmail from "./tabs/WithUsernameAndEmail.vue";
-import WithStudent from "./tabs/WithStudent.vue";
 
 export default defineComponent({
     name: "sign-in",
     components: {
-        WithEmail,
         WithUsernameAndEmail,
-        WithStudent, // ✅ tambahkan ini
     },
     setup() {
         const store = useAuthStore();

@@ -139,7 +139,6 @@ class TransactionController extends Controller
     }
 
     // ========================== TAMPILKAN DETAIL TRANSACTION ==========================
-
     public function show(Transaction $transaction)
     {
         return response()->json([
