@@ -8,19 +8,11 @@ use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -34,8 +26,30 @@ class UpdateUserRequest extends FormRequest
             'password' => ['nullable', 'confirmed', Password::default()],
             'photo'    => 'nullable|image',
             'role_id'  => 'required|numeric',
-            'student_id' => 'nullable|exists:students,id',
-            'status'      => 'required|in:Pending,Aktif,Tidak Aktif',
+            'student_id' => [
+                'nullable',
+                'exists:students,id',
+                Rule::unique('users', 'student_id')->ignore($this->user->id),
+            ],
+            'status' => 'required|in:Pending,Aktif,Tidak Aktif',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'username.required' => 'Username wajib diisi.',
+            'name.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'photo.image' => 'File foto harus berupa gambar.',
+            'role_id.required' => 'Role wajib dipilih.',
+            'student_id.exists' => 'Siswa tidak ditemukan.',
+            'student_id.unique' => 'Siswa sudah memiliki akun.',
+            'status.required' => 'Status wajib diisi.',
+            'status.in' => 'Status harus berupa Pending, Aktif, atau Tidak Aktif.',
         ];
     }
 }
+        
