@@ -25,54 +25,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // ========================== LOGIN DENGAN EMAIL ==========================
-    // public function loginEmail(Request $request)
-    // {
-    //     $validator = Validator::make($request->post(), [
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => $validator->errors()->first()
-    //         ]);
-    //     }
-
-    //     if (!$token = auth()->attempt($validator->validated())) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Email / Password salah!'
-    //         ], 401);
-    //     }
-
-    //     $user = auth()->user();
-
-    //     if ($user->status === 'Pending') {
-    //         auth()->logout();
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Akun Anda masih menunggu persetujuan admin.'
-    //         ], 403);
-    //     }
-
-    //     if ($user->status === 'Tidak Aktif') {
-    //         auth()->logout();
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Akun Anda tidak aktif, silakan hubungi admin.'
-    //         ], 403);
-    //     }
-
-    //     // kalau status "Aktif" boleh login
-    //     return response()->json([
-    //         'status' => true,
-    //         'user' => $user,
-    //         'token' => $token
-    //     ]);
-    // }
-
     // ========================== LOGIN ==========================
     public function login(Request $request)
     {
@@ -175,32 +127,62 @@ class AuthController extends Controller
         ], 201);
     }
 
+    // ========================== CEK EMAIL SAAT REGISTRASI ==========================
+    public function checkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $exists = User::where('email', $request->email)->exists();
+
+        if ($exists) {
+            return response()->json(['message' => 'Email sudah digunakan'], 409);
+        }
+
+        return response()->json(['message' => 'Email tersedia'], 200);
+    }
+
     // ========================== KIRIM KODE OTP KE EMAIL ==========================
     public function sendEmailOtp(Request $request)
     {
         $request->validate([
-            'email' => 'required|email'
+            'email' => 'required|email',
+            'name'  => 'nullable|string|max:100',
         ]);
 
-        $email = $request->email;
+        $email = strtolower(trim($request->email));
+        $userName = $request->name ?? 'Pengguna';
 
+        // Cegah duplikasi jika email sudah digunakan
         if (User::where('email', $email)->exists()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Email sudah terdaftar. Silakan gunakan email lain atau login.'
+                'message' => 'Email sudah terdaftar. Silakan gunakan email lain atau login.',
             ], 400);
         }
 
+        // Generate kode OTP (6 digit)
         $otp = rand(100000, 999999);
+
+        // Simpan OTP ke cache selama 5 menit
         $otpKey = "otp_{$email}";
         Cache::put($otpKey, $otp, now()->addMinutes(5));
 
-        Mail::to($email)->send(new OtpMail($otp));
+        try {
+            // Kirim email OTP
+            Mail::to($email)->send(new OtpMail($otp, $userName, $email));
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Kode OTP telah dikirim ke email Anda.'
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Kode OTP telah dikirim ke email Anda.',
+            ]);
+        } catch (\Exception $e) {
+            // Jika gagal kirim email
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengirim email OTP. Silakan coba lagi.',
+                'error' => $e->getMessage(), // opsional: hapus jika untuk production
+            ], 500);
+        }
     }
 
     // ========================== CEK KODE OTP EMAIL ==========================
@@ -208,24 +190,33 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'otp' => 'required|numeric|digits:6'
+            'otp' => 'required|numeric|digits:6',
         ]);
 
-        $otpKey = "otp_{$request->email}";
+        $email = strtolower(trim($request->email));
+        $otpKey = "otp_{$email}";
         $cachedOtp = Cache::get($otpKey);
 
-        if (!$cachedOtp || (string)$cachedOtp !== (string)$request->otp) {
+        if (!$cachedOtp) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Kode OTP salah atau telah kadaluarsa.'
+                'message' => 'Kode OTP telah kadaluarsa. Silakan minta ulang.',
             ], 400);
         }
 
+        if ((string)$cachedOtp !== (string)$request->otp) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kode OTP salah. Silakan periksa kembali.',
+            ], 400);
+        }
+
+        // Hapus OTP dari cache agar tidak bisa digunakan lagi
         Cache::forget($otpKey);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Kode OTP berhasil diverifikasi.'
+            'message' => 'Kode OTP berhasil diverifikasi.',
         ]);
     }
 

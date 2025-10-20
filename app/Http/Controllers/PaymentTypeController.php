@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PaymentType;
+use App\Models\Pembayaran;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -83,5 +84,18 @@ class PaymentTypeController extends Controller
         return response()->json([
             'success' => true
         ]);
+        
+    }
+
+
+        // ========================== AMBIL SEMUA DATA PAYMENT TYPE ==========================
+   
+    public function showStruk(PaymentType $invoice)
+    {
+        // Ambil data pembayaran berdasarkan nomor invoice
+        $data = Pembayaran::where('no_invoice', $invoice)->firstOrFail();
+
+        // Kirim ke view
+        return view('pembayaran.struk', compact('data'));
     }
 }

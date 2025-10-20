@@ -94,15 +94,26 @@ export default defineComponent({
     },
     methods: {
         submit() {
-            blockBtn(this.submitButton);
+            blockBtn(this.submitButton);    
 
             axios.post("/auth/login", {
                 login: this.data.login,
                 password: this.data.password
             })
-                .then(res => {
+                .then((res) => {
                     this.store.setAuth(res.data.user, res.data.token);
-                    this.router.push("/dashboard");
+
+                    const roleName = res.data.user.role.name.toLowerCase();
+
+                    if (roleName === "admin") {
+                        this.router.push("/dashboard");
+                    } else if (roleName === "bendahara") {
+                        this.router.push("/bendahara/dashboard");
+                    } else if (roleName === "siswa") {
+                        this.router.push("/student/dashboard");
+                    } else {
+                        this.router.push("/student/dashboard");
+                    }
                 })
                 .catch(error => {
                     toast.error(error.response?.data?.message || "Terjadi kesalahan");

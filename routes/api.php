@@ -36,6 +36,7 @@ Route::middleware(['auth', 'json'])->prefix('auth')->group(function () {
     Route::delete('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
 
+    Route::post('/register/check/email', [AuthController::class, 'checkEmail'])->withoutMiddleware('auth');
     Route::post('register/get/email/otp', [AuthController::class, 'sendEmailOtp'])->withoutMiddleware('auth'); // Kirim otp email saat register
     Route::post('register/check/email/otp', [AuthController::class, 'checkEmailOtp'])->withoutMiddleware('auth'); // Check otp email saat register
 });
@@ -156,6 +157,4 @@ Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
 
-    Route::get('coba/get/email/otp', [AuthController::class, 'cobaEmail']); // Kirim otp email saat register
-
-
+Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
