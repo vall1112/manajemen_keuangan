@@ -7,4 +7,5 @@ export interface User {
     password?: string;
     phone?: BigInteger;
     role_id: BigInteger;
+    status: string;
 }

@@ -4,6 +4,8 @@ import { useDelete } from "@/libs/hooks";
 import Form from "./Form.vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import type { User } from "@/types";
+import { toast } from "vue3-toastify";
+import axios from "axios";
 
 const column = createColumnHelper<User>();
 const paginateRef = ref<any>(null);
@@ -31,6 +33,53 @@ const columns = [
     column.accessor("email", {
         header: "Email",
     }),
+    // column.accessor("toggle", {
+    //     header: () => h("div", { class: "text-center" }, "Status"),
+    //     cell: (cell) => {
+    //         const row = cell.row.original;
+    //         return h("div", { class: "text-center" }, [
+    //             h(
+    //                 "label",
+    //                 {
+    //                     class:
+    //                         "form-check form-switch form-check-custom form-check-solid d-inline-flex justify-content-center",
+    //                 },
+    //                 [
+    //                     h("input", {
+    //                         type: "checkbox",
+    //                         checked: row.status === "Aktif",
+    //                         class: "form-check-input",
+    //                         onChange: async (e: Event) => {
+    //                             const checkbox = e.target as HTMLInputElement;
+    //                             const newStatus =
+    //                                 row.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+    //                             checkbox.disabled = true;
+
+    //                             try {
+    //                                 const response = await axios.put(
+    //                                     `/master/users/${row.id}/status`,
+    //                                     { status: newStatus }
+    //                                 );
+    //                                 toast.success(
+    //                                     response.data.message || "Status berhasil diperbarui!"
+    //                                 );
+    //                                 paginateRef.value?.refetch();
+    //                             } catch (error: any) {
+    //                                 toast.error(
+    //                                     error.response?.data?.message ||
+    //                                     "Gagal memperbarui status!"
+    //                                 );
+    //                                 checkbox.checked = !checkbox.checked;
+    //                             } finally {
+    //                                 checkbox.disabled = false;
+    //                             }
+    //                         },
+    //                     }),
+    //                 ]
+    //             ),
+    //         ]);
+    //     },
+    // }),
     column.accessor("photo", {
         header: "Foto",
         cell: (cell) => {

@@ -38,6 +38,7 @@ const formSchema = Yup.object().shape({
         .nullable(),
     role_id: Yup.string().required("Pilih role"),
     student_id: Yup.string().nullable(),
+    status: Yup.string().required("Pilih status"),
 });
 
 function getEdit() {
@@ -63,7 +64,7 @@ function submit() {
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
     formData.append("role_id", user.value.role_id);
-    // hanya kirim student_id kalau ada
+    formData.append("status", user.value.status);
     if (user.value.student_id) {
         formData.append("student_id", user.value.student_id);
     }
@@ -277,6 +278,28 @@ watch(
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="role_id" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </div>
+                <div class="col-md-6">
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6 required">
+                            Status
+                        </label>
+                        <Field name="status" type="hidden" v-model="user.status">
+                            <select2 placeholder="Pilih status" class="form-select-solid" :options="[
+                                { id: 'Pending', text: 'Pending' },
+                                { id: 'Aktif', text: 'Aktif' },
+                                { id: 'Tidak Aktif', text: 'Tidak Aktif' }
+                            ]" name="status" v-model="user.status">
+                            </select2>
+                        </Field>
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="status" />
                             </div>
                         </div>
                     </div>

@@ -149,4 +149,33 @@ class UserController extends Controller
 
         return response()->json($data);
     }
+
+    // ========================== UPDATE STATUS USER ==========================
+    public function updateStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:Aktif,Tidak Aktif'
+        ]);
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'message' => 'User tidak ditemukan'
+            ], 404);
+        }
+
+        $user->status = $validated['status'];
+        $user->save();
+
+        $message = match ($validated['status']) {
+            'Aktif'       => 'User telah diaktifkan',
+            'Tidak Aktif' => 'User telah dinonaktifkan',
+            default        => 'Status user berhasil diperbarui',
+        };
+
+        return response()->json([
+            'message' => $message,
+            'user'    => $user,
+        ], 200);
+    }
 }

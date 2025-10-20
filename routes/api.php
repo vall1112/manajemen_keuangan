@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('users', [UserController::class, 'index']);
             Route::post('users/pending', [UserController::class, 'userPending']);
             Route::post('users/store', [UserController::class, 'store']);
+            Route::put('users/{id}/status', [UserController::class, 'updateStatus']);
             Route::apiResource('users', UserController::class)
                 ->except(['index', 'store'])->scoped(['user' => 'uuid']);
         });
