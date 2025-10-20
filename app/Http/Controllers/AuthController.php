@@ -2,55 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{
+    Auth,
+    Cache,
+    Hash,
+    Mail,
+    Storage,
+    Validator
+};
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
-    // ========================== AMBIL DATA USER YANG SEDANG LOGIN ==========================
+    // ========================== AMBIL DATA USER LOGIN ==========================
     public function me()
     {
         $user = auth()->user()->load('student.classroom');
 
-        return response()->json([
-            'user' => $user
-        ]);
+        return response()->json(['user' => $user]);
     }
 
     // ========================== LOGIN ==========================
     public function login(Request $request)
     {
         $validator = Validator::make($request->post(), [
-            'login' => 'required|string',
+            'login'    => 'required|string',
             'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
-                'message' => $validator->errors()->first()
-            ]);
+                'status'  => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
         }
 
         $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        $credentials = [
-            $loginField => $request->login,
-            'password' => $request->password,
-        ];
-
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt([$loginField => $request->login, 'password' => $request->password])) {
             return response()->json([
-                'status' => false,
-                'message' => 'Username / Email atau Password salah!'
+                'status'  => false,
+                'message' => 'Username / Email atau Password salah!',
             ], 401);
         }
 
@@ -59,23 +54,25 @@ class AuthController extends Controller
         if ($user->status === 'Pending') {
             auth()->logout();
             return response()->json([
-                'status' => false,
-                'message' => 'Akun Anda masih menunggu persetujuan dari admin'
+                'status'  => false,
+                'message' => 'Akun Anda masih menunggu persetujuan dari admin.',
             ], 403);
         }
 
         if ($user->status === 'Tidak Aktif') {
             auth()->logout();
             return response()->json([
-                'status' => false,
-                'message' => 'Akun Anda tidak aktif, silakan hubungi admin'
+                'status'  => false,
+                'message' => 'Akun Anda tidak aktif, silakan hubungi admin.',
             ], 403);
         }
 
+        $user = auth()->user()->load('student.classroom');
+
         return response()->json([
             'status' => true,
-            'user' => $user,
-            'token' => $token
+            'user'   => $user,
+            'token'  => $token,
         ]);
     }
 
@@ -91,57 +88,56 @@ class AuthController extends Controller
                 'regex:/^[a-zA-Z][a-zA-Z0-9_]*$/',
                 'unique:users,username',
             ],
-            'nama' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users,email',
-            ],
+            'nama'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false,
+                'status'  => false,
                 'message' => 'Validasi gagal.',
-                'errors' => $validator->errors()
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
         $user = User::create([
             'username' => $request->username,
-            'name' => $request->nama,
-            'email' => $request->email,
+            'name'     => $request->nama,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         $token = auth()->login($user);
 
         return response()->json([
-            'status' => true,
-            'message' => 'Registrasi berhasil. Silahkan login.',
-            'user' => $user,
-            'token' => $token
+            'status'  => true,
+            'message' => 'Registrasi berhasil. Silakan login.',
+            'user'    => $user,
+            'token'   => $token,
         ], 201);
     }
 
-    // ========================== CEK EMAIL SAAT REGISTRASI ==========================
+    // ========================== CEK EMAIL ==========================
     public function checkEmail(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate([
+            'email' => 'required|email',
+            'username' => 'required|string|min:3|max:50|regex:/^[a-zA-Z0-9_]+$/',
+        ]);
 
-        $exists = User::where('email', $request->email)->exists();
-
-        if ($exists) {
+        if (User::where('email', $request->email)->exists()) {
             return response()->json(['message' => 'Email sudah digunakan'], 409);
         }
 
-        return response()->json(['message' => 'Email tersedia'], 200);
+        if (User::where('username', $request->username)->exists()) {
+            return response()->json(['message' => 'Username sudah digunakan'], 409);
+        }
+
+        return response()->json(['message' => 'Email dan Username tersedia']);
     }
 
-    // ========================== KIRIM KODE OTP KE EMAIL ==========================
+    // ========================== KIRIM OTP EMAIL ==========================
     public function sendEmailOtp(Request $request)
     {
         $request->validate([
@@ -152,45 +148,38 @@ class AuthController extends Controller
         $email = strtolower(trim($request->email));
         $userName = $request->name ?? 'Pengguna';
 
-        // Cegah duplikasi jika email sudah digunakan
         if (User::where('email', $email)->exists()) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Email sudah terdaftar. Silakan gunakan email lain atau login.',
             ], 400);
         }
 
-        // Generate kode OTP (6 digit)
         $otp = rand(100000, 999999);
-
-        // Simpan OTP ke cache selama 5 menit
         $otpKey = "otp_{$email}";
         Cache::put($otpKey, $otp, now()->addMinutes(5));
 
         try {
-            // Kirim email OTP
             Mail::to($email)->send(new OtpMail($otp, $userName, $email));
-
             return response()->json([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Kode OTP telah dikirim ke email Anda.',
             ]);
         } catch (\Exception $e) {
-            // Jika gagal kirim email
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Gagal mengirim email OTP. Silakan coba lagi.',
-                'error' => $e->getMessage(), // opsional: hapus jika untuk production
+                'error'   => config('app.debug') ? $e->getMessage() : null, // tampilkan error hanya saat debug
             ], 500);
         }
     }
 
-    // ========================== CEK KODE OTP EMAIL ==========================
+    // ========================== CEK OTP EMAIL ==========================
     public function checkEmailOtp(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
-            'otp' => 'required|numeric|digits:6',
+            'otp'   => 'required|numeric|digits:6',
         ]);
 
         $email = strtolower(trim($request->email));
@@ -199,23 +188,22 @@ class AuthController extends Controller
 
         if (!$cachedOtp) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Kode OTP telah kadaluarsa. Silakan minta ulang.',
             ], 400);
         }
 
-        if ((string)$cachedOtp !== (string)$request->otp) {
+        if ((string) $cachedOtp !== (string) $request->otp) {
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'Kode OTP salah. Silakan periksa kembali.',
             ], 400);
         }
 
-        // Hapus OTP dari cache agar tidak bisa digunakan lagi
         Cache::forget($otpKey);
 
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Kode OTP berhasil diverifikasi.',
         ]);
     }
@@ -227,12 +215,10 @@ class AuthController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // ========================== MENGAMBIL DATA USER SISWA ==========================
+    // ========================== PROFILE SISWA ==========================
     public function profile()
     {
-        $user = auth()->user()->load([
-            'student.classroom'
-        ]);
+        $user = auth()->user()->load('student.classroom');
 
         return response()->json([
             'user'      => $user,
@@ -241,15 +227,16 @@ class AuthController extends Controller
         ]);
     }
 
-    // ========================== MENGUPDATE DATA USER SISWA ==========================
+    // ========================== UPDATE SISWA ==========================
     public function updateStudent(Request $request)
     {
         $user = Auth::user();
+        $student = $user->student;
 
-        // --- Update User ---
+        // Update user
         $userData = [
             'username' => $request->input('username', $user->username),
-            'email'    => $request->input('email', $user->email), // <-- sinkronkan email
+            'email'    => $request->input('email', $user->email),
         ];
 
         if ($request->filled('password')) {
@@ -258,21 +245,21 @@ class AuthController extends Controller
 
         $user->update($userData);
 
-        // --- Update Student ---
-        $studentData = [
-            'nama'          => $request->input('nama', $user->student->nama),
-            'nis'           => $request->input('nis', $user->student->nis),
-            'jenis_kelamin' => $request->input('jenis_kelamin', $user->student->jenis_kelamin),
-            'tempat_lahir'  => $request->input('tempat_lahir', $user->student->tempat_lahir),
-            'tanggal_lahir' => $request->input('tanggal_lahir', $user->student->tanggal_lahir),
-            'email'         => $request->input('email', $user->student->email),
-            'telepon'       => $request->input('telepon', $user->student->telepon),
-            'alamat'        => $request->input('alamat', $user->student->alamat),
-            'classroom_id'  => $request->input('classroom_id', $user->student->classroom_id),
-            'status'        => $request->input('status', $user->student->status),
-        ];
+        // Update student
+        $studentData = $request->only([
+            'nama',
+            'nis',
+            'jenis_kelamin',
+            'tempat_lahir',
+            'tanggal_lahir',
+            'email',
+            'telepon',
+            'alamat',
+            'classroom_id',
+            'status'
+        ]);
 
-        $user->student()->update($studentData);
+        $student->update(array_filter($studentData));
 
         return response()->json([
             'success' => true,
@@ -280,52 +267,39 @@ class AuthController extends Controller
         ]);
     }
 
-    // ========================== MENGUPDATE DATA USER SELAIN SISWA ==========================
+    // ========================== UPDATE USER NON-SISWA ==========================
     public function updateUser(Request $request)
     {
-        $user = auth()->user(); // ambil user login
+        $user = auth()->user();
 
-        $validatedData = $request->validate([
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
-            'name'  => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($user->id),
-            ],
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'name'     => 'required|string|max:255',
+            'email'    => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:6|confirmed',
             'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // password
-        if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
+        // Password
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
         } else {
-            unset($validatedData['password']);
+            unset($validated['password']);
         }
 
-        // foto
+        // Foto
         if ($request->hasFile('photo')) {
-            // hapus foto lama
             if ($user->photo) {
                 Storage::disk('public')->delete($user->photo);
             }
-            // simpan foto baru
-            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
+            $validated['photo'] = $request->file('photo')->store('photo', 'public');
         }
 
-        // update user
-        $user->update($validatedData);
+        $user->update($validated);
 
         return response()->json([
             'success' => true,
-            'user'    => $user->fresh(), // ambil data terbaru
+            'user'    => $user->fresh(),
         ]);
     }
 }

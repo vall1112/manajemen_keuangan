@@ -216,7 +216,7 @@ class DashboardController extends Controller
                 ];
             });
 
-        $saldo = \App\Models\SavingBalance::where('student_id', $student->id)->value('saldo') ?? 0;
+        $saldo = SavingBalance::where('student_id', $student->id)->value('saldo') ?? 0;
 
         $latestSaving = $student->savings()->latest('id')->first();
 
