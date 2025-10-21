@@ -45,7 +45,7 @@ class OtpMail extends Mailable
         // Info support (ambil dari setting jika ada)
         $this->supportEmail = $setting->support_email ?? 'support@manajemenkeuangan.com';
         $this->supportUrl = $setting->support_url 
-            ?? 'https://www.instagram.com/smk_alazhar_mgt?utm_source=ig_web_button_share_sheet&igsh=d3F2YTk3YXlja2lk';
+            ?? 'https://wa.me/628   81026311575';
     }
 
     /**
