@@ -88,7 +88,7 @@ function submit() {
         method: "post",
         url: props.selected
             ? `/master/users/${props.selected}`
-            : "/master/users/admin",
+            : "/master/users/store",
         data: formData,
         headers: {
             "Content-Type": "multipart/form-data",
@@ -264,9 +264,9 @@ watch(
                     </div>
                     <!--end::Input group-->
                 </div>
-                <!-- <div class="col-md-6"> -->
+                <div class="col-md-6">
                     <!--begin::Input group-->
-                    <!-- <div class="fv-row mb-7">
+                    <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
                             Role
                         </label>
@@ -280,9 +280,9 @@ watch(
                                 <ErrorMessage name="role_id" />
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                     <!--end::Input group-->
-                <!-- </div> -->
+                </div>
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">

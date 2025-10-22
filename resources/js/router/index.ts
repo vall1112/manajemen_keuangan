@@ -225,7 +225,29 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/users/Index.vue"),
                 meta: {
                     pageTitle: "Users",
-                    breadcrumbs: ["Master", "Users"],
+                    breadcrumbs: ["Master", "Users", "Siswa"],
+                },
+            },
+            // HALAMAN + ADMIN
+            {
+                path: "/dashboard/master/users/admin",
+                name: "dashboard.master.users.admin",
+                component: () =>
+                    import("@/pages/dashboard/master/users/admin/Index.vue"),
+                meta: {
+                    pageTitle: "Admin",
+                    breadcrumbs: ["Master", "Users" , "Admin"],
+                },
+            },
+            // HALAMAN + GURU
+            {
+                path: "/dashboard/master/users/teacher",
+                name: "dashboard.master.users.teacher",
+                component: () =>
+                    import("@/pages/dashboard/master/users/teacher/Index.vue"),
+                meta: {
+                    pageTitle: "Guru",
+                    breadcrumbs: ["Master", "Users" , "Guru"],
                 },
             },
             // PERSETUJUAN USER BARU

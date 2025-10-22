@@ -48,9 +48,71 @@ class UserController extends Controller
 
         return response()->json($data);
     }
+    // ========================== AMBIL DATA USER DENGAN PAGINASI ==========================
+    public function index_admin(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        $data = User::with(['student:id,nama']) // hanya ambil id + nama
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")
+                        ->orWhere('username', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhereHas('student', function ($q2) use ($search) {
+                            $q2->where('nama', 'like', "%$search%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        return response()->json($data);
+    }
 
     // ========================== SIMPAN DATA USER BARU ==========================
     public function store(StoreUserRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
+        }
+
+        $user = User::create($validatedData);
+
+        $role = Role::findById($validatedData['role_id']);
+        $user->assignRole($role);
+
+        return response()->json([
+            'success' => true,
+            'user' => $user
+        ]);
+    }
+    // ========================== SIMPAN DATA ADMIN BARU ==========================
+    public function admin(StoreUserRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
+        }
+
+        $user = User::create($validatedData);
+
+        $role = Role::findById($validatedData['role_id']);
+        $user->assignRole($role);
+
+        return response()->json([
+            'success' => true,
+            'user' => $user
+        ]);
+    }
+    // ========================== SIMPAN DATA GURU BARU ==========================
+    public function teacher(StoreUserRequest $request)
     {
         $validatedData = $request->validated();
 
