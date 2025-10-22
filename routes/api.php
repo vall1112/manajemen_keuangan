@@ -61,6 +61,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             ->except(['index', 'store'])->scoped(['user' => 'uuid']);
             Route::post('users/admin', [UserController::class, 'admin']);
             Route::post('users/admin/index', [UserController::class, 'index_admin']);
+            Route::post('users/teacher/index', [UserController::class, 'index_teacher']);
         });
 
         Route::middleware('can:master-role')->group(function () {

@@ -26,13 +26,16 @@ class UserController extends Controller
 
     // ========================== AMBIL DATA USER DENGAN PAGINASI ==========================
     public function index(Request $request)
-    {
+   {
         $per = $request->per ?? 10;
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // hanya ambil id + nama
+        $data = User::with(['student:id,nama']) // relasi student (ambil id + nama)
+            ->whereHas('roles', function ($query) {
+                $query->where('id', 3); // hanya ambil user dengan role_id = 1 (Admin)
+            })
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
@@ -48,15 +51,18 @@ class UserController extends Controller
 
         return response()->json($data);
     }
-    // ========================== AMBIL DATA USER DENGAN PAGINASI ==========================
+    // ========================== AMBIL DATA ADMIN DENGAN PAGINASI ==========================
     public function index_admin(Request $request)
-    {
+   {
         $per = $request->per ?? 10;
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // hanya ambil id + nama
+        $data = User::with(['student:id,nama']) // relasi student (ambil id + nama)
+            ->whereHas('roles', function ($query) {
+                $query->where('id', 1); // hanya ambil user dengan role_id = 1 (Admin)
+            })
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
@@ -72,6 +78,35 @@ class UserController extends Controller
 
         return response()->json($data);
     }
+
+    // ========================== AMBIL DATA GURU DENGAN PAGINASI ==========================
+    public function index_teacher(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        $data = User::with(['student:id,nama']) // relasi student (ambil id + nama)
+            ->whereHas('roles', function ($query) {
+                $query->where('id', 2); // hanya ambil user dengan role_id = 1 (Admin)
+            })
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")
+                        ->orWhere('username', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhereHas('student', function ($q2) use ($search) {
+                            $q2->where('nama', 'like', "%$search%");
+                        });
+                });
+            })
+            ->latest()
+            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+
+        return response()->json($data);
+    }
+
 
     // ========================== SIMPAN DATA USER BARU ==========================
     public function store(StoreUserRequest $request)
