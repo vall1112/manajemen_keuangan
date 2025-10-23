@@ -237,8 +237,8 @@ class UserController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // hanya ambil id + nama
-            ->where('status', 'Pending') // hanya ambil user status Pending
+        $data = User::with(['student:id,nama'])
+            ->where('status', 'Pending')
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
@@ -253,34 +253,5 @@ class UserController extends Controller
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);
-    }
-
-    // ========================== UPDATE STATUS USER ==========================
-    public function updateStatus(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'status' => 'required|string|in:Aktif,Tidak Aktif'
-        ]);
-
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json([
-                'message' => 'User tidak ditemukan'
-            ], 404);
-        }
-
-        $user->status = $validated['status'];
-        $user->save();
-
-        $message = match ($validated['status']) {
-            'Aktif'       => 'User telah diaktifkan',
-            'Tidak Aktif' => 'User telah dinonaktifkan',
-            default        => 'Status user berhasil diperbarui',
-        };
-
-        return response()->json([
-            'message' => $message,
-            'user'    => $user,
-        ], 200);
     }
 }

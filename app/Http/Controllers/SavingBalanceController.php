@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class SavingBalanceController extends Controller
 {
+    // ========================== AMBIL SEMUA DATA SALDO BERDASARKAN ID SISWA ==========================
     public function get($student_id)
     {
         if (!$student_id || $student_id === 'undefined') {
@@ -28,6 +29,7 @@ class SavingBalanceController extends Controller
         ]);
     }
 
+    // ========================== AMBIL DATA DATA SALDO BERDASARKAN ID SISWA DENGAN PAGINASI ==========================
     public function index(Request $request)
     {
         $per = $request->per ?? 10;
@@ -35,7 +37,6 @@ class SavingBalanceController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        // Ambil dari saving_balances + relasi student + classroom
         $query = \App\Models\SavingBalance::with('student.classroom')
             ->when($request->search, function ($q, $search) {
                 $q->whereHas('student', function ($qq) use ($search) {

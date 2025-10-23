@@ -123,11 +123,6 @@ Route::post('saving/balances', [SavingBalanceController::class, 'index']);
 Route::get('/saving-balances/{student_id}', [SavingBalanceController::class, 'get']);
 
 
-// Route::middleware('auth:api')->group(function () {
-//     Route::get('/dashboard', [StudentDashboardController::class, 'dashboard']);
-//     Route::get('/student-bills', [StudentDashboardController::class, 'bills']);
-// });
-
 Route::prefix('profile')->group(function () {
     Route::get('', [AuthController::class, 'profile']);
     Route::post('update/student', [AuthController::class, 'updateStudent']);

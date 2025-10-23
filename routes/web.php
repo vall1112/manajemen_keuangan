@@ -26,8 +26,4 @@ Route::get('/{any}', function () {
 // routes/web.php
 Route::get('/api/transactions/{transaction}/receipt', [TransactionController::class, 'receipt']);
 
-use App\Http\Controllers\PembayaranController;
-
-Route::get('/struk/{invoice}', [PembayaranController::class, 'showStruk'])->name('pembayaran.struk');
-
 Route::get('/struk/{invoice}', [TransactionController::class, 'showStruk'])->name('struk.show');

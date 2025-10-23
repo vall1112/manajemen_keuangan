@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PaymentType;
 use App\Models\Pembayaran;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +94,7 @@ class PaymentTypeController extends Controller
     public function showStruk(PaymentType $invoice)
     {
         // Ambil data pembayaran berdasarkan nomor invoice
-        $data = Pembayaran::where('no_invoice', $invoice)->firstOrFail();
+        $data = Transaction::where('no_invoice', $invoice)->firstOrFail();
 
         // Kirim ke view
         return view('pembayaran.struk', compact('data'));
