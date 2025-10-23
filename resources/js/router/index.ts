@@ -228,7 +228,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users", "Siswa"],
                 },
             },
-            // HALAMAN + ADMIN
+            // USER ADMIN
             {
                 path: "/dashboard/master/users/admin",
                 name: "dashboard.master.users.admin",
@@ -239,7 +239,7 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Master", "Users" , "Admin"],
                 },
             },
-            // HALAMAN + GURU
+            // USER GURU
             {
                 path: "/dashboard/master/users/teacher",
                 name: "dashboard.master.users.teacher",
@@ -248,6 +248,17 @@ const routes: Array<RouteRecordRaw> = [
                 meta: {
                     pageTitle: "Guru",
                     breadcrumbs: ["Master", "Users" , "Guru"],
+                },
+            },
+            // USER SISWA
+            {
+                path: "/dashboard/master/users/student",
+                name: "dashboard.master.users.student",
+                component: () =>
+                    import("@/pages/dashboard/master/users/student/Index.vue"),
+                meta: {
+                    pageTitle: "Siswa",
+                    breadcrumbs: ["Master", "Users" , "Siswa"],
                 },
             },
             // PERSETUJUAN USER BARU

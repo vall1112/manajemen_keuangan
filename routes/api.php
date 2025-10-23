@@ -57,11 +57,11 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('users/pending', [UserController::class, 'userPending']);
             Route::post('users/store', [UserController::class, 'store']);
             Route::put('users/{id}/status', [UserController::class, 'updateStatus']);
+            Route::post('users/admin', [UserController::class, 'index_admin']);
+            Route::post('users/teacher', [UserController::class, 'index_teacher']);
+            Route::post('users/student', [UserController::class, 'index_student']);
             Route::apiResource('users', UserController::class)
-            ->except(['index', 'store'])->scoped(['user' => 'uuid']);
-            Route::post('users/admin', [UserController::class, 'admin']);
-            Route::post('users/admin/index', [UserController::class, 'index_admin']);
-            Route::post('users/teacher/index', [UserController::class, 'index_teacher']);
+                ->except(['index', 'store'])->scoped(['user' => 'uuid']);
         });
 
         Route::middleware('can:master-role')->group(function () {

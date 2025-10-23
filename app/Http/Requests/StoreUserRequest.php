@@ -23,13 +23,13 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'username'    => 'required|string|max:50|alpha_dash|unique:users',
+            'teacher_id'  => 'nullable|exists:students,id|unique:users,student_id',
+            'student_id'  => 'nullable|exists:students,id|unique:users,student_id',
             'name'        => 'required',
             'email'       => 'required|email|unique:users',
             'password'    => ['required', 'confirmed', Password::default()],
             'photo'       => 'nullable|image',
             'role_id'     => 'required',
-            'teacher_id'  => 'nullable|exists:students,id|unique:users,student_id',
-            'student_id'  => 'nullable|exists:students,id|unique:users,student_id',
             'status'      => 'required|in:Pending,Aktif,Tidak Aktif',
         ];
     }
@@ -38,11 +38,11 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'username.unique'    => 'Username sudah digunakan.',
-            'email.unique'       => 'Email sudah digunakan.',
-            'teacher_id.unique'  => 'Guru ini sudah memiliki akun pengguna.',
+             'teacher_id.unique'  => 'Guru ini sudah memiliki akun pengguna.',
             'teacher_id.exists'  => 'Guru tidak ditemukan.',
             'student_id.unique'  => 'Siswa ini sudah memiliki akun pengguna.',
             'student_id.exists'  => 'Siswa tidak ditemukan.',
+            'email.unique'       => 'Email sudah digunakan.',
             'status.required'    => 'Status harus dipilih.',
             'status.in'          => 'Status hanya boleh aktif, pending, atau tidak aktif.',
         ];

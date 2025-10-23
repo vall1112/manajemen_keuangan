@@ -105,7 +105,7 @@ watch(openForm, (val) => {
             </button>
         </div>
         <div class="card-body">
-            <paginate ref="paginateRef" id="table-users" url="/master/users/admin/index" :columns="columns"></paginate>
+            <paginate ref="paginateRef" id="table-users" url="/master/users/admin" :columns="columns"></paginate>
         </div>
     </div>
 </template>

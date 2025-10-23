@@ -4,10 +4,11 @@ import { onMounted, ref, watch, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
-import type { User, Role, Student } from "@/types";
+import type { User, Student } from "@/types";
 import ApiService from "@/core/services/ApiService";
-import { useRole } from "@/services/useRole";
 import { useStudent } from "@/services/useStudent";
+
+const STUDENT_ROLE_ID = 3;
 
 const props = defineProps({
     selected: {
@@ -36,8 +37,7 @@ const formSchema = Yup.object().shape({
     passwordConfirmation: Yup.string()
         .oneOf([Yup.ref("password")], "Konfirmasi password harus sama")
         .nullable(),
-    role_id: Yup.string().required("Pilih role"),
-    student_id: Yup.string().nullable(),
+    student_id: Yup.string().required("Pilih siswa"),
     status: Yup.string().required("Pilih status"),
 });
 
@@ -63,8 +63,9 @@ function submit() {
     formData.append("username", user.value.username);
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
-    formData.append("role_id", user.value.role_id);
+    formData.append("role_id", STUDENT_ROLE_ID.toString());
     formData.append("status", user.value.status);
+
     if (user.value.student_id) {
         formData.append("student_id", user.value.student_id);
     }
@@ -76,9 +77,11 @@ function submit() {
             user.value.passwordConfirmation
         );
     }
+
     if (photo.value.length) {
         formData.append("photo", photo.value[0].file);
     }
+
     if (props.selected) {
         formData.append("_method", "PUT");
     }
@@ -104,37 +107,40 @@ function submit() {
             if (err.response?.status === 422) {
                 const errors = err.response.data.errors;
                 formRef.value.setErrors(errors);
-
                 Object.values(errors).forEach((messages: any) => {
                     toast.error(messages[0]);
                 });
             } else {
-                const message = err.response?.data?.message || "Terjadi kesalahan server";
+                const message =
+                    err.response?.data?.message || "Terjadi kesalahan server";
                 toast.error(message);
             }
         })
-
         .finally(() => {
             unblock(document.getElementById("form-user"));
         });
 }
 
-const role = useRole();
-const roles = computed(() =>
-    role.data.value?.map((item: Role) => ({
-        id: item.id,
-        text: item.full_name,
-    }))
-);
-
+// Ambil data siswa
 const student = useStudent();
 const students = computed(() =>
     student.data.value?.map((item: Student) => ({
         id: item.id,
-        text: `${item.nama} - ${item.classroom?.nama_kelas ?? ''}`,
-        nama: item.nama,
-        nama_kelas: item.classroom?.nama_kelas ?? null,
+        text: item.nama,
+        email: item.email,
     }))
+);
+
+watch(
+    () => user.value.student_id,
+    (newId) => {
+        if (!newId) return;
+        const selectedStudent = students.value?.find((t) => t.id == newId);
+        if (selectedStudent) {
+            user.value.name = selectedStudent.text;
+            user.value.email = selectedStudent.email;
+        }
+    }
 );
 
 onMounted(async () => {
@@ -156,7 +162,7 @@ watch(
 <template>
     <VForm class="form card mb-10" @submit="submit" :validation-schema="formSchema" id="form-user" ref="formRef">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} User</h2>
+            <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Pengguna Siswa</h2>
             <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
                 Batal
                 <i class="la la-times-circle p-0"></i>
@@ -165,7 +171,22 @@ watch(
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6 required">
+                            Pilih Siswa
+                        </label>
+                        <Field name="student_id" type="hidden" v-model="user.student_id">
+                            <select2 placeholder="Pilih siswa" class="form-select-solid" :options="students"
+                                name="student_id" v-model="user.student_id" required />
+                        </Field>
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="student_id" class="text-danger small" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
                             Username
@@ -178,44 +199,39 @@ watch(
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
                 <div class="col-md-6">
-                    <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
                             Nama
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="text" name="name"
-                            autocomplete="off" v-model="user.name" placeholder="Masukkan Nama" />
+                            autocomplete="off" v-model="user.name" placeholder="Masukkan Nama"
+                            :readonly="!!user.student_id" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="name" />
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
                 <div class="col-md-6">
-                    <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
                             Email
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="text" name="email"
-                            autocomplete="off" v-model="user.email" placeholder="Masukkan Email" />
+                            v-model="user.email" :readonly="!!user.student_id" placeholder="Masukkan Email" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="email" />
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
                 <div class="col-md-6">
-                    <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6">
+                        <label class="form-label fw-bold fs-6 required">
                             Password
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="password" name="password"
@@ -226,12 +242,10 @@ watch(
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
                 <div class="col-md-6">
-                    <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6">
+                        <label class="form-label fw-bold fs-6 required">
                             Konfirmasi Password
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="password"
@@ -243,55 +257,14 @@ watch(
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
                 <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6">
-                            Pilih Siswa
-                        </label>
-                        <Field name="student_id" type="hidden" v-model="user.student_id">
-                            <select2 placeholder="Pilih siswa ( jika akun untuk siswa )" class="form-select-solid"
-                                :options="students" name="student_id" v-model="user.student_id">
-                            </select2>
-                        </Field>
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="student_id" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6 required">
-                            Role
-                        </label>
-                        <Field name="role_id" type="hidden" v-model="user.role_id">
-                            <select2 placeholder="Pilih role" class="form-select-solid" :options="roles" name="role_id"
-                                v-model="user.role_id">
-                            </select2>
-                        </Field>
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="role_id" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <div class="col-md-6">
-                    <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">
                             Status
                         </label>
                         <Field name="status" type="hidden" v-model="user.status">
                             <select2 placeholder="Pilih status" class="form-select-solid" :options="[
-                                // { id: 'Pending', text: 'Pending' },
                                 { id: 'Aktif', text: 'Aktif' },
                                 { id: 'Tidak Aktif', text: 'Tidak Aktif' }
                             ]" name="status" v-model="user.status">
@@ -303,25 +276,20 @@ watch(
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
                 <div class="col-md-6">
-                    <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
-                            User Photo
+                            Foto
                         </label>
-                        <!--begin::Input-->
-                        <file-upload :files="photo" :accepted-file-types="fileTypes" required
+                        <file-upload :files="photo" :accepted-file-types="fileTypes"
                             v-on:updatefiles="(file) => (photo = file)"></file-upload>
-                        <!--end::Input-->
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="photo" />
                             </div>
                         </div>
                     </div>
-                    <!--end::Input group-->
                 </div>
             </div>
         </div>

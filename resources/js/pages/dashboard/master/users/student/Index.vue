@@ -150,14 +150,14 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">List Users</h2>
+            <h2 class="mb-0">Daftar Pengguna Siswa</h2>
             <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate ref="paginateRef" id="table-users" url="/master/users" :columns="columns"></paginate>
+            <paginate ref="paginateRef" id="table-users" url="/master/users/student" :columns="columns"></paginate>
         </div>
     </div>
 </template>

@@ -92,67 +92,70 @@ class UserController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // relasi student (ambil id + nama)
-            ->whereHas('roles', function ($query) {
-                $query->where('id', 2); // hanya ambil user dengan role_id = 1 (Admin)
+        $data = User::with('teacher')
+            ->whereHas('roles', function ($q) {
+                $q->where('id', 4);
             })
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
-                        ->orWhere('username', 'like', "%$search%")
                         ->orWhere('email', 'like', "%$search%")
-                        ->orWhereHas('student', function ($q2) use ($search) {
-                            $q2->where('nama', 'like', "%$search%");
-                        });
+                        ->orWhere('phone', 'like', "%$search%");
                 });
             })
             ->latest()
-            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+            ->paginate($per);
+
+        // nomor urut manual
+        $startNo = ($data->currentPage() - 1) * $data->perPage() + 1;
+
+        $items = $data->getCollection()->map(function ($item) use (&$startNo) {
+            $item->no = $startNo++;
+            return $item;
+        });
+
+        $data->setCollection($items);
 
         return response()->json($data);
     }
 
+    // ========================== AMBIL DATA SISWA DENGAN PAGINASI ==========================
+    public function index_student(Request $request)
+    {
+        $per = $request->per ?? 10;
+        $page = $request->page ? $request->page - 1 : 0;
+
+        DB::statement('set @no=0+' . $page * $per);
+
+        $data = User::with('student')
+            ->whereHas('roles', function ($q) {
+                $q->where('id', 3);
+            })
+            ->when($request->search, function (Builder $query, string $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%$search%")
+                        ->orWhere('email', 'like', "%$search%")
+                        ->orWhere('phone', 'like', "%$search%");
+                });
+            })
+            ->latest()
+            ->paginate($per);
+
+        // nomor urut manual
+        $startNo = ($data->currentPage() - 1) * $data->perPage() + 1;
+
+        $items = $data->getCollection()->map(function ($item) use (&$startNo) {
+            $item->no = $startNo++;
+            return $item;
+        });
+
+        $data->setCollection($items);
+
+        return response()->json($data);
+    }
 
     // ========================== SIMPAN DATA USER BARU ==========================
     public function store(StoreUserRequest $request)
-    {
-        $validatedData = $request->validated();
-
-        if ($request->hasFile('photo')) {
-            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
-        }
-
-        $user = User::create($validatedData);
-
-        $role = Role::findById($validatedData['role_id']);
-        $user->assignRole($role);
-
-        return response()->json([
-            'success' => true,
-            'user' => $user
-        ]);
-    }
-    // ========================== SIMPAN DATA ADMIN BARU ==========================
-    public function admin(StoreUserRequest $request)
-    {
-        $validatedData = $request->validated();
-
-        if ($request->hasFile('photo')) {
-            $validatedData['photo'] = $request->file('photo')->store('photo', 'public');
-        }
-
-        $user = User::create($validatedData);
-
-        $role = Role::findById($validatedData['role_id']);
-        $user->assignRole($role);
-
-        return response()->json([
-            'success' => true,
-            'user' => $user
-        ]);
-    }
-    // ========================== SIMPAN DATA GURU BARU ==========================
-    public function teacher(StoreUserRequest $request)
     {
         $validatedData = $request->validated();
 

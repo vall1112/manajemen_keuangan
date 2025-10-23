@@ -66,7 +66,7 @@ const MainMenuConfig: Array<MenuItem> = [
                             },
                             {
                                 heading: "Siswa",
-                                route: "/dashboard/master/users",
+                                route: "/dashboard/master/users/student",
                                 name: "master-user",
                             },
                         ],

@@ -127,6 +127,7 @@ const teachers = computed(() =>
     teacher.data.value?.map((item: Teacher) => ({
         id: item.id,
         text: item.nama,
+        email: item.email,
     }))
 );
 
@@ -134,14 +135,14 @@ watch(
     () => user.value.teacher_id,
     (newId) => {
         if (!newId) return;
-        const selectedTeacher = teachers.value?.find(
-            (t) => t.id == newId
-        );
+        const selectedTeacher = teachers.value?.find((t) => t.id == newId);
         if (selectedTeacher) {
             user.value.name = selectedTeacher.text;
+            user.value.email = selectedTeacher.email;
         }
     }
 );
+
 
 onMounted(async () => {
     if (props.selected) {
@@ -170,6 +171,25 @@ watch(
         </div>
         <div class="card-body">
             <div class="row">
+                <div class="col-md-6">
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6">
+                            Pilih Guru
+                        </label>
+                        <Field name="student_id" type="hidden" v-model="user.teacher_id">
+                            <select2 placeholder="Pilih guru ( jika akun untuk guru )" class="form-select-solid"
+                                :options="teachers" name="student_id" v-model="user.teacher_id">
+                            </select2>
+                        </Field>
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="teacher_id" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </div>
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
@@ -210,29 +230,10 @@ watch(
                             Email
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="text" name="email"
-                            autocomplete="off" v-model="user.email" placeholder="Masukkan Email" />
+                            v-model="user.email" :readonly="!!user.teacher_id" placeholder="Masukkan Email" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="email" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6">
-                            Pilih Guru
-                        </label>
-                        <Field name="student_id" type="hidden" v-model="user.teacher_id">
-                            <select2 placeholder="Pilih guru ( jika akun untuk guru )" class="form-select-solid"
-                                :options="teachers" name="student_id" v-model="user.teacher_id">
-                            </select2>
-                        </Field>
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="teacher_id" />
                             </div>
                         </div>
                     </div>
@@ -297,7 +298,7 @@ watch(
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
-                           Foto
+                            Foto
                         </label>
                         <!--begin::Input-->
                         <file-upload :files="photo" :accepted-file-types="fileTypes" required
