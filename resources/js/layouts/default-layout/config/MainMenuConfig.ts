@@ -74,7 +74,7 @@ const MainMenuConfig: Array<MenuItem> = [
                     // ROLE
                     {
                         heading: "Role",
-                        route: "/dashboard/master/users/roles",
+                        route: "/dashboard/master/roles",
                         name: "master-role",
                     },
                     // GURU

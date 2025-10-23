@@ -208,13 +208,13 @@ const routes: Array<RouteRecordRaw> = [
             },
             // ROLE / PERAN
             {
-                path: "/dashboard/master/users/roles",
-                name: "dashboard.master.users.roles",
+                path: "/dashboard/master/roles",
+                name: "dashboard.master.roles",
                 component: () =>
-                    import("@/pages/dashboard/master/users/roles/Index.vue"),
+                    import("@/pages/dashboard/master/roles/Index.vue"),
                 meta: {
-                    pageTitle: "User Roles",
-                    breadcrumbs: ["Master", "Users", "Roles"],
+                    pageTitle: "Role",
+                    breadcrumbs: ["Master", "Roles"],
                 },
             },
             // USER / PENGGUNA

@@ -26,15 +26,15 @@ class UserController extends Controller
 
     // ========================== AMBIL DATA USER DENGAN PAGINASI ==========================
     public function index(Request $request)
-   {
+    {
         $per = $request->per ?? 10;
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // relasi student (ambil id + nama)
+        $data = User::with(['student:id,nama'])
             ->whereHas('roles', function ($query) {
-                $query->where('id', 3); // hanya ambil user dengan role_id = 1 (Admin)
+                $query->where('id', 3);
             })
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
@@ -53,28 +53,33 @@ class UserController extends Controller
     }
     // ========================== AMBIL DATA ADMIN DENGAN PAGINASI ==========================
     public function index_admin(Request $request)
-   {
+    {
         $per = $request->per ?? 10;
         $page = $request->page ? $request->page - 1 : 0;
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // relasi student (ambil id + nama)
-            ->whereHas('roles', function ($query) {
-                $query->where('id', 1); // hanya ambil user dengan role_id = 1 (Admin)
-            })
+        $data = User::whereHas('roles', function ($q) {
+            $q->where('id', 1);
+        })
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
-                        ->orWhere('username', 'like', "%$search%")
                         ->orWhere('email', 'like', "%$search%")
-                        ->orWhereHas('student', function ($q2) use ($search) {
-                            $q2->where('nama', 'like', "%$search%");
-                        });
+                        ->orWhere('phone', 'like', "%$search%");
                 });
             })
             ->latest()
-            ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
+            ->paginate($per);
+
+        $startNo = ($data->currentPage() - 1) * $data->perPage() + 1;
+
+        $items = $data->getCollection()->map(function ($item) use (&$startNo) {
+            $item->no = $startNo++;
+            return $item;
+        });
+
+        $data->setCollection($items);
 
         return response()->json($data);
     }

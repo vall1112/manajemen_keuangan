@@ -4,10 +4,11 @@ import { onMounted, ref, watch, computed } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
-import type { User, Role, Student } from "@/types";
+import type { User, Teacher } from "@/types";
 import ApiService from "@/core/services/ApiService";
-import { useRole } from "@/services/useRole";
-import { useStudent } from "@/services/useStudent";
+import { useTeacher } from "@/services/useTeacher";
+
+const ADMIN_ROLE_ID = 1;
 
 const props = defineProps({
     selected: {
@@ -36,8 +37,7 @@ const formSchema = Yup.object().shape({
     passwordConfirmation: Yup.string()
         .oneOf([Yup.ref("password")], "Konfirmasi password harus sama")
         .nullable(),
-    role_id: Yup.string().required("Pilih role"),
-    student_id: Yup.string().nullable(),
+    teacher_id: Yup.string().nullable(),
     status: Yup.string().required("Pilih status"),
 });
 
@@ -63,10 +63,11 @@ function submit() {
     formData.append("username", user.value.username);
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
-    formData.append("role_id", user.value.role_id);
+    formData.append("role_id", ADMIN_ROLE_ID.toString());
     formData.append("status", user.value.status);
-    if (user.value.student_id) {
-        formData.append("student_id", user.value.student_id);
+
+    if (user.value.teacher_id) {
+        formData.append("teacher_id", user.value.teacher_id);
     }
 
     if (user.value?.password) {
@@ -76,9 +77,11 @@ function submit() {
             user.value.passwordConfirmation
         );
     }
+
     if (photo.value.length) {
         formData.append("photo", photo.value[0].file);
     }
+
     if (props.selected) {
         formData.append("_method", "PUT");
     }
@@ -88,7 +91,7 @@ function submit() {
         method: "post",
         url: props.selected
             ? `/master/users/${props.selected}`
-            : "/master/users/admin",
+            : "/master/users/store",
         data: formData,
         headers: {
             "Content-Type": "multipart/form-data",
@@ -104,37 +107,40 @@ function submit() {
             if (err.response?.status === 422) {
                 const errors = err.response.data.errors;
                 formRef.value.setErrors(errors);
-
                 Object.values(errors).forEach((messages: any) => {
                     toast.error(messages[0]);
                 });
             } else {
-                const message = err.response?.data?.message || "Terjadi kesalahan server";
+                const message =
+                    err.response?.data?.message || "Terjadi kesalahan server";
                 toast.error(message);
             }
         })
-
         .finally(() => {
             unblock(document.getElementById("form-user"));
         });
 }
 
-const role = useRole();
-const roles = computed(() =>
-    role.data.value?.map((item: Role) => ({
+// Ambil data guru
+const teacher = useTeacher();
+const teachers = computed(() =>
+    teacher.data.value?.map((item: Teacher) => ({
         id: item.id,
-        text: item.full_name,
+        text: item.nama,
     }))
 );
 
-const student = useStudent();
-const students = computed(() =>
-    student.data.value?.map((item: Student) => ({
-        id: item.id,
-        text: `${item.nama} - ${item.classroom?.nama_kelas ?? ''}`,
-        nama: item.nama,
-        nama_kelas: item.classroom?.nama_kelas ?? null,
-    }))
+watch(
+    () => user.value.teacher_id,
+    (newId) => {
+        if (!newId) return;
+        const selectedTeacher = teachers.value?.find(
+            (t) => t.id == newId
+        );
+        if (selectedTeacher) {
+            user.value.name = selectedTeacher.text;
+        }
+    }
 );
 
 onMounted(async () => {
@@ -156,7 +162,7 @@ watch(
 <template>
     <VForm class="form card mb-10" @submit="submit" :validation-schema="formSchema" id="form-user" ref="formRef">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} User</h2>
+            <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Pengguna Admin</h2>
             <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
                 Batal
                 <i class="la la-times-circle p-0"></i>
@@ -187,7 +193,8 @@ watch(
                             Nama
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="text" name="name"
-                            autocomplete="off" v-model="user.name" placeholder="Masukkan Nama" />
+                            autocomplete="off" v-model="user.name" placeholder="Masukkan Nama"
+                            :readonly="!!user.teacher_id" />
                         <div class="fv-plugins-message-container">
                             <div class="fv-help-block">
                                 <ErrorMessage name="name" />
@@ -216,6 +223,25 @@ watch(
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
+                            Pilih Guru
+                        </label>
+                        <Field name="student_id" type="hidden" v-model="user.teacher_id">
+                            <select2 placeholder="Pilih guru ( jika akun untuk guru )" class="form-select-solid"
+                                :options="teachers" name="student_id" v-model="user.teacher_id">
+                            </select2>
+                        </Field>
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">
+                                <ErrorMessage name="teacher_id" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Input group-->
+                </div>
+                <div class="col-md-6">
+                    <!--begin::Input group-->
+                    <div class="fv-row mb-7">
+                        <label class="form-label fw-bold fs-6 required">
                             Password
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="password" name="password"
@@ -231,7 +257,7 @@ watch(
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6">
+                        <label class="form-label fw-bold fs-6 required">
                             Konfirmasi Password
                         </label>
                         <Field class="form-control form-control-lg form-control-solid" type="password"
@@ -245,44 +271,6 @@ watch(
                     </div>
                     <!--end::Input group-->
                 </div>
-                <div class="col-md-6">
-                    <!--begin::Input group-->
-                    <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6">
-                            Pilih Siswa
-                        </label>
-                        <Field name="student_id" type="hidden" v-model="user.student_id">
-                            <select2 placeholder="Pilih siswa ( jika akun untuk siswa )" class="form-select-solid"
-                                :options="students" name="student_id" v-model="user.student_id">
-                            </select2>
-                        </Field>
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="student_id" />
-                            </div>
-                        </div>
-                    </div>
-                    <!--end::Input group-->
-                </div>
-                <!-- <div class="col-md-6"> -->
-                    <!--begin::Input group-->
-                    <!-- <div class="fv-row mb-7">
-                        <label class="form-label fw-bold fs-6 required">
-                            Role
-                        </label>
-                        <Field name="role_id" type="hidden" v-model="user.role_id">
-                            <select2 placeholder="Pilih role" class="form-select-solid" :options="roles" name="role_id"
-                                v-model="user.role_id">
-                            </select2>
-                        </Field>
-                        <div class="fv-plugins-message-container">
-                            <div class="fv-help-block">
-                                <ErrorMessage name="role_id" />
-                            </div>
-                        </div>
-                    </div> -->
-                    <!--end::Input group-->
-                <!-- </div> -->
                 <div class="col-md-6">
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
@@ -309,7 +297,7 @@ watch(
                     <!--begin::Input group-->
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">
-                            User Photo
+                           Foto
                         </label>
                         <!--begin::Input-->
                         <file-upload :files="photo" :accepted-file-types="fileTypes" required

@@ -1,6 +1,7 @@
 export interface Teacher {
-    id: number;
-    user_id?: number;
+    id: BigInteger;
+    teacher_id?: BigInteger;
+    user_id?: BigInteger;
     nip?: string;
     nama: string;
     jenis_kelamin: "L" | "P";

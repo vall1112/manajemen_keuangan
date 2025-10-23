@@ -26,66 +26,14 @@ const columns = [
     column.accessor("name", {
         header: "Nama",
     }),
-    column.accessor("student_id", {
-        header: "Siswa",
-        cell: (info) => info.row.original.student?.nama ?? "-",
-    }),
     column.accessor("email", {
         header: "Email",
     }),
-    // column.accessor("toggle", {
-    //     header: () => h("div", { class: "text-center" }, "Status"),
-    //     cell: (cell) => {
-    //         const row = cell.row.original;
-    //         return h("div", { class: "text-center" }, [
-    //             h(
-    //                 "label",
-    //                 {
-    //                     class:
-    //                         "form-check form-switch form-check-custom form-check-solid d-inline-flex justify-content-center",
-    //                 },
-    //                 [
-    //                     h("input", {
-    //                         type: "checkbox",
-    //                         checked: row.status === "Aktif",
-    //                         class: "form-check-input",
-    //                         onChange: async (e: Event) => {
-    //                             const checkbox = e.target as HTMLInputElement;
-    //                             const newStatus =
-    //                                 row.status === "Aktif" ? "Tidak Aktif" : "Aktif";
-    //                             checkbox.disabled = true;
-
-    //                             try {
-    //                                 const response = await axios.put(
-    //                                     `/master/users/${row.id}/status`,
-    //                                     { status: newStatus }
-    //                                 );
-    //                                 toast.success(
-    //                                     response.data.message || "Status berhasil diperbarui!"
-    //                                 );
-    //                                 paginateRef.value?.refetch();
-    //                             } catch (error: any) {
-    //                                 toast.error(
-    //                                     error.response?.data?.message ||
-    //                                     "Gagal memperbarui status!"
-    //                                 );
-    //                                 checkbox.checked = !checkbox.checked;
-    //                             } finally {
-    //                                 checkbox.disabled = false;
-    //                             }
-    //                         },
-    //                     }),
-    //                 ]
-    //             ),
-    //         ]);
-    //     },
-    // }),
     column.accessor("photo", {
         header: "Foto",
         cell: (cell) => {
             const photoUrl = cell.getValue();
 
-            // fallback jika photo null/undefined/empty
             const src = photoUrl ? `/storage/${photoUrl}` : "/media/avatars/blank.png";
 
             return h("div", { class: "text-wrap" }, [
@@ -150,7 +98,7 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">List Users</h2>
+            <h2 class="mb-0">Daftar Pengguna Admin</h2>
             <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>

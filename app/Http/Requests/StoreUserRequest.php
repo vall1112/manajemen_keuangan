@@ -28,6 +28,7 @@ class StoreUserRequest extends FormRequest
             'password'    => ['required', 'confirmed', Password::default()],
             'photo'       => 'nullable|image',
             'role_id'     => 'required',
+            'teacher_id'  => 'nullable|exists:students,id|unique:users,student_id',
             'student_id'  => 'nullable|exists:students,id|unique:users,student_id',
             'status'      => 'required|in:Pending,Aktif,Tidak Aktif',
         ];
@@ -38,6 +39,8 @@ class StoreUserRequest extends FormRequest
         return [
             'username.unique'    => 'Username sudah digunakan.',
             'email.unique'       => 'Email sudah digunakan.',
+            'teacher_id.unique'  => 'Guru ini sudah memiliki akun pengguna.',
+            'teacher_id.exists'  => 'Guru tidak ditemukan.',
             'student_id.unique'  => 'Siswa ini sudah memiliki akun pengguna.',
             'student_id.exists'  => 'Siswa tidak ditemukan.',
             'status.required'    => 'Status harus dipilih.',

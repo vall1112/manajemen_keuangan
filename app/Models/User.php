@@ -21,6 +21,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'username',
+        'teacher_id',
         'student_id',
         'name',
         'email',
@@ -97,6 +98,11 @@ class User extends Authenticatable implements JWTSubject
     public function getPermissionAttribute()
     {
         return $this->getAllPermissions()->pluck('name');
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
     }
 
     public function student()
