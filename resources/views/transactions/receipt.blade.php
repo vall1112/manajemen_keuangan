@@ -98,7 +98,8 @@
     <div class="receipt">
         {{-- HEADER --}}
         <div class="header">
-    <img src="{{ $schoolLogo }}" alt="Logo Sekolah">
+    <img src="{{    $schoolLogo = $setting->logo_sekolah
+ }}" alt="Logo Sekolah">
     <h1>{{ strtoupper($schoolName) }}</h1>
     <p>Sistem Pembayaran Sekolah</p>
     <p><strong>BUKTI PEMBAYARAN SPP</strong></p>
