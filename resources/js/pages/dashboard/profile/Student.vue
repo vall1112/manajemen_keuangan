@@ -43,11 +43,11 @@ function getProfile() {
             student.value = data.siswa;
             user.value = data.user;
 
-            student.value.tanggal_lahir_raw = student.value.tanggal_lahir;
+            student.value.tanggal_lahir = student.value.tanggal_lahir;
 
             if (student.value.tanggal_lahir) {
                 student.value.tanggal_lahir = formatTanggalIndo(
-                    student.value.tanggal_lahir_raw
+                    student.value.tanggal_lahir
                 );
             }
 
@@ -75,8 +75,8 @@ function submit() {
     formData.append("jenis_kelamin", student.value.jenis_kelamin);
     formData.append("tempat_lahir", student.value.tempat_lahir);
 
-    if (student.value.tanggal_lahir_raw) {
-        const d = new Date(student.value.tanggal_lahir_raw);
+    if (student.value.tanggal_lahir) {
+        const d = new Date(student.value.tanggal_lahir);
         const onlyDate = d.toISOString().split("T")[0];
         formData.append("tanggal_lahir", onlyDate);
     }
@@ -136,7 +136,7 @@ onMounted(() => {
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">Kelas</label>
                         <input type="text" class="form-control form-control-lg form-control-solid"
-                            :value="student.classroom?.nama_kelas ?? '-'" disabled />
+                            :value="student.classroom_id?.nama_kelas ?? '-'" disabled />
                     </div>
                 </div>
 

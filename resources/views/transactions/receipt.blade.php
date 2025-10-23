@@ -14,8 +14,8 @@
         }
 
         .receipt {
-            width: 105mm;
-            height: 148mm; /* A6 */
+            width: 210mm;
+            height: 297mm; /* A4 */
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 6px;
