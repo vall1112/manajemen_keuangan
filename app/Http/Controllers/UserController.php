@@ -32,10 +32,7 @@ class UserController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama'])
-            ->whereHas('roles', function ($query) {
-                $query->where('id', 3);
-            })
+        $data = User::with(['student:id,nama']) // hanya ambil id dan nama dari relasi student
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")

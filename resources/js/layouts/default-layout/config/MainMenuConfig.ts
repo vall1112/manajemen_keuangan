@@ -48,6 +48,12 @@ const MainMenuConfig: Array<MenuItem> = [
                 name: "master",
                 sub: [
                     // USER
+                                  {
+                        heading: "User",
+                        route: "/dashboard/master/users",
+                        name: "master-user",
+                    },
+                    // USER
                     {
                         sectionTitle: "User",
                         route: "user",

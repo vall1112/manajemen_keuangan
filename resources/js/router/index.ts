@@ -79,13 +79,13 @@ const routes: Array<RouteRecordRaw> = [
             },
             // HALAMAN PENGGUNA SISWA
             {
-                path: "/dashboard/master/users/student",
-                name: "dashboard.master.users.student",
+                path: "/dashboard/master/users",
+                name: "dashboard.master.users",
                 component: () =>
-                    import("@/pages/dashboard/master/users/student/Index.vue"),
+                    import("@/pages/dashboard/master/users/Index.vue"),
                 meta: {
-                    pageTitle: "Siswa",
-                    breadcrumbs: ["Master", "Users", "Siswa"],
+                    pageTitle: "Daftar User",
+                    breadcrumbs: ["Master", "Users"],
                 },
             },
             // HALAMAN PERAN
