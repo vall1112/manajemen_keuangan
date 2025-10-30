@@ -114,6 +114,17 @@ const columns = [
                 h(
                     "button",
                     {
+                        class: "btn btn-sm btn-icon btn-success",
+                        onClick: () => {
+                            selected.value = cell.getValue();
+                            openForm.value = true;
+                        },
+                    },
+                    h("i", { class: "la la-print fs-2" })
+                ),
+                h(
+                    "button",
+                    {
                         class: "btn btn-sm btn-icon btn-info",
                         onClick: () => {
                             selected.value = cell.getValue();
