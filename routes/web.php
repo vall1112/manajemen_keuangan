@@ -28,3 +28,5 @@ Route::get('/{any}', function () {
 Route::get('/api/transactions/{transaction}/receipt', [TransactionController::class, 'receipt']);
 Route::get('/struk/{invoice}', [TransactionController::class, 'showStruk'])->name('struk.show');
 Route::get('/dashboard/master/users/print/{uuid}', [UserController::class, 'print'])->name('users.print');
+
+Route::get('/users/{id}/print', [UserController::class, 'print']);
