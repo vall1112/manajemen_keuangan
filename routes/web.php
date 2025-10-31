@@ -3,6 +3,7 @@
 use AmrShawky\LaravelCurrency\Facade\Currency;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,5 +26,5 @@ Route::get('/{any}', function () {
 
 // routes/web.php
 Route::get('/api/transactions/{transaction}/receipt', [TransactionController::class, 'receipt']);
-
 Route::get('/struk/{invoice}', [TransactionController::class, 'showStruk'])->name('struk.show');
+Route::get('/dashboard/master/users/print/{uuid}', [UserController::class, 'print'])->name('users.print');

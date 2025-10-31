@@ -157,3 +157,4 @@ Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
 
 Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
+Route::get('/dashboard/master/users/print/{uuid}', [UserController::class, 'print'])->name('users.print');

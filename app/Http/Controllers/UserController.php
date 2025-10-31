@@ -251,4 +251,45 @@ class UserController extends Controller
 
         return response()->json($data);
     }
+
+    // ========================== AMBIL DATA UUID ==========================
+   public function print($uuid)
+{
+    // Ambil data user berdasarkan UUID
+    $user = \App\Models\User::with([
+        'siswa.kelas.jurusan', // pastikan relasi ini sesuai dengan model kamu
+    ])->where('uuid', $uuid)->firstOrFail();
+
+    // Ambil data siswa terkait (jika ada)
+    $siswa = $user->siswa;
+    $kelas = $siswa->kelas ?? null;
+    $jurusan = $kelas->jurusan ?? null;
+
+    // Ambil data setting sekolah
+    $setting = \App\Models\Setting::first();
+
+    // Nama & logo sekolah
+    $schoolName = $setting->school ?? 'Nama Sekolah';
+    $schoolLogo = $setting->logo_sekolah
+        ? asset('storage/' . $setting->logo_sekolah)
+        : asset('default-logo.png');
+
+    // Ambil tanggal sekarang (untuk ditampilkan di cetakan)
+    $tanggalCetak = now()->translatedFormat('d F Y');
+
+    // Kirim semua data ke view cetak
+    return view('master.users.print', [
+        'user'         => $user,
+        'siswa'        => $siswa,
+        'kelas'        => $kelas,
+        'jurusan'      => $jurusan,
+        'schoolName'   => $schoolName,
+        'schoolLogo'   => $schoolLogo,
+        'tanggalCetak' => $tanggalCetak,
+    ]);
 }
+
+
+
+}
+

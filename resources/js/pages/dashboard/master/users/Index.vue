@@ -142,6 +142,17 @@ const columns = [
                     },
                     h("i", { class: "la la-trash fs-2" })
                 ),
+                h(
+                    "button",
+                    {
+                        class: "btn btn-sm btn-icon btn-secondary",
+                        onClick: () => {
+                            // Cetak data user tertentu di halaman yang sama
+                             window.location.href = (`/dashboard/master/users/print${cell.getValue()}`);
+                    },
+                    },
+                h("i", { class: "la la-print fs-2" })
+                ),
             ]),
     }),
 ];
