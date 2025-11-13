@@ -54,29 +54,29 @@ const MainMenuConfig: Array<MenuItem> = [
                         name: "master-user",
                     },
                     // USER
-                    {
-                        sectionTitle: "User",
-                        route: "user",
-                        keenthemesIcon: "bank",
-                        name: "savings",
-                        sub: [
-                            {
-                                heading: "Admin",
-                                route: "/dashboard/master/users/admin",
-                                name: "master-user",
-                            },
-                            {
-                                heading: "Guru",
-                                route: "/dashboard/master/users/teacher",
-                                name: "master-user",
-                            },
-                            {
-                                heading: "Siswa",
-                                route: "/dashboard/master/users/student",
-                                name: "master-user",
-                            },
-                        ],
-                    },
+                    // {
+                    //     sectionTitle: "User",
+                    //     route: "user",
+                    //     keenthemesIcon: "bank",
+                    //     name: "savings",
+                    //     sub: [
+                    //         {
+                    //             heading: "Admin",
+                    //             route: "/dashboard/master/users/admin",
+                    //             name: "master-user",
+                    //         },
+                    //         {
+                    //             heading: "Guru",
+                    //             route: "/dashboard/master/users/teacher",
+                    //             name: "master-user",
+                    //         },
+                    //         {
+                    //             heading: "Siswa",
+                    //             route: "/dashboard/master/users/student",
+                    //             name: "master-user",
+                    //         },
+                    //     ],
+                    // },
                     // ROLE
                     {
                         heading: "Role",

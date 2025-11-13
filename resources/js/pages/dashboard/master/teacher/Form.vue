@@ -8,10 +8,10 @@ import type { Teacher } from "@/types";
 import ApiService from "@/core/services/ApiService";
 
 const props = defineProps({
-    selected: {
-        type: String,
-        default: null,
-    },
+  selected: {
+    type: String,
+    default: null,
+  },
 });
 
 const emit = defineEmits(["close", "refresh"]);
@@ -22,17 +22,17 @@ const foto = ref<any>([]);
 const formRef = ref();
 
 const formSchema = Yup.object().shape({
-    nama: Yup.string().required("Nama harus diisi"),
-    email: Yup.string().email("Email harus valid").nullable(),
-    no_telepon: Yup.string().required("Nomor Telepon harus diisi"),
-    nip: Yup.string().nullable(),
-    tempat_lahir: Yup.string().required("Tempat lahir harus diisi"),
-    tanggal_lahir: Yup.date().required("Tanggal lahir harus diisi"),
-    jenis_kelamin: Yup.string().required("Pilih jenis kelamin"),
-    alamat: Yup.string().required("Alamat harus diisi"),
-mata_pelajaran: Yup.string().nullable(),
-    jabatan: Yup.string().required("Jabatan harus diisi"),
-    status: Yup.string().required("Status harus dipilih"),
+  nama: Yup.string().required("Nama harus diisi"),
+  email: Yup.string().email("Email harus valid").nullable(),
+  no_telepon: Yup.string().required("Nomor Telepon harus diisi"),
+  nip: Yup.string().nullable(),
+  tempat_lahir: Yup.string().required("Tempat lahir harus diisi"),
+  tanggal_lahir: Yup.date().required("Tanggal lahir harus diisi"),
+  jenis_kelamin: Yup.string().required("Pilih jenis kelamin"),
+  alamat: Yup.string().required("Alamat harus diisi"),
+  mata_pelajaran: Yup.string().nullable(),
+  jabatan: Yup.string().required("Jabatan harus diisi"),
+  status: Yup.string().required("Status harus dipilih"),
 });
 
 function getEdit() {
@@ -51,65 +51,65 @@ function getEdit() {
 }
 
 function submit() {
-    const formData = new FormData();
-    formData.append("nama", teacher.value.nama);
-    formData.append("email", teacher.value.email ?? "");
-    formData.append("no_telepon", teacher.value.no_telepon);
-    formData.append("nip", teacher.value.nip ?? "");
-    formData.append("tempat_lahir", teacher.value.tempat_lahir);
-    formData.append("tanggal_lahir", teacher.value.tanggal_lahir);
-    formData.append("jenis_kelamin", teacher.value.jenis_kelamin);
-    formData.append("alamat", teacher.value.alamat);
-    formData.append("jabatan", teacher.value.jabatan);
-    formData.append("mata_pelajaran", teacher.value.mata_pelajaran);
-    formData.append("status", teacher.value.status);
+  const formData = new FormData();
+  formData.append("nama", teacher.value.nama);
+  formData.append("email", teacher.value.email ?? "");
+  formData.append("no_telepon", teacher.value.no_telepon);
+  formData.append("nip", teacher.value.nip ?? "");
+  formData.append("tempat_lahir", teacher.value.tempat_lahir);
+  formData.append("tanggal_lahir", teacher.value.tanggal_lahir);
+  formData.append("jenis_kelamin", teacher.value.jenis_kelamin);
+  formData.append("alamat", teacher.value.alamat);
+  formData.append("jabatan", teacher.value.jabatan);
+  formData.append("mata_pelajaran", teacher.value.mata_pelajaran);
+  formData.append("status", teacher.value.status);
 
-    if (foto.value.length) {
-        formData.append("foto", foto.value[0].file);
-    }
-    if (props.selected) {
-        formData.append("_method", "PUT");
-    }
+  if (foto.value.length) {
+    formData.append("foto", foto.value[0].file);
+  }
+  if (props.selected) {
+    formData.append("_method", "PUT");
+  }
 
-    block(document.getElementById("form-teacher"));
-    axios({
-        method: "post",
-        url: props.selected
-            ? `/master/teachers/${props.selected}`
-            : "/master/teachers/store",
-        data: formData,
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
+  block(document.getElementById("form-teacher"));
+  axios({
+    method: "post",
+    url: props.selected
+      ? `/master/teachers/${props.selected}`
+      : "/master/teachers/store",
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+    .then(() => {
+      emit("close");
+      emit("refresh");
+      toast.success("Data berhasil disimpan");
+      formRef.value.resetForm();
     })
-        .then(() => {
-            emit("close");
-            emit("refresh");
-            toast.success("Data berhasil disimpan");
-            formRef.value.resetForm();
-        })
-        .catch((err: any) => {
-            formRef.value.setErrors(err.response.data.errors);
-            toast.error(err.response.data.message);
-        })
-        .finally(() => {
-            unblock(document.getElementById("form-teacher"));
-        });
+    .catch((err: any) => {
+      formRef.value.setErrors(err.response.data.errors);
+      toast.error(err.response.data.message);
+    })
+    .finally(() => {
+      unblock(document.getElementById("form-teacher"));
+    });
 }
 
 onMounted(() => {
-    if (props.selected) {
-        getEdit();
-    }
+  if (props.selected) {
+    getEdit();
+  }
 });
 
 watch(
-    () => props.selected,
-    () => {
-        if (props.selected) {
-            getEdit();
-        }
+  () => props.selected,
+  () => {
+    if (props.selected) {
+      getEdit();
     }
+  }
 );
 </script>
 
@@ -140,8 +140,8 @@ watch(
         <div class="col-md-4">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6">NIP</label>
-            <Field class="form-control form-control-lg form-control-solid" type="text" name="nip"
-              v-model="teacher.nip" placeholder="Masukkan NIP" />
+            <Field class="form-control form-control-lg form-control-solid" type="text" name="nip" v-model="teacher.nip"
+              placeholder="Masukkan NIP" />
             <ErrorMessage name="nip" class="text-danger small" />
           </div>
         </div>
