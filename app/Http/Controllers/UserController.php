@@ -151,31 +151,20 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    public function print($id)
-    {
-        try {
-            // Ambil user berdasarkan ID
-            $user = User::findOrFail($id);
+    public function printCard($id)
+{
+    $user = User::with('student')->find($id);
 
-            // Data tambahan jika kamu punya kolom lain
-            // (misalnya kelas, jurusan, atau foto)
-            return response()->json([
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'nisn' => $user->nisn ?? null,
-                'kelas' => $user->kelas ?? null,
-                'jurusan' => $user->jurusan ?? null,
-                'photo' => $user->photo ?? null,
-                'created_at' => $user->created_at,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'User tidak ditemukan.',
-                'error' => $e->getMessage(),
-            ], 404);
-        }
+    if (!$user) {
+        return response()->json(['message' => 'Data user tidak ditemukan'], 404);
     }
+
+    // render tampilan kartu user (blade)
+    $html = view('users.card', compact('user'))->render();
+
+    return response($html);
+}
+
 
     // ========================== SIMPAN DATA USER BARU ==========================
     public function store(StoreUserRequest $request)
