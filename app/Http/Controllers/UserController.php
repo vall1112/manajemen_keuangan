@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Role;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -151,32 +152,6 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    public function print($id)
-    {
-        try {
-            // Ambil user berdasarkan ID
-            $user = User::findOrFail($id);
-
-            // Data tambahan jika kamu punya kolom lain
-            // (misalnya kelas, jurusan, atau foto)
-            return response()->json([
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'nisn' => $user->nisn ?? null,
-                'kelas' => $user->kelas ?? null,
-                'jurusan' => $user->jurusan ?? null,
-                'photo' => $user->photo ?? null,
-                'created_at' => $user->created_at,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'User tidak ditemukan.',
-                'error' => $e->getMessage(),
-            ], 404);
-        }
-    }
-
     // ========================== SIMPAN DATA USER BARU ==========================
     public function store(StoreUserRequest $request)
     {
@@ -278,40 +253,14 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    // ========================== AMBIL DATA UUID ==========================
-    public function pprint($uuid)
+    // ========================== MEMBUAT KARTU LOGIN ==========================
+    public function card(User $user)
     {
-        // Ambil data user berdasarkan UUID
-        $user = \App\Models\User::with([
-            'siswa.kelas.jurusan', // pastikan relasi ini sesuai dengan model kamu
-        ])->where('uuid', $uuid)->firstOrFail();
+        $setting = Setting::firstOrFail();
 
-        // Ambil data siswa terkait (jika ada)
-        $siswa = $user->siswa;
-        $kelas = $siswa->kelas ?? null;
-        $jurusan = $kelas->jurusan ?? null;
-
-        // Ambil data setting sekolah
-        $setting = \App\Models\Setting::first();
-
-        // Nama & logo sekolah
-        $schoolName = $setting->school ?? 'Nama Sekolah';
-        $schoolLogo = $setting->logo_sekolah
-            ? asset('storage/' . $setting->logo_sekolah)
-            : asset('default-logo.png');
-
-        // Ambil tanggal sekarang (untuk ditampilkan di cetakan)
-        $tanggalCetak = now()->translatedFormat('d F Y');
-
-        // Kirim semua data ke view cetak
-        return view('master.users.print', [
-            'user'         => $user,
-            'siswa'        => $siswa,
-            'kelas'        => $kelas,
-            'jurusan'      => $jurusan,
-            'schoolName'   => $schoolName,
-            'schoolLogo'   => $schoolLogo,
-            'tanggalCetak' => $tanggalCetak,
+        return view('users.card', [
+            'user' => $user,
+            'setting' => $setting,
         ]);
     }
 }

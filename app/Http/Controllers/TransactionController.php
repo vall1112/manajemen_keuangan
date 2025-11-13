@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\SavingBalance;
-use App\Models\Pembayaran;
+use App\Models\Saving;
+use App\Models\Bill;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +32,7 @@ class TransactionController extends Controller
         DB::statement('set @no=0+' . $page * $per);
 
         $data = Transaction::with([
-            'bill.student', // ambil nama siswa
+            'bill.student',
         ])
             ->when($request->search, function ($query, $search) {
                 $query->where('kode', 'like', "%$search%")
@@ -50,7 +52,7 @@ class TransactionController extends Controller
             return [
                 'no' => $item->no,
                 'id' => $item->id,
-                'kode' => $item->kode, // kode transaksi
+                'kode' => $item->kode,
                 'bill_id' => $item->bill_id,
                 'student_name' => $item->bill->student->nama ?? null,
                 'nominal' => $item->nominal,
@@ -79,12 +81,11 @@ class TransactionController extends Controller
         try {
             $validatedData['user_id'] = auth()->id();
 
-            $bill = \App\Models\Bill::with('student', 'paymentType')->findOrFail($validatedData['bill_id']);
+            $bill = Bill::with('student', 'paymentType')->findOrFail($validatedData['bill_id']);
             $student = $bill->student;
 
-            // === Validasi tambahan: nominal tidak boleh melebihi saldo tabungan ===
             if ($validatedData['metode_pembayaran'] === 'Pembayaran melalui tabungan') {
-                $savingBalance = \App\Models\SavingBalance::firstOrNew([
+                $savingBalance = SavingBalance::firstOrNew([
                     'student_id' => $student->id
                 ]);
 
@@ -99,21 +100,17 @@ class TransactionController extends Controller
                 }
             }
 
-            // Simpan transaksi
-            $transaction = \App\Models\Transaction::create($validatedData);
+            $transaction = Transaction::create($validatedData);
 
-            // Jika pembayaran berhasil, ubah status tagihan
             if ($validatedData['status'] === 'Berhasil') {
                 $bill->update(['status' => 'Lunas']);
             }
 
-            // === Proses potong saldo tabungan ===
             if ($validatedData['metode_pembayaran'] === 'Pembayaran melalui tabungan') {
                 $savingBalance->saldo = $lastSaldo - $validatedData['nominal'];
                 $savingBalance->save();
 
-                // Simpan riwayat ke tabel savings
-                \App\Models\Saving::create([
+                Saving::create([
                     'user_id'    => auth()->id(),
                     'student_id' => $student->id,
                     'nominal'    => $validatedData['nominal'],
@@ -161,31 +158,24 @@ class TransactionController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update transaksi
             $transaction->update($validatedData);
 
-            // Ambil data tagihan + relasi siswa dan jenis pembayaran
-            $bill = \App\Models\Bill::with(['student', 'paymentType'])->findOrFail($transaction->bill_id);
+            $bill = Bill::with(['student', 'paymentType'])->findOrFail($transaction->bill_id);
             $student = $bill->student;
 
-            // Jika status transaksi Berhasil, ubah status tagihan dan proses tabungan
             if ($validatedData['status'] === 'Berhasil') {
-                // Ubah status tagihan menjadi Lunas
                 $bill->update(['status' => 'Lunas']);
 
-                // Ambil saldo tabungan siswa
-                $savingBalance = \App\Models\SavingBalance::firstOrNew([
+                $savingBalance = SavingBalance::firstOrNew([
                     'student_id' => $student->id
                 ]);
 
                 $lastSaldo = $savingBalance->saldo ?? 0;
 
-                // Kurangi saldo
                 $savingBalance->saldo = $lastSaldo - $validatedData['nominal'];
                 $savingBalance->save();
 
-                // Tambahkan riwayat ke tabel savings
-                \App\Models\Saving::create([
+                Saving::create([
                     'user_id'    => auth()->id(),
                     'student_id' => $student->id,
                     'nominal'    => $validatedData['nominal'],
@@ -224,62 +214,52 @@ class TransactionController extends Controller
         ]);
     }
 
-// ========================== MEMBUAT KUITANSI ==========================
-public function receipt(Transaction $transaction)
-{
-    // Muat relasi yang diperlukan
-    $transaction->load([
-        'bill.student.classroom.major',
-        'bill.paymentType',
-        'bill.schoolYear',
-    ]);
+    // ========================== MEMBUAT KUITANSI ==========================
+    public function receipt(Transaction $transaction)
+    {
+        $transaction->load([
+            'bill.student.classroom.major',
+            'bill.paymentType',
+            'bill.schoolYear',
+        ]);
 
-    // Ambil data relasi utama
-    $bill = $transaction->bill;
-    $student = $bill->student;
-    $classroom = $student->classroom;
-    $major = $classroom->major ?? null;
-    $paymentType = $bill->paymentType;
-    $schoolYear = $bill->schoolYear;
+        $bill = $transaction->bill;
+        $student = $bill->student;
+        $classroom = $student->classroom;
+        $major = $classroom->major ?? null;
+        $paymentType = $bill->paymentType;
+        $schoolYear = $bill->schoolYear;
 
-    // Ambil data setting (berisi juga informasi sekolah)
-    $setting = \App\Models\Setting::first();
+        $setting = Setting::first();
 
-    // Siapkan data sekolah (nama & logo)
-    $schoolName = $setting->school ?? 'Nama Sekolah';
-    $schoolLogo = $setting->logo_sekolah
-        ? asset('storage/' . $setting->logo_sekolah) 
-        : asset('default-logo.png'); // fallback jika logo kosong
+        $schoolName = $setting->school ?? 'Nama Sekolah';
+        $schoolLogo = $setting->logo_sekolah
+            ? asset('storage/' . $setting->logo_sekolah)
+            : asset('default-logo.png');
 
-    // Ambil daftar tagihan yang belum dibayar oleh siswa ini
-    $unpaidBills = \App\Models\Bill::where('student_id', $student->id)
-        ->where('status', 'Belum Dibayar')
-        ->get();
+        $unpaidBills = Bill::where('student_id', $student->id)
+            ->where('status', 'Belum Dibayar')
+            ->get();
 
-    // Gunakan tanggal dari created_at transaksi
-    $tanggalBayar = $transaction->created_at;
-    $kode = $transaction->kode;
+        $tanggalBayar = $transaction->created_at;
+        $kode = $transaction->kode;
 
-    // Kirim semua data ke view
-    return view('transactions.receipt', [
-        'transaction'   => $transaction,
-        'bill'          => $bill,
-        'student'       => $student,
-        'classroom'     => $classroom,
-        'major'         => $major,
-        'paymentType'   => $paymentType,
-        'schoolYear'    => $schoolYear,
-        'setting'       => $setting,
-        'schoolName'    => $schoolName, // ✅ nama sekolah siap pakai di view
-        'schoolLogo'    => $schoolLogo, // ✅ logo sekolah siap pakai di view
-        'unpaidBills'   => $unpaidBills,
-        'tanggalBayar'  => $tanggalBayar,
-        'kode'          => $kode,
-    ]);
-}
-
-
-
+        return view('transactions.receipt', [
+            'transaction'   => $transaction,
+            'bill'          => $bill,
+            'student'       => $student,
+            'classroom'     => $classroom,
+            'major'         => $major,
+            'paymentType'   => $paymentType,
+            'schoolYear'    => $schoolYear,
+            'setting'       => $setting,
+            'schoolName'    => $schoolName,
+            'schoolLogo'    => $schoolLogo,
+            'unpaidBills'   => $unpaidBills,
+            'tanggalBayar'  => $tanggalBayar,
+            'kode'          => $kode,
+        ]);
+    }
 
     // ========================== MENGAMBIL SALDO TABUNGAN PER SISWA ==========================
     public function getSavingBalance($student_id)
@@ -295,7 +275,7 @@ public function receipt(Transaction $transaction)
 
         return response()->json([
             'student_id' => $student_id,
-            'balance' => (int) $balance->balance, // misal kolomnya 'balance'
+            'balance' => (int) $balance->balance,
         ]);
     }
 
@@ -313,12 +293,11 @@ public function receipt(Transaction $transaction)
         try {
             $validatedData['user_id'] = auth()->id();
             $validatedData['status'] = 'Pending';
-            $validatedData['metode_pembayaran'] = 'Pembayaran melalui tabungan'; // ✅ selalu tabungan
+            $validatedData['metode_pembayaran'] = 'Pembayaran melalui tabungan';
 
             $bill = \App\Models\Bill::with('student', 'paymentType')->findOrFail($validatedData['bill_id']);
             $student = $bill->student;
 
-            // ❌ Cegah siswa membayar tagihan yang sudah lunas
             if ($bill->status === 'Lunas') {
                 return response()->json([
                     'success' => false,
@@ -326,8 +305,7 @@ public function receipt(Transaction $transaction)
                 ], 422);
             }
 
-            // ✅ Validasi saldo tabungan
-            $savingBalance = \App\Models\SavingBalance::firstOrNew([
+            $savingBalance = SavingBalance::firstOrNew([
                 'student_id' => $student->id
             ]);
 
@@ -341,10 +319,8 @@ public function receipt(Transaction $transaction)
                 ], 422);
             }
 
-            // ✅ Simpan transaksi (status pending)
-            $transaction = \App\Models\Transaction::create($validatedData);
+            $transaction = Transaction::create($validatedData);
 
-            // ✅ Tandai tagihan juga sebagai pending
             $bill->update(['status' => 'Pending']);
 
             DB::commit();
@@ -372,10 +348,10 @@ public function receipt(Transaction $transaction)
         DB::statement('set @no=0+' . $page * $per);
 
         $data = Transaction::with([
-            'bill.student',        // ambil nama siswa
-            'bill.paymentType',    // ambil jenis pembayaran
+            'bill.student',
+            'bill.paymentType',
         ])
-            ->where('status', 'Pending') // ✅ hanya transaksi pending
+            ->where('status', 'Pending')
             ->when($request->search, function ($query, $search) {
                 $query->where('kode', 'like', "%$search%")
                     ->orWhere('nominal', 'like', "%$search%")
@@ -400,15 +376,13 @@ public function receipt(Transaction $transaction)
                 'kode'              => $item->kode,
                 'bill_id'           => $item->bill_id,
                 'student_name'      => $item->bill->student->nama ?? null,
-                'payment_type_name' => $item->bill->paymentType->nama_jenis ?? null, // ✅ jenis pembayaran
+                'payment_type_name' => $item->bill->paymentType->nama_jenis ?? null,
                 'nominal'           => $item->nominal,
                 'status'            => $item->status,
                 'catatan'           => $item->catatan,
                 'created_at'        => $item->created_at,
             ];
         });
-
-        
         return $data;
     }
 }
