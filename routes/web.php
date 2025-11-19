@@ -24,9 +24,8 @@ Route::get('/{any}', function () {
     return view('app');
 })->where('any', '^(?!api\/)[\/\w\.-]*');
 
-// routes/web.php
 Route::get('/api/transactions/{transaction}/receipt', [TransactionController::class, 'receipt']);
 Route::get('/struk/{invoice}', [TransactionController::class, 'showStruk'])->name('struk.show');
-Route::get('/dashboard/master/users/print/{uuid}', [UserController::class, 'print'])->name('users.print');
 
-Route::get('/users/{id}/print', [UserController::class, 'print']);
+Route::get('/api/master/user/{user}/card', [UserController::class, 'card'])->name('users.card');
+Route::get('/card/{id}', [UserController::class, 'showCard'])->name('card.show');

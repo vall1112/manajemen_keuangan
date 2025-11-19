@@ -45,18 +45,15 @@ onMounted(() => {
             <img 
                 v-if="layout === 'dark-sidebar' || (themeMode === 'dark' && layout === 'light-sidebar')" 
                 :src="setting?.logo_sekolah" 
-                alt="Logo Sekolah" 
                 class="h-50px app-sidebar-logo-default mb-2" 
             />
             <img 
                 v-if="themeMode === 'light' && layout === 'light-sidebar'" 
                 :src="setting?.logo_sekolah" 
-                alt="Logo Sekolah" 
                 class="h-50px app-sidebar-logo-default mb-2" 
             />
             <img 
                 :src="setting?.logo_sekolah" 
-                alt="Logo Sekolah" 
                 class="h-50px app-sidebar-logo-minimize mb-2" 
             />
         </router-link>
@@ -64,7 +61,7 @@ onMounted(() => {
 
         <!--begin::Nama Sekolah-->
         <div class="fw-bold text-white text-center fs-4">
-            {{ setting?.school || 'Nama Sekolah' }}
+            {{ setting?.school }}
         </div>
         <!--end::Nama Sekolah-->
 

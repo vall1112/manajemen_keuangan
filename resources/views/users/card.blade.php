@@ -2,63 +2,79 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Kartu Pengguna {{ $user->name }}</title>
+    <title>Kartu Login {{ $user->name }}</title>
     <style>
         @page { size: landscape; margin: 10mm; }
         body { font-family: Arial, sans-serif; font-size: 12px; }
         .card {
             width: 900px;
-            border: 1px solid #000;
-            padding: 20px;
+            border: 1px solid black;
+            padding: 12px;
             margin: auto;
-            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
         }
-        h2 { text-align: center; margin-bottom: 10px; }
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid black;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
         }
-        .info-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        .photo {
-            text-align: center;
+        .header img { width: 60px; height: auto; }
+        .header div { text-align: center; flex: 1; line-height: 1.4; }
+        .info {
+            display: flex;
+            justify-content: space-between;
             margin-top: 10px;
         }
-        .photo img {
-            width: 120px;
+        .info table { line-height: 1.8; }
+        .photo {
+            width: 100px;
             height: 120px;
-            border-radius: 10px;
+            border: 1px solid black;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border: 1px solid #ccc;
         }
     </style>
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
 </head>
 <body>
     <div class="card">
-        <h2>Kartu Pengguna</h2>
-        <table class="info-table">
-            <tr>
-                <td><strong>Nama</strong></td>
-                <td>{{ $user->name }}</td>
-            </tr>
-            <tr>
-                <td><strong>Username</strong></td>
-                <td>{{ $user->username }}</td>
-            </tr>
-            <tr>
-                <td><strong>Email</strong></td>
-                <td>{{ $user->email }}</td>
-            </tr>
-            <tr>
-                <td><strong>Siswa</strong></td>
-                <td>{{ $user->student->nama ?? '-' }}</td>
-            </tr>
-        </table>
+        <div class="header">
+            <img src="{{ $setting->logo_sekolah ? asset($setting->logo_sekolah) : asset('media/avatars/blank.png') }}" alt="Logo Sekolah">
+            <div>
+                <strong>KARTU LOGIN {{$setting->app }}</strong><br>
+                {{$setting->school }}
+            </div>
+            <img src="{{ $setting->logo ? asset($setting->logo) : asset('media/avatars/blank.png') }}" alt="Logo">
+        </div>
 
-        <div class="photo">
-            <img src="{{ $user->photo ? asset('storage/' . $user->photo) : asset('media/avatars/blank.png') }}" alt="Foto User">
+        <div class="info">
+            <div>
+                <table>
+                    <tr><td>Nama</td><td>:</td><td>{{ $user->name }}</td></tr>
+                    <tr><td>Email</td><td>:</td><td>{{ $user->email }}</td></tr>
+                    <tr><td>Username</td><td>:</td><td>{{ $user->username }}</td></tr>
+                    <tr><td>Password</td><td>:</td><td>{{ $user->password }}</td></tr>
+                </table>
+            </div>
+
+            <div class="photo">
+                <img src="{{ $user->photo ? asset('storage/'.$user->photo) : asset('media/avatars/blank.png') }}" alt="Foto">
+            </div>
         </div>
     </div>
 </body>

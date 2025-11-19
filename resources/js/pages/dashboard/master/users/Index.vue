@@ -16,26 +16,6 @@ const { delete: deleteUser } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
-// Fungsi cetak kartu
-const printCard = async (userId: number) => {
-    try {
-        const url = `/api/users/${userId}/card`;
-        const response = await fetch(url);
-        const cardHtml = await response.text();
-
-        const printWindow = window.open("", "PRINT", "width=900,height=650");
-        if (printWindow) {
-            printWindow.document.write(cardHtml);
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.onafterprint = () => printWindow.close();
-        }
-    } catch (error) {
-        console.error("Gagal cetak kartu:", error);
-    }
-};
-
 const columns = [
     column.accessor("no", {
         header: "#",
@@ -53,11 +33,61 @@ const columns = [
     column.accessor("email", {
         header: "Email",
     }),
+    // column.accessor("toggle", {
+    //     header: () => h("div", { class: "text-center" }, "Status"),
+    //     cell: (cell) => {
+    //         const row = cell.row.original;
+    //         return h("div", { class: "text-center" }, [
+    //             h(
+    //                 "label",
+    //                 {
+    //                     class:
+    //                         "form-check form-switch form-check-custom form-check-solid d-inline-flex justify-content-center",
+    //                 },
+    //                 [
+    //                     h("input", {
+    //                         type: "checkbox",
+    //                         checked: row.status === "Aktif",
+    //                         class: "form-check-input",
+    //                         onChange: async (e: Event) => {
+    //                             const checkbox = e.target as HTMLInputElement;
+    //                             const newStatus =
+    //                                 row.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+    //                             checkbox.disabled = true;
+
+    //                             try {
+    //                                 const response = await axios.put(
+    //                                     `/master/users/${row.id}/status`,
+    //                                     { status: newStatus }
+    //                                 );
+    //                                 toast.success(
+    //                                     response.data.message || "Status berhasil diperbarui!"
+    //                                 );
+    //                                 paginateRef.value?.refetch();
+    //                             } catch (error: any) {
+    //                                 toast.error(
+    //                                     error.response?.data?.message ||
+    //                                     "Gagal memperbarui status!"
+    //                                 );
+    //                                 checkbox.checked = !checkbox.checked;
+    //                             } finally {
+    //                                 checkbox.disabled = false;
+    //                             }
+    //                         },
+    //                     }),
+    //                 ]
+    //             ),
+    //         ]);
+    //     },
+    // }),
     column.accessor("photo", {
         header: "Foto",
         cell: (cell) => {
             const photoUrl = cell.getValue();
+
+            // fallback jika photo null/undefined/empty
             const src = photoUrl ? `/storage/${photoUrl}` : "/media/avatars/blank.png";
+
             return h("div", { class: "text-wrap" }, [
                 h("img", {
                     src,
@@ -77,46 +107,43 @@ const columns = [
             ]);
         },
     }),
-    column.accessor("id", {
+    column.accessor("uuid", {
         header: "Aksi",
-        cell: (info) => {
-            const transaction = info.row.original;
-            return h("div", { class: "d-flex gap-2" }, [
-                // Tombol Cetak Kartu (Hijau)
+        cell: (cell) =>
+            h("div", { class: "d-flex gap-2" }, [
                 h(
                     "button",
                     {
                         class: "btn btn-sm btn-icon btn-success",
-                        title: "Cetak Kartu",
-                        onClick: () => printCard(transaction.id),
+                        onClick: () => {
+                            selected.value = cell.getValue();
+                            openForm.value = true;
+                        },
                     },
                     h("i", { class: "la la-print fs-2" })
                 ),
-                // Tombol Edit
                 h(
                     "button",
                     {
                         class: "btn btn-sm btn-icon btn-info",
-                        title: "Edit Data",
                         onClick: () => {
-                            selected.value = transaction.uuid;
+                            selected.value = cell.getValue();
                             openForm.value = true;
                         },
                     },
                     h("i", { class: "la la-pencil fs-2" })
                 ),
-                // Tombol Hapus
                 h(
                     "button",
                     {
                         class: "btn btn-sm btn-icon btn-danger",
-                        title: "Hapus Data",
-                        onClick: () => deleteUser(`/master/users/${transaction.uuid}`),
+                        onClick: () =>
+                            deleteUser(`/master/users/${cell.getValue()}`),
                     },
                     h("i", { class: "la la-trash fs-2" })
                 ),
-            ]);
-        },
+            
+            ]),
     }),
 ];
 
@@ -131,33 +158,18 @@ watch(openForm, (val) => {
 </script>
 
 <template>
-    <Form
-        :selected="selected"
-        @close="openForm = false"
-        v-if="openForm"
-        @refresh="refresh"
-    />
+    <Form :selected="selected" @close="openForm = false" v-if="openForm" @refresh="refresh" />
 
     <div class="card">
         <div class="card-header align-items-center">
             <h2 class="mb-0">Daftar Pengguna Siswa</h2>
-            <button
-                type="button"
-                class="btn btn-sm btn-primary ms-auto"
-                v-if="!openForm"
-                @click="openForm = true"
-            >
+            <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate
-                ref="paginateRef"
-                id="table-users"
-                url="/master/users"
-                :columns="columns"
-            ></paginate>
+            <paginate ref="paginateRef" id="table-users" url="/master/users" :columns="columns"></paginate>
         </div>
     </div>
 </template>
