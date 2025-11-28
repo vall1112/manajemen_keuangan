@@ -16,6 +16,7 @@ const { delete: deleteUser } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
+<<<<<<< HEAD
 // ✅ Fungsi untuk mencetak kartu login
 const printCard = async (userId: number) => {
     try {
@@ -38,6 +39,8 @@ const printCard = async (userId: number) => {
 };
 
 // ✅ Kolom tabel pengguna
+=======
+>>>>>>> b0e280e29b5e0936fa6ddbb9c183c0c301173b1a
 const columns = [
     column.accessor("no", {
         header: "#",
@@ -48,14 +51,68 @@ const columns = [
     column.accessor("name", {
         header: "Nama",
     }),
+    column.accessor("student_id", {
+        header: "Siswa",
+        cell: (info) => info.row.original.student?.nama ?? "-",
+    }),
     column.accessor("email", {
         header: "Email",
     }),
+    // column.accessor("toggle", {
+    //     header: () => h("div", { class: "text-center" }, "Status"),
+    //     cell: (cell) => {
+    //         const row = cell.row.original;
+    //         return h("div", { class: "text-center" }, [
+    //             h(
+    //                 "label",
+    //                 {
+    //                     class:
+    //                         "form-check form-switch form-check-custom form-check-solid d-inline-flex justify-content-center",
+    //                 },
+    //                 [
+    //                     h("input", {
+    //                         type: "checkbox",
+    //                         checked: row.status === "Aktif",
+    //                         class: "form-check-input",
+    //                         onChange: async (e: Event) => {
+    //                             const checkbox = e.target as HTMLInputElement;
+    //                             const newStatus =
+    //                                 row.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+    //                             checkbox.disabled = true;
+
+    //                             try {
+    //                                 const response = await axios.put(
+    //                                     `/master/users/${row.id}/status`,
+    //                                     { status: newStatus }
+    //                                 );
+    //                                 toast.success(
+    //                                     response.data.message || "Status berhasil diperbarui!"
+    //                                 );
+    //                                 paginateRef.value?.refetch();
+    //                             } catch (error: any) {
+    //                                 toast.error(
+    //                                     error.response?.data?.message ||
+    //                                     "Gagal memperbarui status!"
+    //                                 );
+    //                                 checkbox.checked = !checkbox.checked;
+    //                             } finally {
+    //                                 checkbox.disabled = false;
+    //                             }
+    //                         },
+    //                     }),
+    //                 ]
+    //             ),
+    //         ]);
+    //     },
+    // }),
     column.accessor("photo", {
         header: "Foto",
         cell: (cell) => {
             const photoUrl = cell.getValue();
+
+            // fallback jika photo null/undefined/empty
             const src = photoUrl ? `/storage/${photoUrl}` : "/media/avatars/blank.png";
+
             return h("div", { class: "text-wrap" }, [
                 h("img", {
                     src,
@@ -65,60 +122,62 @@ const columns = [
                         height: "50px",
                         objectFit: "cover",
                         borderRadius: "4px",
+                        cursor: photoUrl ? "pointer" : "default",
                     },
+                    onClick: () => {
+                        if (photoUrl) openImageModal(src);
+                    },
+                    class: "user-image",
                 }),
             ]);
         },
     }),
-    column.accessor("id", {
+    column.accessor("uuid", {
         header: "Aksi",
-        cell: (info) => {
-            const user = info.row.original;
-            return h("div", { class: "d-flex gap-2" }, [
-                // Tombol Edit
+        cell: (cell) =>
+            h("div", { class: "d-flex gap-2" }, [
+                h(
+                    "button",
+                    {
+                        class: "btn btn-sm btn-icon btn-success",
+                        onClick: () => {
+                            selected.value = cell.getValue();
+                            openForm.value = true;
+                        },
+                    },
+                    h("i", { class: "la la-print fs-2" })
+                ),
                 h(
                     "button",
                     {
                         class: "btn btn-sm btn-icon btn-info",
                         onClick: () => {
-                            selected.value = user.uuid;
+                            selected.value = cell.getValue();
                             openForm.value = true;
                         },
-                        title: "Edit Pengguna",
                     },
                     h("i", { class: "la la-pencil fs-2" })
                 ),
-
-                // Tombol Cetak Kartu Login
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-warning",
-                        onClick: () => printCard(user.id),
-                        title: "Cetak Kartu Login",
-                    },
-                    h("i", { class: "la la-print fs-2" })
-                ),
-
-                // Tombol Hapus
                 h(
                     "button",
                     {
                         class: "btn btn-sm btn-icon btn-danger",
-                        onClick: () => deleteUser(`/master/users/${user.uuid}`),
-                        title: "Hapus Pengguna",
+                        onClick: () =>
+                            deleteUser(`/master/users/${cell.getValue()}`),
                     },
                     h("i", { class: "la la-trash fs-2" })
                 ),
-            ]);
-        },
+            
+            ]),
     }),
 ];
 
 const refresh = () => paginateRef.value.refetch();
 
 watch(openForm, (val) => {
-    if (!val) selected.value = "";
+    if (!val) {
+        selected.value = "";
+    }
     window.scrollTo(0, 0);
 });
 </script>
@@ -128,24 +187,14 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">Daftar Pengguna</h2>
-            <button
-                type="button"
-                class="btn btn-sm btn-primary ms-auto"
-                v-if="!openForm"
-                @click="openForm = true"
-            >
+            <h2 class="mb-0">Daftar Pengguna Siswa</h2>
+            <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate
-                ref="paginateRef"
-                id="table-users"
-                url="/master/users"
-                :columns="columns"
-            ></paginate>
+            <paginate ref="paginateRef" id="table-users" url="/master/users" :columns="columns"></paginate>
         </div>
     </div>
 </template>
