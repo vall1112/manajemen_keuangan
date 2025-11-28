@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Import beberapa helper dan library
 import { block, unblock } from "@/libs/utils";
 import { onMounted, ref, watch, computed } from "vue";
 import * as Yup from "yup";
@@ -11,7 +10,7 @@ import { useRole } from "@/services/useRole";
 import { useStudent } from "@/services/useStudent";
 import { useTeacher } from "@/services/useTeacher";
 
-// Props menerima "selected" → ID user saat mode edit
+// Props
 const props = defineProps({
     selected: {
         type: String,
@@ -19,10 +18,10 @@ const props = defineProps({
     },
 });
 
-// Emit event untuk menutup modal & refresh data
+// Emit
 const emit = defineEmits(["close", "refresh"]);
 
-// Data user yang akan diedit atau dibuat
+// Data user
 const user = ref<User>({
     status: "Aktif",
 } as User);
@@ -32,7 +31,7 @@ const fileTypes = ref(["image/jpeg", "image/png", "image/jpg"]);
 const photo = ref<any>([]);
 const formRef = ref();
 
-// Validasi form dengan Yup
+// Yup Validation Schema
 const formSchema = Yup.object().shape({
     name: Yup.string().required("Nama harus diisi"),
     email: Yup.string().email("Email harus valid").required("Email harus diisi"),
@@ -41,20 +40,21 @@ const formSchema = Yup.object().shape({
     passwordConfirmation: Yup.string()
         .oneOf([Yup.ref("password")], "Konfirmasi password harus sama")
         .nullable(),
-    role_id: Yup.string().required("Pilih role"),
+    role_id: Yup.string().nullable(),
     teacher_id: Yup.string().nullable(),
     student_id: Yup.string().nullable(),
 });
 
-// ===============================
-// LOAD DATA EDIT
-// ===============================
+// ==========================================
+// LOAD EDIT DATA USER
+// ==========================================
 function getEdit() {
     block(document.getElementById("form-user"));
     ApiService.get("master/users", props.selected)
         .then(({ data }) => {
             user.value = data.user;
             user.value.status = "Aktif";
+
             photo.value = data.user.photo ? ["/storage/" + data.user.photo] : [];
         })
         .catch((err: any) => {
@@ -65,10 +65,12 @@ function getEdit() {
         });
 }
 
-// ===============================
+// ==========================================
 // SUBMIT FORM
-// ===============================
+// ==========================================
 function submit() {
+    console.log("ROLE TERPILIH:", user.value.role_id);
+
     const formData = new FormData();
     formData.append("name", user.value.name);
     formData.append("email", user.value.email);
@@ -111,9 +113,9 @@ function submit() {
         })
         .catch((err: any) => {
             const errors = err.response?.data?.errors;
-            if (errors) {
-                formRef.value.setErrors(errors);
-            }
+
+            if (errors) formRef.value.setErrors(errors);
+
             if (errors) {
                 Object.values(errors).forEach((msg: any) => {
                     toast.error(msg[0]);
@@ -127,9 +129,9 @@ function submit() {
         });
 }
 
-// ===============================
-// ROLE, STUDENT, TEACHER
-// ===============================
+// ==========================================
+// LOAD ROLE, STUDENTS, TEACHER
+// ==========================================
 const role = useRole();
 const roles = computed(() =>
     role.data.value?.map((item: Role) => ({
@@ -154,12 +156,12 @@ const teachers = computed(() =>
     }))
 );
 
-// Jika edit, load data user
+// Load when mounted
 onMounted(() => {
     if (props.selected) getEdit();
 });
 
-// Jika props berubah (modal dibuka ulang), load ulang data
+// Reload when modal open
 watch(
     () => props.selected,
     () => {
@@ -167,66 +169,67 @@ watch(
     }
 );
 
-// ===============================
-// RESET GURU/SISWA BERDASARKAN ROLE
-// ===============================
+// ==========================================
+// RESET GURU/SISWA SAAT ROLE BERUBAH
+// ==========================================
 watch(
     () => user.value.role_id,
     (val) => {
         if (val == 1 || val == 2 || val == 4) {
             user.value.student_id = null;
-        } else if (val == 3) {
+        }
+
+        if (val == 3) {
             user.value.teacher_id = null;
         }
     }
 );
 
-// ===============================
-// AUTO FILL NAME & EMAIL BERDASARKAN GURU
-// ===============================
+// ==========================================
+// AUTO FILL NAMA/EMAIL GURU
+// ==========================================
 watch(
     () => user.value.teacher_id,
     (val) => {
-        if (val) {
+        if (val && (user.value.role_id == 1 || user.value.role_id == 2 || user.value.role_id == 4)) {
             const selected = teacher.data.value?.find((t: any) => t.id == val);
             if (selected) {
                 user.value.name = selected.nama;
                 user.value.email = selected.email;
             }
-        } else {
-            user.value.name = "";
-            user.value.email = "";
         }
     }
 );
 
-// ===============================
-// AUTO FILL NAME & EMAIL BERDASARKAN SISWA
-// ===============================
+// ==========================================
+// AUTO FILL NAMA/EMAIL SISWA
+// ==========================================
 watch(
     () => user.value.student_id,
     (val) => {
-        if (val) {
+        if (val && user.value.role_id == 3) {
             const selected = student.data.value?.find((s: any) => s.id == val);
             if (selected) {
                 user.value.name = selected.nama;
                 user.value.email = selected.email;
             }
-        } else {
-            user.value.name = "";
-            user.value.email = "";
         }
     }
 );
 </script>
 
 <template>
-    <VForm class="form card mb-10" @submit="submit" :validation-schema="formSchema" id="form-user" ref="formRef">
+    <VForm
+        class="form card mb-10"
+        @submit="submit"
+        :validation-schema="formSchema"
+        id="form-user"
+        ref="formRef"
+    >
         <div class="card-header align-items-center">
             <h2 class="mb-0">{{ selected ? "Edit" : "Tambah" }} Pengguna</h2>
             <button type="button" class="btn btn-sm btn-light-danger ms-auto" @click="emit('close')">
-                Batal
-                <i class="la la-times-circle p-0"></i>
+                Batal <i class="la la-times-circle p-0"></i>
             </button>
         </div>
 
@@ -234,48 +237,62 @@ watch(
             <div class="row">
 
                 <!-- ====================== -->
-                <!-- ROLE DITARUH DI ATAS   -->
+                <!-- ROLE (PERBAIKAN PENUH) -->
                 <!-- ====================== -->
                 <div class="col-md-6">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">Role</label>
-                        <Field name="role_id" type="hidden" v-model="user.role_id">
-                            <select2 placeholder="Pilih role" class="form-select-solid" :options="roles" name="role_id"
-                                v-model="user.role_id" />
-                        </Field>
+
+                        <!-- FIX: TANPA Field AGAR VALUE TIDAK NYASAR -->
+                        <select2
+                            placeholder="Pilih role"
+                            class="form-select-solid"
+                            :options="roles"
+                            name="role_id"
+                            v-model="user.role_id"
+                        />
+
                         <ErrorMessage name="role_id" class="text-danger" />
                     </div>
                 </div>
 
-                <!-- ====================== -->
-                <!-- JIKA ROLE 1,2,4 → GURU -->
-                <!-- ====================== -->
+                <!-- GURU -->
                 <div class="col-md-6" v-if="user.role_id == 1 || user.role_id == 2 || user.role_id == 4">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">Guru</label>
-                        <Field name="teacher_id" type="hidden" v-model="user.teacher_id">
-                            <select2 placeholder="Pilih Guru" class="form-select-solid" :options="teachers"
-                                name="teacher_id" v-model="user.teacher_id" allow-clear />
-                        </Field>
+
+                        <select2
+                            placeholder="Pilih Guru"
+                            class="form-select-solid"
+                            :options="teachers"
+                            name="teacher_id"
+                            v-model="user.teacher_id"
+                            allow-clear
+                        />
+
+                        <ErrorMessage name="teacher_id" class="text-danger" />
                     </div>
                 </div>
 
-                <!-- ====================== -->
-                <!-- JIKA ROLE 3 → SISWA -->
-                <!-- ====================== -->
+                <!-- SISWA -->
                 <div class="col-md-6" v-if="user.role_id == 3">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6">Siswa</label>
-                        <Field name="student_id" type="hidden" v-model="user.student_id">
-                            <select2 placeholder="Pilih Siswa" class="form-select-solid" :options="students"
-                                name="student_id" v-model="user.student_id" allow-clear />
-                        </Field>
+
+                        <select2
+                            placeholder="Pilih Siswa"
+                            class="form-select-solid"
+                            :options="students"
+                            name="student_id"
+                            v-model="user.student_id"
+                            allow-clear
+                        />
+
+                        <ErrorMessage name="student_id" class="text-danger" />
                     </div>
                 </div>
 
-                <!-- ====================== -->
                 <!-- NAME -->
-                <!-- ====================== -->
                 <div class="col-md-6">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">Nama</label>
@@ -286,9 +303,7 @@ watch(
                     </div>
                 </div>
 
-                <!-- ====================== -->
                 <!-- EMAIL -->
-                <!-- ====================== -->
                 <div class="col-md-6">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">Email</label>
@@ -319,7 +334,7 @@ watch(
                     </div>
                 </div>
 
-                <!-- KONFIRMASI PASSWORD -->
+                <!-- PASSWORD CONFIRMATION -->
                 <div class="col-md-6">
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">Konfirmasi Password</label>
@@ -339,6 +354,7 @@ watch(
                         <ErrorMessage name="photo" class="text-danger" />
                     </div>
                 </div>
+
             </div>
         </div>
 
