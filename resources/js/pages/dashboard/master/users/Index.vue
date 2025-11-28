@@ -19,7 +19,7 @@ const { delete: deleteUser } = useDelete({
 // ✅ Fungsi untuk mencetak kartu login
 const printCard = async (userId: number) => {
     try {
-        const url = `/api/master/user/${userId}/card`; // ✅ route sesuai API kamu
+        const url = `/api/master/user/${userId}/card`;
         const response = await fetch(url);
         const cardHtml = await response.text();
 

@@ -3,22 +3,18 @@
 namespace App\Models;
 
 use App\Traits\Uuid;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable implements JWTSubject
 {
     use Uuid, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'username',
         'teacher_id',
@@ -30,61 +26,76 @@ class User extends Authenticatable implements JWTSubject
         'photo',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'password' => 'hashed',
-    ];
+    // hashed DIHAPUS
+    protected $casts = [];
 
     protected $appends = ['permission', 'role'];
 
     protected static function booted()
     {
-        // Tambahkan peran default 'user' saat pengguna dibuat
-        static::created(function ($user) {
-            $role = Role::find(3); // id role siswa
-            if ($role && !$user->hasRole($role->name)) {
-                $user->assignRole($role->name);
+        // Hash password saat creating, JIKA role admin dikirim di request
+        static::creating(function ($user) {
+            if (!empty($user->password)) {
+
+                // Jika request mengirim role_id admin
+                if (request()->has('role_id')) {
+                    $role = Role::find(request()->role_id);
+
+                    if ($role && $role->id == 1) {
+                        $user->password = Hash::make($user->password);
+                    }
+                }
             }
         });
 
-        // Hapus foto pengguna dari storage saat dihapus
+        // Setelah user dibuat → assign role default & hashing final jika perlu
+        static::created(function ($user) {
+
+            // AUTO role default siswa ID=3
+            $roleDefault = Role::find(3);
+            if ($roleDefault && !$user->hasRole($roleDefault->name)) {
+                $user->assignRole($roleDefault->name);
+            }
+
+            // Jika user DISIMPAN dulu, lalu role admin dipasang setelah created
+            if ($user->hasRole(Role::find(1)->name)) {
+
+                // Jika password belum hashed → hash disini
+                if (!password_get_info($user->password)['algo']) {
+                    $user->password = Hash::make($user->password);
+                    $user->saveQuietly();
+                }
+            }
+        });
+
+        // Saat update → hash password jika user sudah punya role admin
+        static::updating(function ($user) {
+            if ($user->isDirty('password') && !empty($user->password)) {
+                if ($user->hasRole(Role::find(1)->name)) {
+                    $user->password = Hash::make($user->password);
+                }
+            }
+        });
+
+        // Hapus foto saat user dihapus
         static::deleted(function ($user) {
-            if ($user->photo != null && $user->photo != '') {
-                $old_photo = str_replace('/storage/', '', $user->photo);
-                Storage::disk('public')->delete($old_photo);
+            if (!empty($user->photo)) {
+                $old = str_replace('/storage/', '', $user->photo);
+                Storage::disk('public')->delete($old);
             }
         });
     }
 
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
         return [];
@@ -109,9 +120,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Student::class);
     }
+
     public function siswa()
     {
-    return $this->hasOne(Siswa::class, 'user_id');
+        return $this->hasOne(Student::class, 'user_id');
     }
-
 }
