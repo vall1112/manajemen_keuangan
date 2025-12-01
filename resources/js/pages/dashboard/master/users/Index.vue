@@ -105,7 +105,7 @@ const columns = [
                     "button",
                     {
                         class: "btn btn-sm btn-icon btn-danger",
-                        onClick: () => deleteUser('/master/users / ${ user.uuid }'),
+                        onClick: () => deleteUser(`/master/users/${user.uuid}`),
                         title: "Hapus Pengguna",
                     },
                     h("i", { class: "la la-trash fs-2" })
