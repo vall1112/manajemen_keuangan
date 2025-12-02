@@ -30,6 +30,9 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
+    column.accessor("username", {
+        header: "Username",
+    }),
     column.accessor("nama", {
         header: "Nama",
     }),
@@ -39,13 +42,6 @@ const columns = [
     column.accessor("jabatan", {
         header: "Jabatan",
     }),
-    // column.accessor("mata_pelajaran", {
-    //     header: "Mapel",
-    //     cell: ({ row }) => {
-    //         const mapel = row?.original?.mata_pelajaran?.trim();
-    //         return mapel ? mapel : "-";
-    //     },
-    // }),
     column.accessor("status", {
         header: "Status",
         cell: (cell) => {

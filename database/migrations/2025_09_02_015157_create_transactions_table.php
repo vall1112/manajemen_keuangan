@@ -13,16 +13,19 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('kode')->unique();
             $table->unsignedBigInteger('bill_id');
             $table->decimal('nominal', 10, 2);
-            $table->string('metode', 50);
-            $table->string('bukti')->nullable();
+            $table->enum('metode_pembayaran', [
+                'Pembayaran melalui tabungan',
+                'Pembayaran melalui uang cash'
+            ]);
             $table->enum('status', ['Pending', 'Berhasil', 'Gagal'])->default('Pending');
-            $table->text('keterangan')->nullable();
+            $table->text('catatan')->nullable();
             $table->timestamps();
-
-            // foreign key ke tabel bills/tagihan
-            $table->foreign('bill_id')->references('id')->on('bills')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('bill_id')->references('id')->on('bills')->cascadeOnDelete();
         });
     }
 

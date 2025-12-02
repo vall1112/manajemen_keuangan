@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('majors', function (Blueprint $table) {
-            $table->id(); // id auto increment
-            $table->string('kode', 10)->unique(); // kode jurusan (misal: RPL, TKJ)
-            $table->string('nama_jurusan'); // nama jurusan (misal: Rekayasa Perangkat Lunak)
-            $table->text('keterangan')->nullable(); // keterangan tambahan
-            $table->timestamps(); // created_at & updated_at
+            $table->id();
+            $table->string('kode')->unique()->index();
+            $table->string('nama_jurusan', 255);
+            $table->text('keterangan')->nullable();
+            $table->timestamps();
         });
     }
 

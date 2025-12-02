@@ -16,7 +16,6 @@ const { delete: deleteUser } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
-// ✅ Fungsi untuk mencetak kartu login
 const printCard = async (userId: number) => {
     try {
         const url = `/api/master/user/${userId}/card`;
@@ -37,7 +36,6 @@ const printCard = async (userId: number) => {
     }
 };
 
-// ✅ Kolom tabel pengguna
 const columns = [
     column.accessor("no", {
         header: "#",
@@ -70,7 +68,7 @@ const columns = [
             ]);
         },
     }),
-    column.accessor("id", {
+    column.accessor("uuid", {
         header: "Aksi",
         cell: (info) => {
             const user = info.row.original;
@@ -128,7 +126,7 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">Daftar Pengguna</h2>
+            <h2 class="mb-0">Daftar Pengguna Admin</h2>
             <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>

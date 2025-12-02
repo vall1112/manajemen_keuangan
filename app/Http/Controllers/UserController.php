@@ -33,18 +33,18 @@ class UserController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = User::with(['student:id,nama']) // hanya ambil id dan nama dari relasi student
+        $data = User::query()
+            ->whereHas('roles', function ($q) {
+                $q->where('role_id', 1);
+            })
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%$search%")
                         ->orWhere('username', 'like', "%$search%")
-                        ->orWhere('email', 'like', "%$search%")
-                        ->orWhereHas('student', function ($q2) use ($search) {
-                            $q2->where('nama', 'like', "%$search%");
-                        });
+                        ->orWhere('email', 'like', "%$search%");
                 });
             })
-            ->latest()
+            ->orderBy('id', 'asc')
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
         return response()->json($data);
@@ -114,6 +114,10 @@ class UserController extends Controller
     // ========================== HAPUS DATA USER ==========================
     public function destroy(User $user)
     {
+        if ($user->teacher) {
+            $user->teacher->delete();
+        }
+
         if ($user->photo) {
             Storage::disk('public')->delete($user->photo);
         }

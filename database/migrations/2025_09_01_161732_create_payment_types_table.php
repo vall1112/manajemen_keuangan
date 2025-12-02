@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('payment_types', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_jenis'); // contoh: SPP, Uang Gedung, Praktek
-            $table->decimal('nominal', 10, 2); // nominal default pembayaran
-            $table->text('keterangan')->nullable(); // catatan tambahan
+            $table->string('kode')->unique();
+            $table->string('nama_jenis', 255);
+            $table->text('keterangan')->nullable();
             $table->timestamps();
         });
     }

@@ -13,14 +13,18 @@ return new class extends Migration
     {
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('student_id');
             $table->decimal('nominal', 15, 2);
             $table->enum('jenis', ['Setor', 'Tarik']);
             $table->text('keterangan')->nullable();
             $table->timestamps();
-
-            // relasi ke tabel siswa
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->nullOnDelete();
+            $table->foreign('student_id')
+                ->references('id')->on('students')
+                ->cascadeOnDelete();
         });
     }
 
