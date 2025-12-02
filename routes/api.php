@@ -73,6 +73,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         });
 
         Route::get('teachers', [TeacherController::class, 'get']);
+        Route::get('users/by-teacher/{teacher_id}', [TeacherController::class, 'getByTeacher']);
         Route::post('teachers', [TeacherController::class, 'index']);
         Route::post('teachers/store', [TeacherController::class, 'store']);
         Route::apiResource('teachers', TeacherController::class)

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+
     /**
      * Run the migrations.
      */
@@ -13,18 +14,16 @@ return new class extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
+            $table->string('kode')->unique();
             $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('payment_type_id');
             $table->unsignedBigInteger('school_year_id');
             $table->decimal('total_tagihan', 10, 2);
             $table->date('tanggal_tagih');
-            $table->enum('status', ['Belum Dibayar', 'Dibayar Sebagian', 'Lunas'])->default('Belum Dibayar');
-            $table->decimal('dibayar', 10, 2)->default(0);
-            $table->decimal('sisa', 10, 2)->default(0);
+            $table->date('jatuh_tempo')->nullable();
+            $table->enum('status', ['Pending', 'Belum Dibayar', 'Lunas'])->default('Pending');
             $table->text('keterangan')->nullable();
             $table->timestamps();
-
-            // Foreign keys
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('cascade');
             $table->foreign('school_year_id')->references('id')->on('school_years')->onDelete('cascade');

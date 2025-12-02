@@ -15,27 +15,24 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('nis')->unique();
-            $table->enum('jenis_kelamin', ['L', 'P']); // L = Laki-laki, P = Perempuan
-            $table->string('tempat_lahir')->nullable();
-            $table->date('tanggal_lahir')->nullable();
-            $table->text('alamat')->nullable();
-
-            // Relasi ke tabel classrooms
-            $table->foreignId('classroom_id')
-                  ->nullable()
-                  ->constrained('classrooms')
-                  ->nullOnDelete();
-
-            $table->string('email')->nullable()->unique();
-            $table->string('telepon', 20)->nullable();
-            $table->enum('status', ['aktif', 'prakerin', 'alumni', 'keluar'])->default('aktif');
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('tempat_lahir'); 
+            $table->date('tanggal_lahir');
+            $table->text('alamat');
+            $table->unsignedBigInteger('classroom_id')->index();
+            $table->string('email')->unique();
+            $table->string('telepon', 20); 
+            $table->enum('status', ['Aktif', 'Prakerin', 'Alumni', 'Keluar'])
+                  ->default('Aktif');
             $table->string('nama_ayah')->nullable();
             $table->string('telepon_ayah', 20)->nullable();
             $table->string('nama_ibu')->nullable();
             $table->string('telepon_ibu', 20)->nullable();
             $table->string('foto')->nullable();
-
             $table->timestamps();
+            $table->foreign('classroom_id')
+                  ->references('id')->on('classrooms')
+                  ->nullOnDelete();
         });
     }
 

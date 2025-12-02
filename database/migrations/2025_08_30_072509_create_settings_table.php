@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->uuid()->unique();
+            $table->char('uuid')->unique();
             $table->string('app');
+            $table->string('school');
             $table->text('description');
             $table->string('logo');
-            $table->string('banner');
             $table->string('bg_auth');
-
-            $table->string('dinas');
+            $table->string('logo_sekolah')->nullable();
+            $table->string('bg_landing_page')->nullable();
             $table->string('pemerintah');
             $table->string('alamat');
             $table->string('telepon');

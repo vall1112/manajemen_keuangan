@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kelas');              // contoh: X IPA 1
-            $table->string('jurusan');                 // contoh: IPA, IPS, TKJ
-            $table->unsignedBigInteger('wali_kelas_id')->nullable(); // relasi ke tabel guru
-            $table->integer('jumlah_anak')->default(0); // jumlah siswa di kelas
+            $table->string('nama_kelas');
+            $table->unsignedBigInteger('major_id')->index();
+            $table->unsignedBigInteger('wali_kelas_id')->index();
+            $table->integer('jumlah_anak')->default(0); 
             $table->timestamps();
-
-            // Foreign Key wali kelas → teachers.id
-            $table->foreign('wali_kelas_id')->references('id')->on('teachers')->onDelete('set null');
+            $table->foreign('major_id')->references('id')->on('majors')->nullOnDelete();
+            $table->foreign('wali_kelas_id')->references('id')->on('teachers')->nullOnDelete();
         });
     }
 
