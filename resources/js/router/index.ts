@@ -84,8 +84,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/users/Index.vue"),
                 meta: {
-                    pageTitle: "Daftar User",
-                    breadcrumbs: ["Master", "Users"],
+                    pageTitle: "Pengguna",
+                    breadcrumbs: ["Master", "Pengguna"],
                 },
             },
             // HALAMAN PERAN
@@ -96,7 +96,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/roles/Index.vue"),
                 meta: {
                     pageTitle: "Role",
-                    breadcrumbs: ["Master", "Roles"],
+                    breadcrumbs: ["Master", "Role"],
                 },
             },
             // HALAMAN GURU
@@ -107,7 +107,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/teacher/Index.vue"),
                 meta: {
                     pageTitle: "Guru",
-                    breadcrumbs: ["Guru"],
+                    breadcrumbs: ["Master", "Guru"],
                 },
             },
             // HALAMAN SISWA
@@ -118,7 +118,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/student/Index.vue"),
                 meta: {
                     pageTitle: "Siswa",
-                    breadcrumbs: ["Siswa"],
+                    breadcrumbs: ["Master", "Siswa"],
                 },
             },
             // HALAMAN KELAS
@@ -129,7 +129,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/classroom/Index.vue"),
                 meta: {
                     pageTitle: "Kelas",
-                    breadcrumbs: ["Kelas"],
+                    breadcrumbs: ["Master", "Kelas"],
                 },
             },
             // HALAMAN JURUSAN
@@ -140,7 +140,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/major/Index.vue"),
                 meta: {
                     pageTitle: "Jurusan",
-                    breadcrumbs: ["Jurusan"],
+                    breadcrumbs: ["Master", "Jurusan"],
                 },
             },
             // HALAMAN TAHUN AJARAN
@@ -151,7 +151,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/school_year/Index.vue"),
                 meta: {
                     pageTitle: "Tahun Ajaran",
-                    breadcrumbs: ["Tahun Ajaran"],
+                    breadcrumbs: ["Master", "Tahun Ajaran"],
                 },
             },
             // HALAMAN JENIS PEMBAYARAN
@@ -162,7 +162,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/payment_type/Index.vue"),
                 meta: {
                     pageTitle: "Jenis Pembayaran",
-                    breadcrumbs: ["Jenis Pembayaran"],
+                    breadcrumbs: ["Master", "Jenis Pembayaran"],
                 },
             },
             // HALAMAN TAGIHAN

@@ -73,6 +73,16 @@ const columns = [
         cell: (info) => {
             const user = info.row.original;
             return h("div", { class: "d-flex gap-2" }, [
+                // Tombol Cetak Kartu Login
+                h(
+                    "button",
+                    {
+                        class: "btn btn-sm btn-icon btn-warning",
+                        onClick: () => printCard(user.id),
+                        title: "Cetak Kartu Login",
+                    },
+                    h("i", { class: "la la-print fs-2" })
+                ),
                 // Tombol Edit
                 h(
                     "button",
@@ -86,18 +96,6 @@ const columns = [
                     },
                     h("i", { class: "la la-pencil fs-2" })
                 ),
-
-                // Tombol Cetak Kartu Login
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-warning",
-                        onClick: () => printCard(user.id),
-                        title: "Cetak Kartu Login",
-                    },
-                    h("i", { class: "la la-print fs-2" })
-                ),
-
                 // Tombol Hapus
                 h(
                     "button",
@@ -126,7 +124,7 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-            <h2 class="mb-0">Daftar Pengguna Admin</h2>
+            <h2 class="mb-0">Daftar Pengguna</h2>
             <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
                 Tambah
                 <i class="la la-plus"></i>
