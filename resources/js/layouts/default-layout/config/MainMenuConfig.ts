@@ -5,9 +5,20 @@ const MainMenuConfig: Array<MenuItem> = [
     {
         pages: [
             {
-                heading: "Dashboard",
+                heading: "Dashboard (admin)",
                 name: "dashboard",
                 route: "/dashboard",
+                keenthemesIcon: "element-11",
+            },
+        ],
+    },
+    // DASHBOARD GURU
+    {
+        pages: [
+            {
+                heading: "Dashboard (guru)",
+                name: "dashboard",
+                route: "/teacher/dashboard",
                 keenthemesIcon: "element-11",
             },
         ],
@@ -16,7 +27,7 @@ const MainMenuConfig: Array<MenuItem> = [
     {
         pages: [
             {
-                heading: "Dashboard",
+                heading: "Dashboard (bendahara)",
                 name: "bendahara-dashboard",
                 route: "/bendahara/dashboard",
                 keenthemesIcon: "element-11",
@@ -27,7 +38,7 @@ const MainMenuConfig: Array<MenuItem> = [
     {
         pages: [
             {
-                heading: "Dashboard",
+                heading: "Dashboard (siswa)",
                 name: "user-dashboard",
                 route: "/student/dashboard",
                 keenthemesIcon: "element-11",

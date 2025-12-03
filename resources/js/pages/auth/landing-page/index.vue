@@ -248,7 +248,7 @@
               kami
             </p>
             <div class="d-flex flex-wrap justify-content-center gap-4">
-              <router-link to="/sign-up" class="btn btn-light btn-lg px-8 hover-scale">
+              <router-link to="/sign-in" class="btn btn-light btn-lg px-8 hover-scale">
                 <i class="ki-duotone ki-user-tick me-2">
                   <span class="path1"></span>
                   <span class="path2"></span>
