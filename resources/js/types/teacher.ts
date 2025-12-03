@@ -10,7 +10,7 @@ export interface Teacher {
     no_telepon: string;
     email: string;
     alamat: string;
-    jabatan: string;
+    level: string;
     mata_pelajaran?: string;
     status: "Aktif" | "Tidak Aktif" | "Cuti";
     foto?: string;

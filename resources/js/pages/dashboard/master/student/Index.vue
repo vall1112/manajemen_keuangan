@@ -183,9 +183,4 @@ watch(openForm, (val) => {
             <paginate ref="paginateRef" id="table-students" url="/master/students" :columns="columns"></paginate>
         </div>
     </div>
-
-    <!-- Modal Image -->
-    <modal v-model:show="showImageModal">
-        <img :src="selectedImage" alt="Preview" class="w-100" />
-    </modal>
 </template>

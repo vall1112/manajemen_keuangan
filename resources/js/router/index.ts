@@ -32,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/dashboard/Admin.vue"),
                 meta: {
                     pageTitle: "Dashboard",
-                    breadcrumbs: ["Dashboard"],
+                    breadcrumbs: ["Admin"],
                 },
             },
             // HALAMAN DASHBOARD BENDAHARA
@@ -42,7 +42,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/dashboard/Bendahara.vue"),
                 meta: {
                     pageTitle: "Dashboard",
-                    breadcrumbs: ["Dashboard"],
+                    breadcrumbs: ["Bendahara"],
                 },
             },
             // HALAMAN DASHBOARD SISWA
@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/dashboard/Siswa.vue"),
                 meta: {
                     pageTitle: "Dashboard",
-                    breadcrumbs: ["Dashboard"],
+                    breadcrumbs: ["Siswa"],
                 },
             },
             // HALAMAN PENGGUNA ADMIN
@@ -181,8 +181,8 @@ const routes: Array<RouteRecordRaw> = [
                 name: "transaction",
                 component: () => import("@/pages/dashboard/transaction/Index.vue"),
                 meta: {
-                    pageTitle: "Transaksi",
-                    breadcrumbs: ["Transaksi"],
+                    pageTitle: "Transaksi Tagihan",
+                    breadcrumbs: ["Transaksi Tagihan"],
                 },
             },
             // HALAMAN FORM TRANSAKSI TAGIHAN

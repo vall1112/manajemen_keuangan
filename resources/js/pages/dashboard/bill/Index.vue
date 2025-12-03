@@ -21,7 +21,7 @@ const columns = [
         header: "#",
     }),
     column.accessor("kode", {
-        header: "Invoice",
+        header: "Kode",
     }),
     column.accessor("student_id", {
         header: "Nama",

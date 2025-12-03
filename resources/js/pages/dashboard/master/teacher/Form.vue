@@ -105,7 +105,7 @@ async function submit() {
     const teacherForm = new FormData();
     const teacherFields = [
       "nama", "email", "nip", "jenis_kelamin", "tempat_lahir",
-      "tanggal_lahir", "no_telepon", "alamat", "jabatan",
+      "tanggal_lahir", "no_telepon", "alamat", "level",
       "mata_pelajaran", "status",
     ];
     teacherFields.forEach(k => teacherForm.append(k, teacher.value[k] ?? ""));
@@ -126,6 +126,16 @@ async function submit() {
     // ==============================
     // STEP 2 — SAVE / UPDATE USER
     // ==============================
+
+    // Jika user tidak ingin membuat akun → lewati proses user
+    if (!user.value.username) {
+      toast.success("Berhasil menyimpan data guru");
+      emit("close");
+      emit("refresh");
+      formRef.value.resetForm();
+      return;
+    }
+
     const userForm = new FormData();
     userForm.append("username", user.value.username);
     userForm.append("name", user.value.name);
@@ -133,19 +143,22 @@ async function submit() {
     userForm.append("status", user.value.status);
     userForm.append("role_id", "4");
     userForm.append("teacher_id", teacherId);
-    if (foto.value.length && foto.value[0].file) userForm.append("photo", foto.value[0].file);
+
+    if (foto.value.length && foto.value[0].file) {
+      userForm.append("photo", foto.value[0].file);
+    }
 
     // Hanya kirim password jika user baru atau password diubah
     if (!user.value.id || user.value.password) {
       userForm.append("password", user.value.password);
-      userForm.append("password_confirmation", user.value.passwordConfirmation); // <-- mapping ke Laravel
+      userForm.append("password_confirmation", user.value.passwordConfirmation);
     }
 
     if (!user.value.id) {
       await axios.post("/master/users/store", userForm);
     } else {
       userForm.append("_method", "PUT");
-      await axios.post(`/master/users/${user.value.id}`, userForm); // UUID
+      await axios.post(`/master/users/${user.value.id}`, userForm);
     }
 
     toast.success("Berhasil menyimpan data guru & user");
@@ -294,13 +307,19 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Jabatan -->
+        <!-- level -->
         <div class="col-md-4">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Jabatan</label>
-            <Field class="form-control form-control-lg form-control-solid" type="text" name="jabatan"
-              v-model="teacher.jabatan" placeholder="Masukkan Jabatan" />
-            <ErrorMessage name="jabatan" class="text-danger small" />
+            <label class="form-label fw-bold fs-6 required">Level</label>
+            <Field as="select" name="level" v-model="teacher.level"
+              class="form-select form-select-lg form-select-solid">
+              <option value="">Pilih Level</option>
+              <option value="Kepala">Kepala</option>
+              <option value="Wali Kelas">Wali Kelas</option>
+              <option value="Guru">Guru</option>
+            </Field>
+            <ErrorMessage name="level" class="text-danger small" />
+            <ErrorMessage name="level" class="text-danger small" />
           </div>
         </div>
 

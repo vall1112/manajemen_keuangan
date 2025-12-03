@@ -22,7 +22,7 @@ class Teacher extends Model
         'no_telepon',
         'email',
         'alamat',
-        'jabatan',
+        'level',
         'mata_pelajaran',
         'status',
         'foto',

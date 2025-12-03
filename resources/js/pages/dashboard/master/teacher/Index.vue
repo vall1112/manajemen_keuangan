@@ -55,7 +55,7 @@ const columns = [
     column.accessor("username", { header: "Username" }),
     column.accessor("nama", { header: "Nama" }),
     column.accessor("nip", { header: "NIP" }),
-    column.accessor("jabatan", { header: "Jabatan" }),
+    column.accessor("level", { header: "Level" }),
     column.accessor("status", {
         header: "Status",
         cell: (cell) => {
