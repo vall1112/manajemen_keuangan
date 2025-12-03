@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
             // HALAMAN DASHBOARD GURU
             {
                 path: "/teacher/dashboard",
-                name: "dashboard",
+                name: "teacher.dashboard",
                 component: () => import("@/pages/dashboard/Teacher.vue"),
                 meta: {
                     pageTitle: "Dashboard",

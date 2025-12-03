@@ -285,7 +285,7 @@ watch(openDetail, (val) => {
       <paginate
         ref="paginateRef"
         id="table-student-debts"
-        url="/api/teacher/student-debts"
+        url="/master/students"
         :columns="columns"
         :per-page="15"
         search-placeholder="Cari NIS atau Nama Siswa..."
