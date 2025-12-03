@@ -35,6 +35,16 @@ const routes: Array<RouteRecordRaw> = [
                     breadcrumbs: ["Dashboard"],
                 },
             },
+            // HALAMAN DASHBOARD GURU
+            {
+                path: "/teacher/dashboard",
+                name: "dashboard",
+                component: () => import("@/pages/dashboard/Teacher.vue"),
+                meta: {
+                    pageTitle: "Dashboard",
+                    breadcrumbs: ["Dashboard"],
+                },
+            },
             // HALAMAN DASHBOARD BENDAHARA
             {
                 path: "/bendahara/dashboard/",
