@@ -2,301 +2,252 @@
 import { h, ref, watch, computed } from "vue";
 import { createColumnHelper } from "@tanstack/vue-table";
 import { toast } from "vue3-toastify";
-import axios from "axios";
 
-// Tipe data siswa + tunggakan
-interface StudentDebt {
+// Interface untuk data siswa
+interface Student {
+  no?: number;
   id: number;
+  uuid: string;
   nis: string;
   name: string;
-  class_name: string;
-  total_debt: number;        // total tunggakan dalam rupiah
-  unpaid_months: string[];   // contoh: ["Januari 2025", "Februari 2025"]
-  phone: string;
+  class: string;
   photo?: string;
+  total_tunggakan: number;
+  bulan_tertunggak: string[];
+  status_pembayaran: 'lunas' | 'belum_lunas';
 }
 
-const columnHelper = createColumnHelper<StudentDebt>();
+const column = createColumnHelper<Student>();
 const paginateRef = ref<any>(null);
-const openDetail = ref<boolean>(false);
-const selectedStudent = ref<StudentDebt | null>(null);
+const selectedStudent = ref<string>("");
+const showDetail = ref<boolean>(false);
 
-// Fungsi format rupiah
-const formatRupiah = (amount: number) => {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
+// Format currency
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0
   }).format(amount);
 };
 
-// Buka modal detail tunggakan
-const viewDetail = (student: StudentDebt) => {
-  selectedStudent.value = student;
-  openDetail.value = true;
+// Lihat detail tunggakan
+const viewDetail = (studentUuid: string) => {
+  selectedStudent.value = studentUuid;
+  showDetail.value = true;
 };
 
-// Cetak kwitansi tunggakan (contoh)
-const printInvoice = async (studentId: number) => {
+// Export ke Excel (placeholder)
+const exportToExcel = async () => {
   try {
-    const { data } = await axios.get(`/api/teacher/debts/${studentId}/invoice`, {
-      responseType: "blob",
-    });
-    const url = window.URL.createObjectURL(new Blob([data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `Kwitansi_Tunggakan_${studentId}.pdf`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    toast.info("Sedang mengunduh data...");
+    // Implementasi export Excel
+    const response = await fetch("/api/teacher/students/export");
+    // Handle download
+    toast.success("Data berhasil diunduh!");
   } catch (error) {
-    toast.error("Gagal mengunduh kwitansi!");
+    console.error("Gagal export data:", error);
+    toast.error("Gagal mengunduh data!");
+  }
+};
+
+// Print tunggakan siswa
+const printTunggakan = async (studentId: number) => {
+  try {
+    const url = `/api/teacher/students/${studentId}/print-tunggakan`;
+    const response = await fetch(url);
+    const printHtml = await response.text();
+
+    const printWindow = window.open("", "PRINT", "width=900,height=650");
+    if (printWindow) {
+      printWindow.document.write(printHtml);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.onafterprint = () => printWindow.close();
+    }
+  } catch (error) {
+    console.error("Gagal mencetak:", error);
+    toast.error("Gagal mencetak data tunggakan!");
   }
 };
 
 const columns = [
-  columnHelper.accessor("nis", {
+  column.accessor("no", {
+    header: "#",
+  }),
+  column.accessor("nis", {
     header: "NIS",
-    cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("photo", {
-    header: "Foto",
-    cell: (info) => {
-      const photo = info.getValue();
-      const src = photo ? `/storage/photos/${photo}` : "/media/avatars/blank.png";
-      return h("img", {
-        src,
-        alt: "Foto Siswa",
-        class: "rounded",
-        style: { width: "40px", height: "40px", objectFit: "cover" },
-      });
-    },
-  }),
-  columnHelper.accessor("name", {
+  column.accessor("nama", {
     header: "Nama Siswa",
-    cell: (info) => h("div", { class: "fw-bold" }, info.getValue()),
   }),
-  columnHelper.accessor("class_name", {
+  column.accessor("classroom_id", {
     header: "Kelas",
   }),
-  columnHelper.accessor("total_debt", {
+  column.accessor("photo", {
+    header: "Foto",
+    cell: (cell) => {
+      const photoUrl = cell.getValue();
+      const src = photoUrl ? `/storage/${photoUrl}` : "/media/avatars/blank.png";
+      return h("div", { class: "text-center" }, [
+        h("img", {
+          src,
+          alt: "Foto Siswa",
+          style: {
+            width: "50px",
+            height: "50px",
+            objectFit: "cover",
+            borderRadius: "50%",
+            border: "2px solid #e4e6ef",
+          },
+        }),
+      ]);
+    },
+  }),
+  column.accessor("total_tunggakan", {
     header: "Total Tunggakan",
-    cell: (info) => {
-      const value = info.getValue();
-      return h(
-        "span",
-        {
-          class: value > 0 ? "text-danger fw-bold" : "text-success",
-        },
-        formatRupiah(value)
-      );
+    cell: (cell) => {
+      const amount = cell.getValue();
+      const isLunas = amount === 0;
+      return h("div", { class: "text-end" }, [
+        h("span", {
+          class: isLunas ? "badge badge-success" : "badge badge-danger",
+          style: { fontSize: "12px" }
+        }, formatCurrency(amount))
+      ]);
     },
   }),
-  columnHelper.display({
-    id: "unpaid_months",
-    header: "Bulan Belum Dibayar",
-    cell: (info) => {
-      const months = info.row.original.unpaid_months;
-      if (!months || months.length === 0) {
-        return h("span", { class: "badge badge-success" }, "Lunas");
-      }
-      return h(
-        "span",
-        { class: "badge badge-danger" },
-        `${months.length} bulan`
-      );
+  column.accessor("status_pembayaran", {
+    header: "Status",
+    cell: (cell) => {
+      const status = cell.getValue();
+      const isLunas = status === 'lunas';
+      return h("div", { class: "text-center" }, [
+        h("span", {
+          class: isLunas
+            ? "badge badge-light-success"
+            : "badge badge-light-danger",
+        }, isLunas ? "Lunas" : "Belum Lunas")
+      ]);
     },
   }),
-  columnHelper.display({
-    id: "actions",
+  column.accessor("uuid", {
     header: "Aksi",
     cell: (info) => {
       const student = info.row.original;
-      return h("div", { class: "d-flex gap-2" }, [
-        // Lihat detail
+      return h("div", { class: "d-flex gap-2 justify-content-center" }, [
+        // Tombol Detail
         h(
           "button",
           {
-            class: "btn btn-sm btn-icon btn-info",
+            class: "btn btn-sm btn-icon btn-primary",
+            onClick: () => viewDetail(student.uuid),
             title: "Lihat Detail Tunggakan",
-            onClick: () => viewDetail(student),
           },
-          h("i", { class: "ki-outline ki-eye fs-2" })
-        ),
-        // Cetak kwitansi
-        student.total_debt > 0 &&
-          h(
-            "button",
-            {
-              class: "btn btn-sm btn-icon btn-warning",
-              title: "Cetak Kwitansi",
-              onClick: () => printInvoice(student.id),
-            },
-            h("i", { class: "ki-outline ki-printer fs-2" })
-          ),
-        // WhatsApp reminder (opsional)
-        h(
-          "a",
-          {
-            href: `https://wa.me/${student.phone.replace(/[^0-9]/g, "")}?text=Assalamualaikum,%20Orang%20tua%20Wali%20dari%20${encodeURIComponent(
-              student.name
-            )}.%20Mohon%20segera%20melunasi%20tunggakan%20SPP%20sebesar%20${formatRupiah(
-              student.total_debt
-            )}.%20Terima%20kasih.`,
-            class: "btn btn-sm btn-icon btn-success",
-            target: "_blank",
-            title: "Kirim Reminder WA",
-          },
-          h("i", { class: "ki-outline ki-message-text-2 fs-2" })
+          h("i", { class: "la la-eye fs-2" })
         ),
       ]);
     },
   }),
 ];
-
-watch(openDetail, (val) => {
-  if (!val) {
-    selectedStudent.value = null;
-  }
+watch(showDetail, (val) => {
+  if (!val) selectedStudent.value = "";
+  window.scrollTo(0, 0);
 });
 </script>
 
 <template>
-  <!-- Modal Detail Tunggakan -->
-  <div class="modal fade" id="modalDetailDebt" tabindex="-1" v-if="openDetail">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title">Detail Tunggakan - {{ selectedStudent?.name }}</h3>
-          <button
-            type="button"
-            class="btn-close"
-            @click="openDetail = false"
-          ></button>
+  <!-- Modal Detail (Component terpisah) -->
+  <!-- <DetailTunggakan :student-uuid="selectedStudent" @close="showDetail = false" v-if="showDetail" /> -->
+
+  <!-- Card Statistik -->
+  <div class="row g-5 g-xl-8 mb-5">
+    <div class="col-xl-3">
+      <div class="card card-xl-stretch">
+        <div class="card-body">
+          <i class="la la-users text-primary fs-2x"></i>
+          <div class="text-gray-900 fw-bold fs-2 mb-2 mt-5">150</div>
+          <div class="fw-semibold text-gray-400">Total Siswa</div>
         </div>
-        <div class="modal-body" v-if="selectedStudent">
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <img
-                :src="
-                  selectedStudent.photo
-                    ? `/storage/photos/${selectedStudent.photo}`
-                    : '/media/avatars/blank.png'
-                "
-                class="rounded mb-3"
-                style="width: 120px; height: 120px; object-fit: cover"
-                alt="Foto Siswa"
-              />
-              <p class="fw-bold">{{ selectedStudent.nis }}</p>
-            </div>
-            <div class="col-md-8">
-              <table class="table table-bordered">
-                <tr>
-                  <th>Nama</th>
-                  <td>{{ selectedStudent.name }}</td>
-                </tr>
-                <tr>
-                  <th>Kelas</th>
-                  <td>{{ selectedStudent.class_name }}</td>
-                </tr>
-                <tr>
-                  <th>Total Tunggakan</th>
-                  <td class="text-danger fw-bold">
-                    {{ formatRupiah(selectedStudent.total_debt) }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>Bulan Belum Dibayar</th>
-                  <td>
-                    <template v-if="selectedStudent.unpaid_months.length">
-                      <span
-                        v-for="(month, i) in selectedStudent.unpaid_months"
-                        :key="i"
-                        class="badge badge-danger me-1"
-                      >
-                        {{ month }}
-                      </span>
-                    </template>
-                    <span v-else class="text-success">Semua lunas</span>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
+      </div>
+    </div>
+    <div class="col-xl-3">
+      <div class="card card-xl-stretch">
+        <div class="card-body">
+          <i class="la la-check-circle text-success fs-2x"></i>
+          <div class="text-gray-900 fw-bold fs-2 mb-2 mt-5">120</div>
+          <div class="fw-semibold text-gray-400">Siswa Lunas</div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="openDetail = false">
-            Tutup
-          </button>
+      </div>
+    </div>
+    <div class="col-xl-3">
+      <div class="card card-xl-stretch">
+        <div class="card-body">
+          <i class="la la-exclamation-circle text-danger fs-2x"></i>
+          <div class="text-gray-900 fw-bold fs-2 mb-2 mt-5">30</div>
+          <div class="fw-semibold text-gray-400">Siswa Menunggak</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3">
+      <div class="card card-xl-stretch">
+        <div class="card-body">
+          <i class="la la-money-bill text-warning fs-2x"></i>
+          <div class="text-gray-900 fw-bold fs-2 mb-2 mt-5">Rp 15.500.000</div>
+          <div class="fw-semibold text-gray-400">Total Tunggakan</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Main Card -->
+  <!-- Tabel Data Siswa -->
   <div class="card">
-    <div class="card-header border-0 pt-6">
-      <div class="card-title">
-        <h2 class="fw-bold">Dashboard Guru - Monitoring Tunggakan Siswa</h2>
-      </div>
-      <div class="card-toolbar">
-      </div>
+    <div class="card-header align-items-center">
+      <h2 class="mb-0">Daftar Siswa & Tunggakan Pembayaran</h2>
     </div>
-
-    <div class="card-body pt-0">
-      <!-- Statistik singkat (opsional) -->
-      <div class="row mb-7">
-        <div class="col-xl-4">
-          <div class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6 bg-light-primary">
-            <div class="d-flex flex-column py-2">
-              <div class="fs-3 fw-bold text-primary">87 Siswa</div>
-              <div class="fs-6 fw-semibold text-gray-600">Total Siswa Diajar</div>
-            </div>
-            <div class="d-flex align-items-center">
-              <i class="ki-outline ki-profile-user fs-2x text-primary"></i>
-            </div>
-          </div>
+    <div class="card-body">
+      <!-- Filter Section -->
+      <div class="row mb-5">
+        <div class="col-md-3">
+          <label class="form-label">Filter Kelas</label>
+          <select class="form-select form-select-sm">
+            <option value="">Semua Kelas</option>
+            <option value="7">Kelas 7</option>
+            <option value="8">Kelas 8</option>
+            <option value="9">Kelas 9</option>
+          </select>
         </div>
-        <div class="col-xl-4">
-          <div class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6 bg-light-danger">
-            <div class="d-flex flex-column py-2">
-              <div class="fs-3 fw-bold text-danger">23 Siswa</div>
-              <div class="fs-6 fw-semibold text-gray-600">Memiliki Tunggakan</div>
-            </div>
-            <div class="d-flex align-items-center">
-              <i class="ki-outline ki-wallet fs-2x text-danger"></i>
-            </div>
-          </div>
+        <div class="col-md-3">
+          <label class="form-label">Filter Status</label>
+          <select class="form-select form-select-sm">
+            <option value="">Semua Status</option>
+            <option value="lunas">Lunas</option>
+            <option value="belum_lunas">Belum Lunas</option>
+          </select>
         </div>
-        <div class="col-xl-4">
-          <div class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6 bg-light-warning">
-            <div class="d-flex flex-column py-2">
-              <div class="fs-3 fw-bold text-warning">Rp 48.750.000</div>
-              <div class="fs-6 fw-semibold text-gray-600">Total Tunggakan</div>
-            </div>
-            <div class="d-flex align-items-center">
-              <i class="ki-outline ki-dollar fs-2x text-warning"></i>
-            </div>
-          </div>
+        <div class="col-md-6">
+          <label class="form-label">Cari Siswa</label>
+          <input type="text" class="form-control form-control-sm" placeholder="Cari berdasarkan NIS atau Nama..." />
         </div>
       </div>
 
-      <!-- Tabel dengan paginate -->
-      <paginate
-        ref="paginateRef"
-        id="table-student-debts"
-        url="/master/students"
-        :columns="columns"
-        :per-page="15"
-        search-placeholder="Cari NIS atau Nama Siswa..."
-      />
+      <!-- Paginate Table -->
+      <paginate ref="paginateRef" id="table-students-tunggakan" url="/master/students" :columns="columns"></paginate>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Opsional: styling tambahan */
+.card-xl-stretch {
+  height: 100%;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
 .badge {
-  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
 }
 </style>
