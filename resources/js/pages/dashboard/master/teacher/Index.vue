@@ -30,22 +30,18 @@ const columns = [
     column.accessor("no", {
         header: "#",
     }),
+    column.accessor("username", {
+        header: "Username",
+    }),
     column.accessor("nama", {
         header: "Nama",
     }),
     column.accessor("nip", {
         header: "NIP",
     }),
-    column.accessor("jabatan", {
-        header: "Jabatan",
+    column.accessor("level", {
+        header: "level",
     }),
-    // column.accessor("mata_pelajaran", {
-    //     header: "Mapel",
-    //     cell: ({ row }) => {
-    //         const mapel = row?.original?.mata_pelajaran?.trim();
-    //         return mapel ? mapel : "-";
-    //     },
-    // }),
     column.accessor("status", {
         header: "Status",
         cell: (cell) => {

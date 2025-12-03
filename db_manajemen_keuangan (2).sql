@@ -747,7 +747,7 @@ CREATE TABLE `teachers` (
   `no_telepon` varchar(20) NOT NULL,
   `email` varchar(255) NOT NULL,
   `alamat` varchar(255) NOT NULL,
-  `jabatan` varchar(255) NOT NULL,
+  `level` varchar(255) NOT NULL,
   `mata_pelajaran` varchar(255) DEFAULT NULL,
   `status` enum('Aktif','Tidak Aktif','Cuti') NOT NULL DEFAULT 'Aktif',
   `foto` varchar(255) DEFAULT NULL,
@@ -759,7 +759,7 @@ CREATE TABLE `teachers` (
 -- Dumping data for table `teachers`
 --
 
-INSERT INTO `teachers` (`id`, `user_id`, `nip`, `nama`, `jenis_kelamin`, `tempat_lahir`, `tanggal_lahir`, `no_telepon`, `email`, `alamat`, `jabatan`, `mata_pelajaran`, `status`, `foto`, `created_at`, `updated_at`) VALUES
+INSERT INTO `teachers` (`id`, `user_id`, `nip`, `nama`, `jenis_kelamin`, `tempat_lahir`, `tanggal_lahir`, `no_telepon`, `email`, `alamat`, `level`, `mata_pelajaran`, `status`, `foto`, `created_at`, `updated_at`) VALUES
 (1, NULL, '872929449269789443', 'Drs. Nuripan, M.Pd.', 'L', 'Gresik', '2000-01-01', '081111111111', 'guru1@gmail.com', 'Gresik', 'Kepala Sekolah', 'null', 'Aktif', 'teachers/FoyKN6JYKmcENI6n76oWClWNd1SpxMBhtnoQPSz7.jpg', '2025-09-04 23:05:00', '2025-09-05 01:07:40'),
 (2, NULL, '325572716927802599', 'Nur Qomari, M.Pd.', 'L', 'Gresik', '2000-01-01', '082222222222', 'guru2@gmail.com', 'Gresik', 'Wakil Kepala Sekolah', NULL, 'Aktif', NULL, '2025-09-04 23:05:00', '2025-09-04 23:05:00'),
 (3, NULL, '820617609836683862', 'Sutrisno, M.Pd.', 'L', 'Gresik', '2000-01-01', '083333333333', 'guru3@gmail.com', 'Gresik', 'Guru Mapel', NULL, 'Aktif', NULL, '2025-09-04 23:05:00', '2025-09-04 23:05:00'),

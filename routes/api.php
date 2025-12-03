@@ -73,6 +73,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         });
 
         Route::get('teachers', [TeacherController::class, 'get']);
+        Route::get('users/by-teacher/{teacher_id}', [TeacherController::class, 'getByTeacher']);
         Route::post('teachers', [TeacherController::class, 'index']);
         Route::post('teachers/store', [TeacherController::class, 'store']);
         Route::apiResource('teachers', TeacherController::class)
@@ -157,4 +158,4 @@ Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
 
 Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
-Route::get('/dashboard/master/users/print/{uuid}', [UserController::class, 'print'])->name('users.print');
+Route::get('/users/{id}/card', [UserController::class, 'printCard']);

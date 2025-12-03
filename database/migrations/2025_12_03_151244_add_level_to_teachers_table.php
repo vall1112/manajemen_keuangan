@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Menambahkan kolom username setelah id
-            $table->string('username')->unique()->after('id');
+        Schema::table('teachers', function (Blueprint $table) {
+            $table->enum('level', ['Kepala', 'Wali Kelas', 'Guru'])->after('alamat');
         });
     }
 
@@ -22,10 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Menghapus kolom username jika rollback
-            $table->dropColumn('username');
+        Schema::table('teachers', function (Blueprint $table) {
+            $table->dropColumn('level');
         });
     }
 };
-

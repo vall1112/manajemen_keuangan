@@ -4,113 +4,187 @@ import { onMounted, ref, watch } from "vue";
 import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
-import type { Teacher } from "@/types";
 import ApiService from "@/core/services/ApiService";
 
 const props = defineProps({
-    selected: {
-        type: String,
-        default: null,
-    },
+  selected: { type: String, default: null },
 });
 
 const emit = defineEmits(["close", "refresh"]);
 
-const teacher = ref<Teacher>({} as Teacher);
-const fileTypes = ref(["image/jpeg", "image/png", "image/jpg"]);
-const foto = ref<any>([]);
-const formRef = ref();
-
-const formSchema = Yup.object().shape({
-    nama: Yup.string().required("Nama harus diisi"),
-    email: Yup.string().email("Email harus valid").nullable(),
-    no_telepon: Yup.string().required("Nomor Telepon harus diisi"),
-    nip: Yup.string().nullable(),
-    tempat_lahir: Yup.string().required("Tempat lahir harus diisi"),
-    tanggal_lahir: Yup.date().required("Tanggal lahir harus diisi"),
-    jenis_kelamin: Yup.string().required("Pilih jenis kelamin"),
-    alamat: Yup.string().required("Alamat harus diisi"),
-mata_pelajaran: Yup.string().nullable(),
-    jabatan: Yup.string().required("Jabatan harus diisi"),
-    status: Yup.string().required("Status harus dipilih"),
+// =============================
+// STATE
+// =============================
+const teacher = ref<any>({});
+const user = ref<any>({
+  id: null,
+  username: "",
+  name: "",
+  email: "",
+  password: "",
+  passwordConfirmation: "",
+  status: "Aktif",
+  role_id: "4",
+  photo: null,
+  teacher_id: null,
 });
 
-function getEdit() {
+const foto = ref<any>([]);
+const fileTypes = ref(["image/jpeg", "image/png", "image/jpg"]);
+const formRef = ref();
+
+// =============================
+// AUTO SYNC USER.NAME = TEACHER.NAMA
+// =============================
+watch(
+  () => teacher.value.nama,
+  (v) => (user.value.name = v)
+);
+
+watch(foto, () => {
+  if (foto.value.length && foto.value[0].file) {
+    user.value.photo = foto.value[0].file;
+  }
+});
+
+// =============================
+// GET EDIT DATA
+// =============================
+async function getEdit() {
   block(document.getElementById("form-teacher"));
-  ApiService.get("master/teachers", props.selected)
-    .then(({ data }) => {
-      teacher.value = data.teacher;
-      foto.value = data.teacher.foto ? ["/storage/" + data.teacher.foto] : [];
-    })
-    .catch((err: any) => {
-      toast.error(err.response.data.message);
-    })
-    .finally(() => {
-      unblock(document.getElementById("form-teacher"));
+
+  try {
+    // =============================
+    // GET TEACHER
+    // =============================
+    const { data } = await ApiService.get("master/teachers", props.selected);
+
+    teacher.value = data.teacher;
+
+    // FIX FOTO PREVIEW
+    foto.value = data.teacher.foto
+      ? [{ file: null, url: "/storage/" + data.teacher.foto }]
+      : [];
+
+    // =============================
+    // CEK APAKAH AKUN USER ADA
+    // =============================
+    // cek ke server apakah ada user dengan teacher_id ini
+    const check = await axios.post("/master/users/check", {
+      teacher_id: props.selected,
     });
+
+    if (!check.data.exists) {
+      toast.warning("Guru belum memiliki akun");
+      return; // STOP — jangan panggil API user
+    }
+
+    // =============================
+    // GET USER
+    // =============================
+    const u = await ApiService.get("master/users/by-teacher", props.selected);
+
+    user.value.id = u.data.user.id;
+    user.value.username = u.data.user.username;
+    user.value.email = u.data.user.email;
+    user.value.name = u.data.user.name;
+    user.value.status = u.data.user.status;
+
+  } catch (e: any) {
+    toast.error("Gagal mengambil data");
+  } finally {
+    unblock(document.getElementById("form-teacher"));
+  }
 }
 
-function submit() {
-    const formData = new FormData();
-    formData.append("nama", teacher.value.nama);
-    formData.append("email", teacher.value.email ?? "");
-    formData.append("no_telepon", teacher.value.no_telepon);
-    formData.append("nip", teacher.value.nip ?? "");
-    formData.append("tempat_lahir", teacher.value.tempat_lahir);
-    formData.append("tanggal_lahir", teacher.value.tanggal_lahir);
-    formData.append("jenis_kelamin", teacher.value.jenis_kelamin);
-    formData.append("alamat", teacher.value.alamat);
-    formData.append("jabatan", teacher.value.jabatan);
-    formData.append("mata_pelajaran", teacher.value.mata_pelajaran);
-    formData.append("status", teacher.value.status);
+// =============================
+// SUBMIT
+// =============================
+async function submit() {
+  block(document.getElementById("form-teacher"));
 
-    if (foto.value.length) {
-        formData.append("foto", foto.value[0].file);
-    }
-    if (props.selected) {
-        formData.append("_method", "PUT");
+  try {
+    let teacher_id = props.selected;
+
+    // ===============================
+    // STEP 1 — SAVE / UPDATE TEACHER
+    // ===============================
+    let teacherForm = new FormData();
+
+    const teacherFields = [
+      "nama", "email", "nip", "jenis_kelamin", "tempat_lahir",
+      "tanggal_lahir", "no_telepon", "alamat", "level",
+      "mata_pelajaran", "status",
+    ];
+
+    teacherFields.forEach((k) => teacherForm.append(k, teacher.value[k] ?? ""));
+
+    if (foto.value.length && foto.value[0].file) {
+      teacherForm.append("foto", foto.value[0].file);
     }
 
-    block(document.getElementById("form-teacher"));
-    axios({
-        method: "post",
-        url: props.selected
-            ? `/master/teachers/${props.selected}`
-            : "/master/teachers/store",
-        data: formData,
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    })
-        .then(() => {
-            emit("close");
-            emit("refresh");
-            toast.success("Data berhasil disimpan");
-            formRef.value.resetForm();
-        })
-        .catch((err: any) => {
-            formRef.value.setErrors(err.response.data.errors);
-            toast.error(err.response.data.message);
-        })
-        .finally(() => {
-            unblock(document.getElementById("form-teacher"));
-        });
+    let teacherResponse;
+
+    if (!props.selected) {
+      teacherResponse = await axios.post(`/master/teachers/store`, teacherForm);
+      teacher_id = teacherResponse.data.teacher.id;
+    } else {
+      teacherForm.append("_method", "PUT");
+      teacherResponse = await axios.post(`/master/teachers/${props.selected}`, teacherForm);
+    }
+
+    // ===============================
+    // STEP 2 — SAVE / UPDATE USER
+    // ===============================
+    let userForm = new FormData();
+
+    userForm.append("username", user.value.username);
+    userForm.append("name", teacher.value.nama);
+    userForm.append("email", teacher.value.email);
+    userForm.append("status", user.value.status);
+    userForm.append("role_id", "4");
+    userForm.append("teacher_id", teacher_id);
+
+    if (foto.value.length && foto.value[0].file) {
+      userForm.append("photo", foto.value[0].file);
+    }
+
+    // CREATE
+    if (!props.selected) {
+      userForm.append("password", user.value.password);
+      userForm.append("password_confirmation", user.value.passwordConfirmation);
+
+      await axios.post("/master/users/store", userForm);
+
+    } else {
+      // UPDATE
+      if (user.value.password) {
+        userForm.append("password", user.value.password);
+        userForm.append("password_confirmation", user.value.passwordConfirmation);
+      }
+
+      userForm.append("_method", "PUT");
+      await axios.post(`/master/users/${user.value.id}`, userForm);
+    }
+
+    toast.success("Berhasil disimpan");
+    emit("close");
+    emit("refresh");
+    formRef.value.resetForm();
+
+  } catch (e: any) {
+    toast.error(e.response?.data?.message || "Gagal menyimpan");
+    if (e.response?.data?.errors) {
+      formRef.value.setErrors(e.response.data.errors);
+    }
+  } finally {
+    unblock(document.getElementById("form-teacher"));
+  }
 }
 
 onMounted(() => {
-    if (props.selected) {
-        getEdit();
-    }
+  if (props.selected) getEdit();
 });
-
-watch(
-    () => props.selected,
-    () => {
-        if (props.selected) {
-            getEdit();
-        }
-    }
-);
 </script>
 
 <template>
@@ -125,6 +199,35 @@ watch(
 
     <div class="card-body">
       <div class="row">
+        <!-- Username -->
+        <div class="col-md-4">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6 required">Username</label>
+            <Field class="form-control form-control-lg form-control-solid" type="text" name="username"
+              v-model="user.username" placeholder="Masukkan Username" />
+            <ErrorMessage name="username" class="text-danger small" />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="col-md-4">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6">Password</label>
+            <Field class="form-control form-control-lg form-control-solid" type="password" name="password"
+              v-model="user.password" placeholder="Masukkan Password" />
+            <ErrorMessage name="password" class="text-danger small" />
+          </div>
+        </div>
+
+        <!-- Konfirmasi Password -->
+        <div class="col-md-4">
+          <div class="fv-row mb-7">
+            <label class="form-label fw-bold fs-6">Konfirmasi Password</label>
+            <Field class="form-control form-control-lg form-control-solid" type="password" name="passwordConfirmation"
+              v-model="user.passwordConfirmation" placeholder="Konfirmasi Password" />
+            <ErrorMessage name="passwordConfirmation" class="text-danger small" />
+          </div>
+        </div>
 
         <!-- Nama -->
         <div class="col-md-4">
@@ -140,8 +243,8 @@ watch(
         <div class="col-md-4">
           <div class="fv-row mb-7">
             <label class="form-label fw-bold fs-6">NIP</label>
-            <Field class="form-control form-control-lg form-control-solid" type="text" name="nip"
-              v-model="teacher.nip" placeholder="Masukkan NIP" />
+            <Field class="form-control form-control-lg form-control-solid" type="text" name="nip" v-model="teacher.nip"
+              placeholder="Masukkan NIP" />
             <ErrorMessage name="nip" class="text-danger small" />
           </div>
         </div>
@@ -210,13 +313,13 @@ watch(
           </div>
         </div>
 
-        <!-- Jabatan -->
+        <!-- level -->
         <div class="col-md-4">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">Jabatan</label>
-            <Field class="form-control form-control-lg form-control-solid" type="text" name="jabatan"
-              v-model="teacher.jabatan" placeholder="Masukkan Jabatan" />
-            <ErrorMessage name="jabatan" class="text-danger small" />
+            <label class="form-label fw-bold fs-6 required">level</label>
+            <Field class="form-control form-control-lg form-control-solid" type="text" name="level"
+              v-model="teacher.level" placeholder="Masukkan level" />
+            <ErrorMessage name="level" class="text-danger small" />
           </div>
         </div>
 
@@ -254,12 +357,13 @@ watch(
             <ErrorMessage name="foto" class="text-danger small" />
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="card-footer d-flex">
-      <button type="submit" class="btn btn-primary btn-sm ms-auto">Simpan</button>
+      <button type="submit" class="btn btn-primary btn-sm ms-auto">
+        Simpan
+      </button>
     </div>
   </VForm>
 </template>

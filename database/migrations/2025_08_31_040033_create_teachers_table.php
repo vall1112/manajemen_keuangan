@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('nip')->nullable()->unique();     // NIP (kalau ada)
+            $table->string('nip')->nullable()->unique();
             $table->string('nama');
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->string('tempat_lahir')->nullable();
-            $table->date('tanggal_lahir')->nullable();
-            $table->string('no_telepon', 20)->nullable();
-            $table->string('email')->unique()->nullable();
-            $table->string('alamat')->nullable();
+            $table->string('tempat_lahir');
+            $table->date('tanggal_lahir');
+            $table->string('no_telepon', 20);
+            $table->string('email')->unique();
+            $table->string('alamat');
+            $table->string('level');
             $table->string('mata_pelajaran')->nullable();
-            $table->string('pendidikan_terakhir')->nullable();
-            $table->enum('status', ['Aktif', 'Tidak Aktif', 'Cuti'])->default('Aktif');
-            $table->string('foto')->nullable(); // path foto guru
+            $table->enum('status', ['Aktif', 'Tidak Aktif', 'Cuti'])
+                ->default('Aktif');
+            $table->string('foto')->nullable();
             $table->timestamps();
         });
     }

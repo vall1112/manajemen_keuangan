@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('saving_balances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->decimal('saldo', 15, 2)->default(0); // saldo tabungan
+            $table->foreignId('student_id')
+                  ->unique()
+                  ->constrained('students')
+                  ->onDelete('cascade');
+            $table->decimal('saldo', 15, 2)->default(0.00);
             $table->timestamps();
         });
     }

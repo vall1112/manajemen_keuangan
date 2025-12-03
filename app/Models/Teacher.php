@@ -22,7 +22,7 @@ class Teacher extends Model
         'no_telepon',
         'email',
         'alamat',
-        'jabatan',
+        'level',
         'mata_pelajaran',
         'status',
         'foto',
@@ -39,5 +39,10 @@ class Teacher extends Model
                 Storage::disk('public')->delete($old_foto);
             }
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

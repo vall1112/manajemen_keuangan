@@ -16,7 +16,10 @@ const { delete: deleteUser } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
+<<<<<<< HEAD
 // ✅ Fungsi untuk mencetak kartu login
+=======
+>>>>>>> 7862eedb9d9d21df65e62e1d0a0ce07ced84156a
 const printCard = async (userId: number) => {
     try {
         const url = `/api/master/user/${userId}/card`;
@@ -37,7 +40,10 @@ const printCard = async (userId: number) => {
     }
 };
 
+<<<<<<< HEAD
 // ✅ Kolom tabel pengguna
+=======
+>>>>>>> 7862eedb9d9d21df65e62e1d0a0ce07ced84156a
 const columns = [
     column.accessor("no", {
         header: "#",
@@ -128,6 +134,7 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
+<<<<<<< HEAD
             <h2 class="mb-0">Daftar Pengguna</h2>
             <button
                 type="button"
@@ -135,6 +142,10 @@ watch(openForm, (val) => {
                 v-if="!openForm"
                 @click="openForm = true"
             >
+=======
+            <h2 class="mb-0">Daftar Pengguna Admin</h2>
+            <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
+>>>>>>> 7862eedb9d9d21df65e62e1d0a0ce07ced84156a
                 Tambah
                 <i class="la la-plus"></i>
             </button>
