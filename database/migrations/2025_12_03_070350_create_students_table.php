@@ -16,14 +16,14 @@ return new class extends Migration
             $table->string('nama');
             $table->string('nis')->unique();
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->string('tempat_lahir'); 
+            $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->text('alamat');
-            $table->unsignedBigInteger('classroom_id')->index();
+            $table->unsignedBigInteger('classroom_id')->nullable()->index();
             $table->string('email')->unique();
-            $table->string('telepon', 20); 
+            $table->string('telepon', 20);
             $table->enum('status', ['Aktif', 'Prakerin', 'Alumni', 'Keluar'])
-                  ->default('Aktif');
+                ->default('Aktif');
             $table->string('nama_ayah')->nullable();
             $table->string('telepon_ayah', 20)->nullable();
             $table->string('nama_ibu')->nullable();
@@ -31,8 +31,8 @@ return new class extends Migration
             $table->string('foto')->nullable();
             $table->timestamps();
             $table->foreign('classroom_id')
-                  ->references('id')->on('classrooms')
-                  ->nullOnDelete();
+                ->references('id')->on('classrooms')
+                ->nullOnDelete();
         });
     }
 

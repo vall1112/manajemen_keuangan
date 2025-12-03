@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +36,6 @@ Route::get('/card/{id}', [UserController::class, 'showCard'])->name('card.show')
 
 // Kartu login guru
 Route::get('/api/master/teacher/{teacher}/card', [TeacherController::class, 'card'])->name('teachers.card');
+
+// Kartu login siswa
+Route::get('/api/master/student/{student}/card', [StudentController::class, 'card'])->name('students.card');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +31,7 @@ class StudentController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = Student::with('classroom') // hanya ambil relasi classroom
+        $data = Student::with(['classroom', 'user'])
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama', 'like', "%$search%")
@@ -37,13 +39,18 @@ class StudentController extends Controller
                         ->orWhere('email', 'like', "%$search%")
                         ->orWhere('status', 'like', "%$search%")
                         ->orWhereRaw("
-                            CASE 
-                                WHEN jenis_kelamin = 'L' THEN 'laki-laki'
-                                WHEN jenis_kelamin = 'P' THEN 'perempuan'
-                            END LIKE ?", ["%$search%"])
+                        CASE 
+                            WHEN jenis_kelamin = 'L' THEN 'laki-laki'
+                            WHEN jenis_kelamin = 'P' THEN 'perempuan'
+                        END LIKE ?", ["%$search%"])
                         // search di relasi classroom
                         ->orWhereHas('classroom', function (Builder $q3) use ($search) {
                             $q3->where('nama_kelas', 'like', "%$search%");
+                        })
+                        // search di relasi user
+                        ->orWhereHas('user', function (Builder $q4) use ($search) {
+                            $q4->where('username', 'like', "%$search%")
+                                ->orWhere('email', 'like', "%$search%");
                         });
                 });
             })
@@ -151,6 +158,31 @@ class StudentController extends Controller
         return response()->json([
             'success' => true,
             'data' => $students
+        ]);
+    }
+
+    public function getByStudent($id)
+    {
+        $user = User::where('student_id', $id)->first();
+
+        return response()->json([
+            'exists' => $user ? true : false,
+            'user' => $user
+        ]);
+    }
+
+    public function card(Student $student)
+    {
+        $user = $student->user;
+        if (!$user) {
+            abort(404, 'Siswa belum memiliki akun.');
+        }
+
+        $setting = Setting::firstOrFail();
+
+        return view('users.card', [
+            'user' => $user,
+            'setting' => $setting,
         ]);
     }
 }

@@ -284,9 +284,6 @@ onMounted(async () => {
             <div class="card-header border-0 pt-5 d-flex align-items-center justify-content-between">
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold text-dark">Notifikasi</span>
-                    <span class="text-muted mt-1 fw-semibold fs-7">
-                        Informasi penting untuk bendahara
-                    </span>
                 </h3>
                 <span class="badge badge-light-danger fs-7">
                     <i class="bi bi-bell-fill me-1"></i> Alert

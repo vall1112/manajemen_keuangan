@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
     // HALAMAN AWAL SAAT MENGAKSES URL
     {
         path: "/",
-        redirect: "/sikaz",
+        redirect: "/simaku",
         component: () => import("@/layouts/default-layout/DefaultLayout.vue"),
         meta: {
             middleware: "auth",
@@ -335,11 +335,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/",
         children: [
             {
-                path: "/sikaz",
-                name: "sikaz",
+                path: "/simaku",
+                name: "simaku",
                 component: () => import("@/pages/auth/landing-page/Index.vue"),
                 meta: {
-                    pageTitle: "SIKAZ",
+                    pageTitle: "SIMAKU",
                     middleware: "guest",
                 },
             },

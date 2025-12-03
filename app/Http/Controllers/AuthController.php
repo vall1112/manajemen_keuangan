@@ -233,7 +233,6 @@ class AuthController extends Controller
         $user = Auth::user();
         $student = $user->student;
 
-        // Update user
         $userData = [
             'username' => $request->input('username', $user->username),
             'email'    => $request->input('email', $user->email),
@@ -245,7 +244,6 @@ class AuthController extends Controller
 
         $user->update($userData);
 
-        // Update student
         $studentData = $request->only([
             'nama',
             'nis',
@@ -280,14 +278,12 @@ class AuthController extends Controller
             'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Password
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
         }
 
-        // Foto
         if ($request->hasFile('photo')) {
             if ($user->photo) {
                 Storage::disk('public')->delete($user->photo);

@@ -84,6 +84,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
         Route::get('students', [StudentController::class, 'get']);
         Route::post('students', [StudentController::class, 'index']);
+        Route::post('users/by-student/{id}', [StudentController::class, 'getByStudent']);
         Route::post('students/store', [StudentController::class, 'store']);
         Route::apiResource('students', StudentController::class)
             ->except(['index', 'store']);
@@ -149,10 +150,10 @@ Route::apiResource('transactions', TransactionController::class)
 Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
     ->name('transactions.receipt');
 
-Route::get('setting/logo', [SettingController::class, 'index']);
+// Route::get('setting/logo', [SettingController::class, 'index']);
 Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
 
-Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
-Route::get('/users/{id}/card', [UserController::class, 'printCard']);
+// Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
+// Route::get('/users/{id}/card', [UserController::class, 'printCard']);
