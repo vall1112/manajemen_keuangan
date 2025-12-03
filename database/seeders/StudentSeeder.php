@@ -9,7 +9,6 @@ class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        // XII TKR
         Student::create([
             'nama'          => 'Abdul Aziz Fuadi',
             'nis'           => '1106/046.016',
