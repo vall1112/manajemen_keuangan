@@ -62,14 +62,12 @@ class DashboardController extends Controller
     // ========================== DASHBOARD BENDAHARA ==========================
     public function bendahara()
     {
-        // Statistik Keuangan
         $statistics = [
             'saldo_kas'          => Transaction::where('status', 'Berhasil')->sum('nominal'),
             'pemasukan_hari_ini' => Transaction::where('status', 'Berhasil')
                 ->whereDate('created_at', Carbon::today())
                 ->sum('nominal'),
             'tagihan_belum_bayar' => Bill::where('status', 'Belum Dibayar')->sum('total_tagihan'),
-            // Ambil total saldo tabungan dari tabel saving_balances
             'saldo_tabungan'      => SavingBalance::sum('saldo'),
         ];
 
@@ -190,51 +188,141 @@ class DashboardController extends Controller
 
         if (!$student) {
             return response()->json([
-                'message' => 'Data siswa tidak ditemukan untuk user ini.'
+                'message' => 'Data siswa tidak ditemukan.'
             ], 404);
         }
 
+        /**
+         * ===========================
+         * 1. PROFILE SISWA
+         * ===========================
+         */
         $profile = [
             'nama'    => $student->nama,
             'nis'     => $student->nis,
             'kelas'   => $student->classroom->nama_kelas ?? '-',
             'jurusan' => $student->classroom->major->nama_jurusan ?? '-',
             'email'   => $student->user->email ?? '-',
-            'foto' => $student->foto ? asset('storage/' . $student->foto) : null,
+            'foto'    => $student->foto ? asset('storage/' . $student->foto) : null,
         ];
 
+
+        /**
+         * ===========================
+         * 2. TAGIHAN BELUM DIBAYAR (limit 5)
+         * ===========================
+         */
         $bills = $student->bills()
             ->where('status', 'Belum Dibayar')
-            ->get(['id', 'kode', 'total_tagihan', 'tanggal_tagih', 'status', 'keterangan'])
+            ->latest('id')
+            ->take(5)
+            ->get()
             ->map(function ($bill) {
                 return [
-                    'id'        => $bill->id,
-                    'title'     => $bill->kode,
-                    'amount'    => $bill->total_tagihan,
-                    'due_date'  => $bill->tanggal_tagih,
-                    'status'    => $bill->status,
+                    'id'       => $bill->id,
+                    'title'    => $bill->kode,
+                    'amount'   => $bill->total_tagihan,
+                    'due_date' => $bill->jatuh_tempo ?? $bill->tanggal_tagih,
                 ];
             });
 
+        /**
+         * ===========================
+         * 3. TOTAL SEMUA TAGIHAN BELUM DIBAYAR
+         * ===========================
+         */
+        $totalTagihan = $student->bills()
+            ->where('status', 'Belum Dibayar')
+            ->sum('total_tagihan');
+
+
+        /**
+         * ===========================
+         * 4. NOTIFIKASI TAGIHAN MENDekati JATUH TEMPO
+         * (≤ 3 hari)
+         * ===========================
+         */
+        $notifTagihan = $student->bills()
+            ->where('status', 'Belum Dibayar')
+            ->whereDate('jatuh_tempo', '<=', now()->addDays(3))
+            ->orderBy('jatuh_tempo', 'asc')
+            ->get()
+            ->map(function ($b) {
+                return [
+                    'id'       => $b->id,
+                    'title'    => $b->kode,
+                    'amount'   => $b->total_tagihan,
+                    'due_date' => $b->jatuh_tempo,
+                ];
+            });
+
+
+        /**
+         * ===========================
+         * 5. SALDO TABUNGAN
+         * ===========================
+         */
         $saldo = SavingBalance::where('student_id', $student->id)->value('saldo') ?? 0;
 
-        $latestSaving = $student->savings()->latest('id')->first();
 
-        $transactions = $latestSaving
-            ? [[
-                'id'      => $latestSaving->id,
-                'type'    => $latestSaving->jenis,
-                'amount'  => $latestSaving->nominal,
-                'note'    => $latestSaving->keterangan,
-            ]]
-            : [];
+        /**
+         * ===========================
+         * 6. RIWAYAT TABUNGAN (limit 5)
+         * ===========================
+         */
+        $transactions = $student->savings()
+            ->latest('id')
+            ->take(5)
+            ->get()
+            ->map(function ($s) {
+                return [
+                    'id'         => $s->id,
+                    'type'       => $s->jenis,
+                    'amount'     => $s->nominal,
+                    'created_at' => $s->created_at,
+                ];
+            });
 
+
+        /**
+         * ===========================
+         * 7. RIWAYAT PEMBAYARAN TAGIHAN (limit 5)
+         *    Student → User → Transactions
+         * ===========================
+         */
+        $riwayatPembayaran = Transaction::where('user_id', $student->user->id)
+            ->latest('id')
+            ->take(5)
+            ->get()
+            ->map(function ($trx) {
+                return [
+                    'id'        => $trx->id,
+                    'kode'      => $trx->kode,
+                    'tagihan'   => $trx->bill->kode ?? '-',
+                    'amount'    => $trx->nominal,
+                    'status'    => $trx->status,
+                    'tanggal'   => $trx->created_at->format('Y-m-d'),
+                ];
+            });
+
+
+        /**
+         * ===========================
+         * 8. RESPONSE FINAL
+         * ===========================
+         */
         return response()->json([
             'profile' => $profile,
-            'bills'   => $bills,
+
+            'bills' => $bills,
+            'total_tagihan' => $totalTagihan,
+            'notif_tagihan' => $notifTagihan,
+
+            'riwayat_pembayaran' => $riwayatPembayaran,
+
             'savings' => [
-                'saldo'         => $saldo,
-                'transactions'  => $transactions,
+                'saldo'        => $saldo,
+                'transactions' => $transactions,
             ],
         ]);
     }

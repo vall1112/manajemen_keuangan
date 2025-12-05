@@ -235,6 +235,7 @@ class AuthController extends Controller
     public function profile()
     {
         $user = auth()->user()->load('student.classroom');
+        $user->makeHidden(['student']); // sembunyikan relasi di user
 
         return response()->json([
             'user'      => $user,
