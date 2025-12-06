@@ -136,7 +136,7 @@ onMounted(() => {
                     <div class="fv-row mb-7">
                         <label class="form-label fw-bold fs-6 required">Kelas</label>
                         <input type="text" class="form-control form-control-lg form-control-solid"
-                            :value="student.classroom_id?.nama_kelas ?? '-'" disabled />
+                            :value="student.classroom?.nama_kelas ?? '-'" disabled />
                     </div>
                 </div>
 
