@@ -16,10 +16,6 @@ const { delete: deleteUser } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
-<<<<<<< HEAD
-// ✅ Fungsi untuk mencetak kartu login
-=======
->>>>>>> 7862eedb9d9d21df65e62e1d0a0ce07ced84156a
 const printCard = async (userId: number) => {
     try {
         const url = `/api/master/user/${userId}/card`;
@@ -40,10 +36,6 @@ const printCard = async (userId: number) => {
     }
 };
 
-<<<<<<< HEAD
-// ✅ Kolom tabel pengguna
-=======
->>>>>>> 7862eedb9d9d21df65e62e1d0a0ce07ced84156a
 const columns = [
     column.accessor("no", {
         header: "#",
@@ -76,11 +68,21 @@ const columns = [
             ]);
         },
     }),
-    column.accessor("id", {
+    column.accessor("uuid", {
         header: "Aksi",
         cell: (info) => {
             const user = info.row.original;
             return h("div", { class: "d-flex gap-2" }, [
+                // Tombol Cetak Kartu Login
+                h(
+                    "button",
+                    {
+                        class: "btn btn-sm btn-icon btn-warning",
+                        onClick: () => printCard(user.id),
+                        title: "Cetak Kartu Login",
+                    },
+                    h("i", { class: "la la-print fs-2" })
+                ),
                 // Tombol Edit
                 h(
                     "button",
@@ -94,18 +96,6 @@ const columns = [
                     },
                     h("i", { class: "la la-pencil fs-2" })
                 ),
-
-                // Tombol Cetak Kartu Login
-                h(
-                    "button",
-                    {
-                        class: "btn btn-sm btn-icon btn-warning",
-                        onClick: () => printCard(user.id),
-                        title: "Cetak Kartu Login",
-                    },
-                    h("i", { class: "la la-print fs-2" })
-                ),
-
                 // Tombol Hapus
                 h(
                     "button",
@@ -134,29 +124,14 @@ watch(openForm, (val) => {
 
     <div class="card">
         <div class="card-header align-items-center">
-<<<<<<< HEAD
             <h2 class="mb-0">Daftar Pengguna</h2>
-            <button
-                type="button"
-                class="btn btn-sm btn-primary ms-auto"
-                v-if="!openForm"
-                @click="openForm = true"
-            >
-=======
-            <h2 class="mb-0">Daftar Pengguna Admin</h2>
             <button type="button" class="btn btn-sm btn-primary ms-auto" v-if="!openForm" @click="openForm = true">
->>>>>>> 7862eedb9d9d21df65e62e1d0a0ce07ced84156a
                 Tambah
                 <i class="la la-plus"></i>
             </button>
         </div>
         <div class="card-body">
-            <paginate
-                ref="paginateRef"
-                id="table-users"
-                url="/master/users"
-                :columns="columns"
-            ></paginate>
+            <paginate ref="paginateRef" id="table-users" url="/master/users" :columns="columns"></paginate>
         </div>
     </div>
 </template>

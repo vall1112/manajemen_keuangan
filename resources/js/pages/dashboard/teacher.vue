@@ -8,7 +8,7 @@ interface Student {
   no?: number;
   id: number;
   uuid: string;
-  nis: string;
+  // nis: string;
   name: string;
   class: string;
   photo?: string;
@@ -76,34 +76,14 @@ const columns = [
   column.accessor("no", {
     header: "#",
   }),
-  column.accessor("nis", {
-    header: "NIS",
-  }),
   column.accessor("nama", {
     header: "Nama Siswa",
   }),
   column.accessor("classroom_id", {
     header: "Kelas",
   }),
-  column.accessor("photo", {
-    header: "Foto",
-    cell: (cell) => {
-      const photoUrl = cell.getValue();
-      const src = photoUrl ? `/storage/${photoUrl}` : "/media/avatars/blank.png";
-      return h("div", { class: "text-center" }, [
-        h("img", {
-          src,
-          alt: "Foto Siswa",
-          style: {
-            width: "50px",
-            height: "50px",
-            objectFit: "cover",
-            borderRadius: "50%",
-            border: "2px solid #e4e6ef",
-          },
-        }),
-      ]);
-    },
+  column.accessor("classroom_id", {
+    header: "Jenis Tunggakan",
   }),
   column.accessor("total_tunggakan", {
     header: "Total Tunggakan",
@@ -225,10 +205,6 @@ watch(showDetail, (val) => {
             <option value="lunas">Lunas</option>
             <option value="belum_lunas">Belum Lunas</option>
           </select>
-        </div>
-        <div class="col-md-6">
-          <label class="form-label">Cari Siswa</label>
-          <input type="text" class="form-control form-control-sm" placeholder="Cari berdasarkan NIS atau Nama..." />
         </div>
       </div>
 

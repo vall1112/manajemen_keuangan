@@ -19,7 +19,7 @@ const routes: Array<RouteRecordRaw> = [
     // HALAMAN AWAL SAAT MENGAKSES URL
     {
         path: "/",
-        redirect: "/sikaz",
+        redirect: "/simaku",
         component: () => import("@/layouts/default-layout/DefaultLayout.vue"),
         meta: {
             middleware: "auth",
@@ -32,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/dashboard/Admin.vue"),
                 meta: {
                     pageTitle: "Dashboard",
-                    breadcrumbs: ["Dashboard"],
+                    breadcrumbs: ["Admin"],
                 },
             },
             // HALAMAN DASHBOARD GURU
@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/dashboard/Bendahara.vue"),
                 meta: {
                     pageTitle: "Dashboard",
-                    breadcrumbs: ["Dashboard"],
+                    breadcrumbs: ["Bendahara"],
                 },
             },
             // HALAMAN DASHBOARD SISWA
@@ -62,7 +62,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import("@/pages/dashboard/Siswa.vue"),
                 meta: {
                     pageTitle: "Dashboard",
-                    breadcrumbs: ["Dashboard"],
+                    breadcrumbs: ["Siswa"],
                 },
             },
             // HALAMAN PENGGUNA ADMIN
@@ -94,8 +94,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () =>
                     import("@/pages/dashboard/master/users/Index.vue"),
                 meta: {
-                    pageTitle: "Daftar User",
-                    breadcrumbs: ["Master", "Users"],
+                    pageTitle: "Pengguna",
+                    breadcrumbs: ["Master", "Pengguna"],
                 },
             },
             // HALAMAN PERAN
@@ -106,7 +106,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/roles/Index.vue"),
                 meta: {
                     pageTitle: "Role",
-                    breadcrumbs: ["Master", "Roles"],
+                    breadcrumbs: ["Master", "Role"],
                 },
             },
             // HALAMAN GURU
@@ -117,7 +117,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/teacher/Index.vue"),
                 meta: {
                     pageTitle: "Guru",
-                    breadcrumbs: ["Guru"],
+                    breadcrumbs: ["Master", "Guru"],
                 },
             },
             // HALAMAN SISWA
@@ -128,7 +128,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/student/Index.vue"),
                 meta: {
                     pageTitle: "Siswa",
-                    breadcrumbs: ["Siswa"],
+                    breadcrumbs: ["Master", "Siswa"],
                 },
             },
             // HALAMAN KELAS
@@ -139,7 +139,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/classroom/Index.vue"),
                 meta: {
                     pageTitle: "Kelas",
-                    breadcrumbs: ["Kelas"],
+                    breadcrumbs: ["Master", "Kelas"],
                 },
             },
             // HALAMAN JURUSAN
@@ -150,7 +150,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/major/Index.vue"),
                 meta: {
                     pageTitle: "Jurusan",
-                    breadcrumbs: ["Jurusan"],
+                    breadcrumbs: ["Master", "Jurusan"],
                 },
             },
             // HALAMAN TAHUN AJARAN
@@ -161,7 +161,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/school_year/Index.vue"),
                 meta: {
                     pageTitle: "Tahun Ajaran",
-                    breadcrumbs: ["Tahun Ajaran"],
+                    breadcrumbs: ["Master", "Tahun Ajaran"],
                 },
             },
             // HALAMAN JENIS PEMBAYARAN
@@ -172,7 +172,7 @@ const routes: Array<RouteRecordRaw> = [
                     import("@/pages/dashboard/master/payment_type/Index.vue"),
                 meta: {
                     pageTitle: "Jenis Pembayaran",
-                    breadcrumbs: ["Jenis Pembayaran"],
+                    breadcrumbs: ["Master", "Jenis Pembayaran"],
                 },
             },
             // HALAMAN TAGIHAN
@@ -191,8 +191,8 @@ const routes: Array<RouteRecordRaw> = [
                 name: "transaction",
                 component: () => import("@/pages/dashboard/transaction/Index.vue"),
                 meta: {
-                    pageTitle: "Transaksi",
-                    breadcrumbs: ["Transaksi"],
+                    pageTitle: "Transaksi Tagihan",
+                    breadcrumbs: ["Transaksi Tagihan"],
                 },
             },
             // HALAMAN FORM TRANSAKSI TAGIHAN
@@ -345,11 +345,11 @@ const routes: Array<RouteRecordRaw> = [
         path: "/",
         children: [
             {
-                path: "/sikaz",
-                name: "sikaz",
+                path: "/simaku",
+                name: "simaku",
                 component: () => import("@/pages/auth/landing-page/Index.vue"),
                 meta: {
-                    pageTitle: "SIKAZ",
+                    pageTitle: "SIMAKU",
                     middleware: "guest",
                 },
             },

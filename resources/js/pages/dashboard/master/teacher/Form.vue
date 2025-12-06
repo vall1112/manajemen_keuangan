@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { block, unblock } from "@/libs/utils";
 import { onMounted, ref, watch } from "vue";
-import * as Yup from "yup";
 import axios from "@/libs/axios";
 import { toast } from "vue3-toastify";
 import ApiService from "@/core/services/ApiService";
@@ -9,7 +8,6 @@ import ApiService from "@/core/services/ApiService";
 const props = defineProps({
   selected: { type: String, default: null },
 });
-
 const emit = defineEmits(["close", "refresh"]);
 
 // =============================
@@ -26,7 +24,6 @@ const user = ref<any>({
   status: "Aktif",
   role_id: "4",
   photo: null,
-  teacher_id: null,
 });
 
 const foto = ref<any>([]);
@@ -36,10 +33,7 @@ const formRef = ref();
 // =============================
 // AUTO SYNC USER.NAME = TEACHER.NAMA
 // =============================
-watch(
-  () => teacher.value.nama,
-  (v) => (user.value.name = v)
-);
+watch(() => teacher.value.nama, (v) => user.value.name = v);
 
 watch(foto, () => {
   if (foto.value.length && foto.value[0].file) {
@@ -54,44 +48,45 @@ async function getEdit() {
   block(document.getElementById("form-teacher"));
 
   try {
-    // =============================
-    // GET TEACHER
-    // =============================
+    // Ambil data guru
     const { data } = await ApiService.get("master/teachers", props.selected);
-
     teacher.value = data.teacher;
 
-    // FIX FOTO PREVIEW
-    foto.value = data.teacher.foto
-      ? [{ file: null, url: "/storage/" + data.teacher.foto }]
-      : [];
+    // Ambil foto guru, format seperti user
+    foto.value = data.teacher.foto ? ["/storage/" + data.teacher.foto] : [];
 
-    // =============================
-    // CEK APAKAH AKUN USER ADA
-    // =============================
-    // cek ke server apakah ada user dengan teacher_id ini
-    const check = await axios.post("/master/users/check", {
-      teacher_id: props.selected,
-    });
-
-    if (!check.data.exists) {
-      toast.warning("Guru belum memiliki akun");
-      return; // STOP — jangan panggil API user
+    // Ambil user terkait guru
+    const res = await axios.post(`/master/users/by-teacher/${props.selected}`);
+    if (res.data.exists && res.data.user) {
+      const u = res.data.user;
+      user.value = {
+        id: u.uuid, // <-- pastikan ambil UUID
+        username: u.username,
+        email: u.email,
+        name: u.name,
+        status: u.status,
+        password: "",
+        passwordConfirmation: "",
+        role_id: u.role_id,
+        photo: u.photo ? ["/storage/" + u.photo] : [],
+      };
+    } else {
+      // Guru belum punya user
+      user.value = {
+        id: null,
+        username: "",
+        email: teacher.value.email || "",
+        name: teacher.value.nama,
+        status: "Aktif",
+        password: "",
+        passwordConfirmation: "",
+        role_id: "4",
+        photo: [],
+      };
     }
 
-    // =============================
-    // GET USER
-    // =============================
-    const u = await ApiService.get("master/users/by-teacher", props.selected);
-
-    user.value.id = u.data.user.id;
-    user.value.username = u.data.user.username;
-    user.value.email = u.data.user.email;
-    user.value.name = u.data.user.name;
-    user.value.status = u.data.user.status;
-
   } catch (e: any) {
-    toast.error("Gagal mengambil data");
+    toast.error("Gagal mengambil data guru & user");
   } finally {
     unblock(document.getElementById("form-teacher"));
   }
@@ -104,77 +99,76 @@ async function submit() {
   block(document.getElementById("form-teacher"));
 
   try {
-    let teacher_id = props.selected;
-
-    // ===============================
+    // ==============================
     // STEP 1 — SAVE / UPDATE TEACHER
-    // ===============================
-    let teacherForm = new FormData();
-
+    // ==============================
+    const teacherForm = new FormData();
     const teacherFields = [
       "nama", "email", "nip", "jenis_kelamin", "tempat_lahir",
       "tanggal_lahir", "no_telepon", "alamat", "level",
       "mata_pelajaran", "status",
     ];
+    teacherFields.forEach(k => teacherForm.append(k, teacher.value[k] ?? ""));
+    if (foto.value.length && foto.value[0].file) teacherForm.append("foto", foto.value[0].file);
 
-    teacherFields.forEach((k) => teacherForm.append(k, teacher.value[k] ?? ""));
-
-    if (foto.value.length && foto.value[0].file) {
-      teacherForm.append("foto", foto.value[0].file);
-    }
-
-    let teacherResponse;
-
+    let teacherId = props.selected;
     if (!props.selected) {
-      teacherResponse = await axios.post(`/master/teachers/store`, teacherForm);
-      teacher_id = teacherResponse.data.teacher.id;
+      // CREATE teacher
+      const resTeacher = await axios.post(`/master/teachers/store`, teacherForm);
+      teacherId = resTeacher.data.teacher.id;
+      props.selected = teacherId;
     } else {
+      // UPDATE teacher
       teacherForm.append("_method", "PUT");
-      teacherResponse = await axios.post(`/master/teachers/${props.selected}`, teacherForm);
+      await axios.post(`/master/teachers/${props.selected}`, teacherForm);
     }
 
-    // ===============================
+    // ==============================
     // STEP 2 — SAVE / UPDATE USER
-    // ===============================
-    let userForm = new FormData();
+    // ==============================
 
+    // Jika user tidak ingin membuat akun → lewati proses user
+    if (!user.value.username) {
+      toast.success("Berhasil menyimpan data guru");
+      emit("close");
+      emit("refresh");
+      formRef.value.resetForm();
+      return;
+    }
+
+    const userForm = new FormData();
     userForm.append("username", user.value.username);
-    userForm.append("name", teacher.value.nama);
-    userForm.append("email", teacher.value.email);
+    userForm.append("name", user.value.name);
+    userForm.append("email", user.value.email || teacher.value.email);
     userForm.append("status", user.value.status);
     userForm.append("role_id", "4");
-    userForm.append("teacher_id", teacher_id);
+    userForm.append("teacher_id", teacherId);
 
     if (foto.value.length && foto.value[0].file) {
       userForm.append("photo", foto.value[0].file);
     }
 
-    // CREATE
-    if (!props.selected) {
+    // Hanya kirim password jika user baru atau password diubah
+    if (!user.value.id || user.value.password) {
       userForm.append("password", user.value.password);
       userForm.append("password_confirmation", user.value.passwordConfirmation);
+    }
 
+    if (!user.value.id) {
       await axios.post("/master/users/store", userForm);
-
     } else {
-      // UPDATE
-      if (user.value.password) {
-        userForm.append("password", user.value.password);
-        userForm.append("password_confirmation", user.value.passwordConfirmation);
-      }
-
       userForm.append("_method", "PUT");
       await axios.post(`/master/users/${user.value.id}`, userForm);
     }
 
-    toast.success("Berhasil disimpan");
+    toast.success("Berhasil menyimpan data guru & user");
     emit("close");
     emit("refresh");
     formRef.value.resetForm();
 
   } catch (e: any) {
-    toast.error(e.response?.data?.message || "Gagal menyimpan");
-    if (e.response?.data?.errors) {
+    toast.error(e.response?.data?.message || "Gagal menyimpan data");
+    if (e.response?.data?.errors && formRef.value) {
       formRef.value.setErrors(e.response.data.errors);
     }
   } finally {
@@ -316,9 +310,15 @@ onMounted(() => {
         <!-- level -->
         <div class="col-md-4">
           <div class="fv-row mb-7">
-            <label class="form-label fw-bold fs-6 required">level</label>
-            <Field class="form-control form-control-lg form-control-solid" type="text" name="level"
-              v-model="teacher.level" placeholder="Masukkan level" />
+            <label class="form-label fw-bold fs-6 required">Level</label>
+            <Field as="select" name="level" v-model="teacher.level"
+              class="form-select form-select-lg form-select-solid">
+              <option value="">Pilih Level</option>
+              <option value="Kepala">Kepala</option>
+              <option value="Wali Kelas">Wali Kelas</option>
+              <option value="Guru">Guru</option>
+            </Field>
+            <ErrorMessage name="level" class="text-danger small" />
             <ErrorMessage name="level" class="text-danger small" />
           </div>
         </div>

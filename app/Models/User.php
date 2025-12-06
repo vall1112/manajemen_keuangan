@@ -31,38 +31,58 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
-    protected $casts = [];
-
     protected $appends = ['permission', 'role'];
 
+    /**
+     * Helper: cek apakah user adalah admin
+     */
+    public function isAdmin()
+    {
+        return $this->roles()->where('id', 1)->exists();
+    }
+
+    /**
+     * Boot model
+     */
     protected static function booted()
     {
+        // CREATE
         static::creating(function ($user) {
+
+            // kalau password diisi
             if (!empty($user->password)) {
 
-                if (request()->has('role_id')) {
-                    $role = Role::find(request()->role_id);
-
-                    if ($role && $role->id == 1) {
-                        $user->password = Hash::make($user->password);
-                    }
+                // cek role_id dari request (ketika create user)
+                if (request()->has('role_id') && request()->role_id == 1) {
+                    // hash hanya admin
+                    $user->password = Hash::make($user->password);
                 }
             }
         });
 
+        // CREATED
         static::created(function ($user) {
+
+            // Assign role
             if (request()->has('role_id')) {
+
                 $role = Role::find(request()->role_id);
+
                 if ($role) {
                     $user->syncRoles([$role->name]);
                 }
+
             } else {
+                // default role id 3
                 $roleDefault = Role::find(3);
                 if ($roleDefault) {
                     $user->assignRole($roleDefault->name);
                 }
             }
-            if ($user->hasRole(Role::find(1)->name)) {
+
+            // Jika admin ternyata password plaintext → hash
+            if ($user->isAdmin()) {
+
                 if (!password_get_info($user->password)['algo']) {
                     $user->password = Hash::make($user->password);
                     $user->saveQuietly();
@@ -70,14 +90,25 @@ class User extends Authenticatable implements JWTSubject
             }
         });
 
+        // UPDATE
         static::updating(function ($user) {
+
+            // jika password berubah & tidak kosong
             if ($user->isDirty('password') && !empty($user->password)) {
-                if ($user->hasRole(Role::find(1)->name)) {
-                    $user->password = Hash::make($user->password);
+
+                // Admin → hash
+                if ($user->isAdmin()) {
+                    // hash hanya jika belum di-hash
+                    if (!password_get_info($user->password)['algo']) {
+                        $user->password = Hash::make($user->password);
+                    }
                 }
+
+                // Non-admin → biarkan plaintext
             }
         });
 
+        // DELETE → hapus foto
         static::deleted(function ($user) {
             if (!empty($user->photo)) {
                 $old = str_replace('/storage/', '', $user->photo);
@@ -86,6 +117,7 @@ class User extends Authenticatable implements JWTSubject
         });
     }
 
+    /** JWT */
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -96,6 +128,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    /** Attributes */
     public function getRoleAttribute()
     {
         return $this->roles()->first();
@@ -106,9 +139,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->getAllPermissions()->pluck('name');
     }
 
+    /** Relations */
     public function teacher()
     {
-        return $this->hasOne(Teacher::class, 'user_id');
+        return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
     public function student()

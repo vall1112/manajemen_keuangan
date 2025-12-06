@@ -57,9 +57,6 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
             Route::post('users/pending', [UserController::class, 'userPending']);
             Route::post('users/store', [UserController::class, 'store']);
             Route::put('users/{id}/status', [UserController::class, 'updateStatus']);
-            Route::post('users/admin', [UserController::class, 'index_admin']);
-            Route::post('users/teacher', [UserController::class, 'index_teacher']);
-            Route::post('users/student', [UserController::class, 'index_student']);
             Route::apiResource('users', UserController::class)
                 ->except(['index', 'store'])->scoped(['user' => 'uuid']);
         });
@@ -73,7 +70,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
         });
 
         Route::get('teachers', [TeacherController::class, 'get']);
-        Route::get('users/by-teacher/{teacher_id}', [TeacherController::class, 'getByTeacher']);
+        Route::post('users/by-teacher/{id}', [TeacherController::class, 'getByTeacher']);
         Route::post('teachers', [TeacherController::class, 'index']);
         Route::post('teachers/store', [TeacherController::class, 'store']);
         Route::apiResource('teachers', TeacherController::class)
@@ -87,6 +84,7 @@ Route::middleware(['auth', 'verified', 'json'])->group(function () {
 
         Route::get('students', [StudentController::class, 'get']);
         Route::post('students', [StudentController::class, 'index']);
+        Route::post('users/by-student/{id}', [StudentController::class, 'getByStudent']);
         Route::post('students/store', [StudentController::class, 'store']);
         Route::apiResource('students', StudentController::class)
             ->except(['index', 'store']);
@@ -152,10 +150,10 @@ Route::apiResource('transactions', TransactionController::class)
 Route::get('/transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])
     ->name('transactions.receipt');
 
-Route::get('setting/logo', [SettingController::class, 'index']);
+// Route::get('setting/logo', [SettingController::class, 'index']);
 Route::get('dashboard/admin', [DashboardController::class, 'admin']);
 Route::get('dashboard/bendahara', [DashboardController::class, 'bendahara']);
 Route::get('dashboard/siswa', [DashboardController::class, 'siswa']);
 
-Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
-Route::get('/users/{id}/card', [UserController::class, 'printCard']);
+// Route::get('login/students', [StudentController::class, 'getStudentAndClassroom']);
+// Route::get('/users/{id}/card', [UserController::class, 'printCard']);

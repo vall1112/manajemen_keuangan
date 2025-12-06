@@ -20,9 +20,9 @@ class AuthController extends Controller
     // ========================== AMBIL DATA USER LOGIN ==========================
     public function me()
     {
-        $user = auth()->user()->load('student.classroom');
-
-        return response()->json(['user' => $user]);
+        return response()->json([
+            'user' => auth()->user()
+        ]);
     }
 
     // ========================== LOGIN ==========================
@@ -42,17 +42,16 @@ class AuthController extends Controller
 
         $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if (!$token = auth()->attempt([$loginField => $request->login, 'password' => $request->password])) {
+        $user = User::where($loginField, $request->login)->first();
+
+        if (!$user) {
             return response()->json([
                 'status'  => false,
                 'message' => 'Username / Email atau Password salah!',
             ], 401);
         }
 
-        $user = auth()->user();
-
         if ($user->status === 'Pending') {
-            auth()->logout();
             return response()->json([
                 'status'  => false,
                 'message' => 'Akun Anda masih menunggu persetujuan dari admin.',
@@ -60,18 +59,35 @@ class AuthController extends Controller
         }
 
         if ($user->status === 'Tidak Aktif') {
-            auth()->logout();
             return response()->json([
                 'status'  => false,
                 'message' => 'Akun Anda tidak aktif, silakan hubungi admin.',
             ], 403);
         }
 
-        $user = auth()->user()->load('student.classroom');
+        if ($user->hasRole('admin')) {
+            if (!\Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Username / Email atau Password salah!',
+                ], 401);
+            }
+        } else {
+            if ($request->password !== $user->password) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Username / Email atau Password salah!',
+                ], 401);
+            }
+        }
+
+        $token = auth('api')->login($user);
+
+        $user->load('student.classroom');
 
         return response()->json([
             'status' => true,
-            'user'   => $user,
+            'user' => auth()->user(),
             'token'  => $token,
         ]);
     }
@@ -233,7 +249,6 @@ class AuthController extends Controller
         $user = Auth::user();
         $student = $user->student;
 
-        // Update user
         $userData = [
             'username' => $request->input('username', $user->username),
             'email'    => $request->input('email', $user->email),
@@ -245,7 +260,6 @@ class AuthController extends Controller
 
         $user->update($userData);
 
-        // Update student
         $studentData = $request->only([
             'nama',
             'nis',
@@ -280,14 +294,12 @@ class AuthController extends Controller
             'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Password
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
         }
 
-        // Foto
         if ($request->hasFile('photo')) {
             if ($user->photo) {
                 Storage::disk('public')->delete($user->photo);

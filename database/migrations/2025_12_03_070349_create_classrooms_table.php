@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kelas');
-            $table->unsignedBigInteger('major_id')->index();
-            $table->unsignedBigInteger('wali_kelas_id')->index();
-            $table->integer('jumlah_anak')->default(0); 
+            $table->unsignedBigInteger('major_id')->nullable()->index();
+            $table->unsignedBigInteger('wali_kelas_id')->nullable()->index();
+            $table->integer('jumlah_anak')->default(0);
             $table->timestamps();
+
             $table->foreign('major_id')->references('id')->on('majors')->nullOnDelete();
             $table->foreign('wali_kelas_id')->references('id')->on('teachers')->nullOnDelete();
         });

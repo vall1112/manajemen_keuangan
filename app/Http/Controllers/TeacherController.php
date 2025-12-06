@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Teacher;
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,12 +32,12 @@ class TeacherController extends Controller
         $data = Teacher::with('user')
             ->when($request->search, function (Builder $query, string $search) {
                 $query->where('nama', 'like', "%$search%")
-                    ->orWhere('nip', 'like', "%$search%");
+                    ->orWhere('nip', 'like', "%$search%")
+                    ->orWhereHas('user', fn($q) => $q->where('username', 'like', "%$search%"));
             })
             ->latest()
             ->paginate($per, ['*', DB::raw('@no := @no + 1 AS no')]);
 
-        // Tambahkan username di setiap item
         $data->getCollection()->transform(function ($item) {
             $item->username = $item->user->username ?? '-';
             return $item;
@@ -59,7 +60,7 @@ class TeacherController extends Controller
             'alamat' => 'required|string',
             'level' => 'required|string',
             'mata_pelajaran' => 'nullable|string',
-            'status' => 'in:Aktif,Tidak Aktif,Cuti',
+            'status' => 'required|in:Aktif,Tidak Aktif,Cuti',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -170,18 +171,30 @@ class TeacherController extends Controller
         }
     }
 
-    public function getByTeacher($teacher_id)
+    // ========================== MENGAMBIL DATA USER BERDASARKAN GURU ==========================
+    public function getByTeacher($id)
     {
-        $user = User::where('teacher_id', $teacher_id)->first();
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found'
-            ], 404);
-        }
+        $user = User::where('teacher_id', $id)->first();
 
         return response()->json([
+            'exists' => $user ? true : false,
             'user' => $user
+        ]);
+    }
+
+    // ========================== CETAK KARTU LOGIN AKUN GURU ==========================
+    public function card(Teacher $teacher)
+    {
+        $user = $teacher->user;
+        if (!$user) {
+            abort(404, 'Guru belum memiliki akun.');
+        }
+
+        $setting = Setting::firstOrFail();
+
+        return view('users.card', [
+            'user' => $user,
+            'setting' => $setting,
         ]);
     }
 }

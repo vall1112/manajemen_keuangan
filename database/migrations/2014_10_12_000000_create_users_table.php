@@ -15,12 +15,8 @@ return new class extends Migration
             $table->id(); 
             $table->string('username')->index();
             $table->char('uuid')->unique();
-            $table->unsignedBigInteger('teacher_id')->nullable()->index(); 
-            $table->unsignedBigInteger('student_id')->nullable()->index();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('status', ['Pending', 'Aktif', 'Tidak Aktif'])
-                  ->default('Pending');
             $table->string('photo')->nullable();
             $table->string('password');
             $table->rememberToken();
