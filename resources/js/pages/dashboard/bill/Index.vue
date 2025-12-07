@@ -16,109 +16,150 @@ const { delete: deleteBill } = useDelete({
     onSuccess: () => paginateRef.value.refetch(),
 });
 
+const formatUang = (value: number) => {
+    return "Rp " + new Intl.NumberFormat("id-ID").format(value ?? 0);
+};
+
+const formatTanggal = (value: string | null) => {
+    if (!value) return "-";
+    return new Date(value).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+};
+
+const formatNomorWA = (nomor: string | null) => {
+    if (!nomor) return null;
+    if (nomor.startsWith("0")) return "+62" + nomor.substring(1);
+    return nomor;
+};
+
 const columns = [
-    column.accessor("no", {
-        header: "#",
-    }),
-    column.accessor("kode", {
-        header: "Kode",
-    }),
+    column.accessor("no", { header: "#" }),
+
+    column.accessor("kode", { header: "Kode" }),
+
     column.accessor("student_id", {
         header: "Nama",
         cell: (info) => info.row.original.student?.nama ?? "-",
     }),
+
     column.accessor("payment_type_id", {
         header: "Jenis Pembayaran",
         cell: (info) => info.row.original.payment_type?.nama_jenis ?? "-",
     }),
+
     column.accessor("school_year_id", {
         header: "Tahun Ajaran",
         cell: (info) => info.row.original.school_year?.tahun_ajaran ?? "-",
     }),
+
     column.accessor("total_tagihan", {
         header: "Total Tagihan",
-        cell: (info) =>
-            new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                minimumFractionDigits: 2,
-            }).format(info.getValue() ?? 0),
+        cell: (info) => formatUang(info.getValue()),
     }),
+
     column.accessor("tanggal_tagih", {
         header: "Tanggal Tagih",
-        cell: (info) =>
-            info.getValue()
-                ? new Date(info.getValue()).toLocaleDateString("id-ID", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                })
-                : "-",
+        cell: (info) => formatTanggal(info.getValue()),
     }),
+
     column.accessor("jatuh_tempo", {
         header: "Jatuh Tempo",
-        cell: (info) =>
-            info.getValue()
-                ? new Date(info.getValue()).toLocaleDateString("id-ID", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                })
-                : "-",
+        cell: (info) => formatTanggal(info.getValue()),
     }),
+
     column.accessor("status", {
         header: "Status",
         cell: (info) => {
             const status = info.getValue();
-            let statusClass = "";
+            const cls =
+                status === "Lunas"
+                    ? "text-success"
+                    : status === "Pending"
+                        ? "text-warning"
+                        : status === "Belum Dibayar"
+                            ? "text-danger"
+                            : "text-muted";
 
-            if (status === "Lunas") {
-                statusClass = "text-success"; // Hijau
-            } else if (status === "Pending") {
-                statusClass = "text-warning"; // Kuning
-            } else if (status === "Belum Dibayar") {
-                statusClass = "text-danger"; // Merah
-            } else {
-                statusClass = "text-muted"; // Default (abu-abu)
-            }
-
-            return h("span", { class: `fw-semibold ${statusClass}` }, status);
+            return h("span", { class: `fw-semibold ${cls}` }, status);
         },
     }),
+
     column.accessor("id", {
         header: "Aksi",
         cell: (cell) => {
             const row = cell.row.original;
-            const status = row.status;
 
-            // Hanya tampilkan tombol bayar jika status adalah "Belum dibayar"
-            if (status !== "Belum Dibayar") {
-                return h("div", { class: "d-flex gap-2" }, [
-                    h("span", { class: "text-muted fst-italic" }, "-")
-                ]);
+            const kode = row.kode;
+            const namaSiswa = row.student?.nama ?? "-";
+            const kelas = row.student?.classroom?.nama_kelas ?? "-";
+            const jenis = row.payment_type?.nama_jenis ?? "-";
+            const total = formatUang(row.total_tagihan);
+            const dueDate = formatTanggal(row.jatuh_tempo);
+
+            let nomorWA = formatNomorWA(row.student?.telepon ?? null);
+
+            const pesan = encodeURIComponent(
+                `Halo, ini pemberitahuan mengenai tagihan sekolah.\n\n` +
+                `Nama Siswa : ${namaSiswa}\n` +
+                `Kelas : ${kelas}\n` +
+                `Jenis Pembayaran : ${jenis}\n` +
+                `Total Tagihan : ${total}\n` +
+                `Jatuh Tempo : ${dueDate}\n\n` +
+                `Mohon segera melakukan pembayaran sebelum jatuh tempo.\n` +
+                `Terima kasih.`
+            );
+
+            const buttons: any[] = [];
+
+            if (row.status === "Belum Dibayar") {
+
+                buttons.push(
+                    h(
+                        "button",
+                        {
+                            class: "btn btn-sm btn-light-success d-flex align-items-center",
+                            title: "Bayar Tagihan",
+                            onClick: () => {
+                                router.push({
+                                    name: "form.transaction",
+                                    query: { kode },
+                                });
+                            },
+                        },
+                        [
+                            h("i", { class: "la la-credit-card fs-2" }),
+                            h("span", " Bayar"),
+                        ]
+                    )
+                );
+
+                if (nomorWA) {
+                    buttons.push(
+                        h(
+                            "a",
+                            {
+                                href: `https://wa.me/${nomorWA}?text=${pesan}`,
+                                target: "_blank",
+                                class: "btn btn-sm btn-light-primary d-flex align-items-center",
+                                title: "Kirim WhatsApp",
+                            },
+                            [
+                                h("i", { class: "lab la-whatsapp fs-2 text-success" }),
+                                h("span", "Chat Wa"),
+                            ]
+                        )
+                    );
+                }
             }
 
-            return h("div", { class: "d-flex gap-2" }, [
-                h(
-                    "button",
-                    {
-                        class:
-                            "btn btn-sm btn-light-success d-flex align-items-center",
-                        title: "Bayar Tagihan",
-                        onClick: () => {
-                            const kodeTagihan = row.kode;
-                            router.push({
-                                name: "form.transaction",
-                                query: { kode: kodeTagihan },
-                            });
-                        },
-                    },
-                    [
-                        h("i", { class: "la la-credit-card fs-2" }),
-                        h("span", "Bayar"),
-                    ]
-                ),
-            ]);
+            if (buttons.length === 0) {
+                return h("span", { class: "text-muted fst-italic" }, "-");
+            }
+
+            return h("div", { class: "d-flex gap-2" }, buttons);
         },
     }),
 ];
@@ -126,9 +167,7 @@ const columns = [
 const refresh = () => paginateRef.value.refetch();
 
 watch(openForm, (val) => {
-    if (!val) {
-        selected.value = null;
-    }
+    if (!val) selected.value = null;
     window.scrollTo(0, 0);
 });
 </script>
@@ -144,8 +183,9 @@ watch(openForm, (val) => {
                 <i class="la la-plus"></i>
             </button>
         </div>
+
         <div class="card-body">
-            <paginate ref="paginateRef" id="table-bills" url="/bills" :columns="columns"></paginate>
+            <paginate ref="paginateRef" id="table-bills" url="/bills" :columns="columns" />
         </div>
     </div>
 </template>

@@ -26,8 +26,9 @@ class BillController extends Controller
 
         DB::statement('set @no=0+' . $page * $per);
 
-        $data = Bill::with(['student', 'paymentType', 'schoolYear'])
+        $data = Bill::with(['student.classroom', 'paymentType', 'schoolYear'])
             ->when($request->search, function (Builder $query, string $search) {
+
                 $query->whereHas('student', function ($q) use ($search) {
                     $q->where('nama', 'like', "%$search%");
                 })
